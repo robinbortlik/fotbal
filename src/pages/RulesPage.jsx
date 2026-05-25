@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { BallIcon } from "../components";
 import { RuleBasics } from "./rules/RuleBasics.jsx";
 import { RuleOffside } from "./rules/RuleOffside.jsx";
@@ -7,6 +8,7 @@ import { RuleSetPieces } from "./rules/RuleSetPieces.jsx";
 import { RulePenalty } from "./rules/RulePenalty.jsx";
 import { RuleGoal } from "./rules/RuleGoal.jsx";
 import { RuleRef } from "./rules/RuleRef.jsx";
+import { RuleYouth } from "./rules/RuleYouth.jsx";
 
 const RULES = [
   { id: "basics", title: "Základy hry", icon: "⚽", duration: 6 },
@@ -16,15 +18,31 @@ const RULES = [
   { id: "penalty", title: "Penalta", icon: "🎯", duration: 5 },
   { id: "goal", title: "Branka a góly", icon: "🥅", duration: 4 },
   { id: "ref", title: "Role rozhodčího", icon: "👮", duration: 4 },
+  { id: "youth", title: "Kategorie mládeže", icon: "🧒", duration: 6 },
 ];
 
+const VALID_IDS = RULES.map((r) => r.id);
+
 export function RulesPage() {
-  const [active, setActive] = useState("offside");
+  const [searchParams] = useSearchParams();
+  const initial = (() => {
+    const fromQuery = searchParams.get("rule");
+    return fromQuery && VALID_IDS.includes(fromQuery) ? fromQuery : "offside";
+  })();
+  const [active, setActive] = useState(initial);
+
+  useEffect(() => {
+    const fromQuery = searchParams.get("rule");
+    if (fromQuery && VALID_IDS.includes(fromQuery) && fromQuery !== active) {
+      setActive(fromQuery);
+    }
+  }, [searchParams]);
+
   return (
     <div className="page">
       <span className="eyebrow green"><BallIcon size={14}/> Kapitola 1</span>
       <h1>Pravidla fotbalu</h1>
-      <p className="lead">Sedm hlavních pravidel, která musíš znát, než vyběhneš na hřiště. Klikni na lekci a Kopík ti ji ukáže s animací.</p>
+      <p className="lead">Sedm hlavních lekcí, ve kterých si projdeme nejdůležitější pravidla. Celkem jich má fotbal sedmnáct — tyhle nejhlavnější si dáme jako první. Klikni na lekci a Kopík ti ji ukáže s animací.</p>
 
       <div className="divider"/>
 
@@ -60,6 +78,7 @@ export function RulesPage() {
           {active === "penalty" && <RulePenalty/>}
           {active === "goal" && <RuleGoal/>}
           {active === "ref" && <RuleRef/>}
+          {active === "youth" && <RuleYouth/>}
         </main>
       </div>
     </div>

@@ -56,7 +56,7 @@ function HomeVariantA({ onNav }) {
 
       <div className="divider"/>
 
-      <SectionHead index="OBSAH WEBU" title="Co se tu naučíš?" kicker="Šest kapitol. Začni klidně tou, co tě láká nejvíc."/>
+      <SectionHead index="OBSAH WEBU" title="Co se tu naučíš?" kicker="Osm kapitol. Začni klidně tou, co tě láká nejvíc."/>
       <div className="card-grid">
         {cats.map(c => (
           <Tile key={c.id} num={c.num} title={c.title} desc={c.desc} tag={c.tag} onClick={() => onNav(c.id)}/>
@@ -164,7 +164,7 @@ function HomeVariantB({ onNav }) {
         <div className="responsive-grid grid gap-4" style={{ gridTemplateRows: "1fr 1fr" }}>
           <div className="card orange p-5">
             <div className="display text-[26px]">Co nás čeká?</div>
-            <p className="mt-1.5 text-navy">6 kapitol plných animací, klikací hřiště a kvízy s okamžitou zpětnou vazbou.</p>
+            <p className="mt-1.5 text-navy">8 kapitol plných animací, klikací hřiště a kvízy s okamžitou zpětnou vazbou.</p>
             <div className="pill-row mt-3">
               <span className="pill navy">Pravidla</span>
               <span className="pill navy">Strategie</span>

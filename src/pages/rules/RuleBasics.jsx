@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { PitchSVG, Player, Ball } from "../../components";
 import { RuleShell } from "./RuleShell.jsx";
 
@@ -10,15 +11,36 @@ export function RuleBasics() {
       lead="Dva týmy. Jeden míč. Kdo dá víc gólů, vyhrává."
       mascotText="Fotbal hrají dva týmy proti sobě. V každém týmu je 11 hráčů, jeden z nich je brankář. Cílem je dostat míč do soupeřovy branky — nohou, hlavou nebo jakoukoli částí těla kromě rukou (brankář ve vápně může rukama)."
       sideSlot={
-        <div className="card">
-          <div className="display text-[22px]">Rychlofakta</div>
-          <ul className="pl-4.5 leading-loose mt-2">
-            <li><b>11 hráčů</b> v týmu (1 brankář + 10 v poli)</li>
-            <li><b>2 × 45 minut</b> (poločas 15 minut)</li>
-            <li><b>3 střídání</b> za zápas (často víc u mládeže)</li>
-            <li><b>Sudí</b> řídí zápas, má 2 asistenty na čárách</li>
-            <li><b>Žluté/červené karty</b> trestají fauly</li>
-          </ul>
+        <div className="flex flex-col gap-3.5">
+          <div className="card">
+            <div className="display text-[22px]">Rychlofakta</div>
+            <ul className="pl-4.5 leading-loose mt-2">
+              <li><b>11 hráčů</b> v týmu (1 brankář + 10 v poli)</li>
+              <li><b>2 × 45 minut</b> (poločas 15 minut)</li>
+              <li><b>Obvykle 5 střídání</b> za zápas (u mládeže často neomezeně)</li>
+              <li><b>Sudí</b> řídí zápas, má 2 asistenty na čárách</li>
+              <li><b>Žluté/červené karty</b> trestají fauly</li>
+            </ul>
+            <Link to="/pravidla?rule=youth" className="pill orange text-[12px] mt-3 inline-block" style={{ textDecoration: "none" }}>
+              Co platí v přípravce? →
+            </Link>
+          </div>
+          <div className="card" style={{ borderLeft: "8px solid var(--pitch)" }}>
+            <div className="display text-[18px]">Vybavení a míč</div>
+            <ul className="pl-4.5 leading-relaxed mt-2 text-[14px]">
+              <li>Dres, trenýrky a štulpny</li>
+              <li><b>Chrániče holení</b> — povinné, schované pod štulpnami</li>
+              <li>Kopačky (lisovky na umělou trávu, kolíky na mokrou trávu)</li>
+              <li><b>Bez šperků a hodinek</b> — kvůli bezpečnosti</li>
+              <li>Velikost míče podle věku: <b>3</b> (U6–U9), <b>4</b> (U10–U13), <b>5</b> (od U14 / starší žáci)</li>
+            </ul>
+          </div>
+          <div className="card" style={{ borderLeft: "8px solid var(--orange)" }}>
+            <div className="display text-[18px]">Výkop</div>
+            <p className="mt-1.5 text-[14px] opacity-95">
+              Zápas, druhý poločas i hra po gólu začíná <b>výkopem ze středového kruhu</b>. Soupeři musí být <b>mimo kruh</b>. Od roku 2016 se může kopnout jakýmkoli směrem (dřív se muselo dopředu).
+            </p>
+          </div>
         </div>
       }
       pitchSlot={

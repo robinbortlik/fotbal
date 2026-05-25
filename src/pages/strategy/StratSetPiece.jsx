@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { PitchSVG, Player, Ball, Arrow, MascotSay } from "../../components";
 
 /* --- Set piece strategy --- */
@@ -25,6 +26,10 @@ export function StratSetPiece() {
       </div>
       <div className="flex flex-col gap-3.5">
         <MascotSay>Standardní situace = připravená šance! Roh, volný kop, aut — to jsou momenty, kdy máš čas si všechno rozmyslet.</MascotSay>
+        <div className="text-[13px] text-navySoft">
+          Pravidla rohu, autu a volného kopu najdeš v kapitole{" "}
+          <Link to="/pravidla?rule=set" className="underline font-bold">Pravidla / Standardní situace</Link>.
+        </div>
         <div className="card">
           <div className="display text-[22px]">Rohový kop: 3 typy náběhů</div>
           <ul className="pl-5 leading-loose mt-1.5">
@@ -34,7 +39,7 @@ export function StratSetPiece() {
           </ul>
         </div>
         <div className="card orange">
-          <b>Pravidlo:</b> Vždy musíš mít alespoň 3 spoluhráče v pokutovém území. Jeden krátkou, dva dlouhou. Pomate to obránce!
+          <b>Trenérská rada:</b> Vždy mějte alespoň 3 spoluhráče v pokutovém území. Jeden na přední tyč, dva na zadní. Pomate to obránce! (Není to oficiální pravidlo, je to taktický tip.)
         </div>
       </div>
     </div>

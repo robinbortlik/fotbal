@@ -1,58 +1,116 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Mascot,
   MascotSay,
   BallIcon,
 } from "../components";
 
-/* === Quiz === */
-
+/* === Quiz ===
+   Each question now carries `explain` (always-shown post-answer) plus an
+   optional `learn` deep-link to the lesson that covers the question, used
+   on the end screen to bounce the kid to the relevant rule on misses. */
 const QUIZ = [
-  { q: "Kolik hráčů hraje v jednom týmu (včetně brankáře)?", a: ["9", "10", "11", "12"], correct: 2,
-    hint: "Mysli na číslo z dresů. Plný tým má…" },
-  { q: "Co znamená ofsajd?", a: [
+  {
+    q: "Kolik hráčů hraje v jednom týmu (včetně brankáře)?",
+    a: ["9", "10", "11", "12"], correct: 2,
+    hint: "Mysli na číslo z dresů. Plný tým má…",
+    explain: "Tým má 11 hráčů — 1 brankář a 10 v poli. (V mládeži se hraje s menšími sestavami 4+1, 5+1, 7+1.)",
+    learn: { to: "/pravidla?rule=basics", label: "Základy hry →" },
+  },
+  {
+    q: "Co znamená ofsajd?",
+    a: [
       "Útočník stojí za soupeřovou brankou",
       "Útočník je v okamžiku přihrávky blíž k bráně než předposlední soupeř",
       "Útočník překročí postranní čáru",
       "Útočník si vezme míč rukama"
-    ], correct: 1, hint: "Důležité je, kdy se ofsajd posuzuje — v okamžiku přihrávky." },
-  { q: "Z jaké vzdálenosti se kope penalta?", a: ["7 m", "9 m", "11 m", "16 m"], correct: 2,
-    hint: "Vzdálenost je stejná jako rok začátku 1. světové války… nebo skoro." },
-  { q: "Kolik trvá zápas (bez nastavení)?", a: ["60 min", "80 min", "90 min", "100 min"], correct: 2,
-    hint: "Dva poločasy po 45 minutách." },
-  { q: "Co dostane hráč za druhou žlutou kartu v jednom zápase?", a: [
+    ], correct: 1,
+    hint: "Důležité je, kdy se ofsajd posuzuje — v okamžiku přihrávky.",
+    explain: "Ofsajd se posuzuje v okamžiku přihrávky. Útočník nesmí být blíž k bráně soupeře než předposlední soupeř (typicky obránce).",
+    learn: { to: "/pravidla?rule=offside", label: "Ofsajd →" },
+  },
+  {
+    q: "Z jaké vzdálenosti se kope penalta?",
+    a: ["7 m", "9 m", "11 m", "16 m"], correct: 2,
+    hint: "Tolik metrů, kolik je hráčů v týmu.",
+    explain: "Penalta se kope z 11 metrů — stejné číslo, kolik je hráčů v týmu. Pamatuj si: 11 a 11.",
+    learn: { to: "/pravidla?rule=penalty", label: "Penalta →" },
+  },
+  {
+    q: "Kolik trvá zápas (bez nastavení)?",
+    a: ["60 min", "80 min", "90 min", "100 min"], correct: 2,
+    hint: "Dva poločasy po 45 minutách.",
+    explain: "Velký fotbal trvá 90 minut: dva poločasy po 45 minutách. V mládeži je to kratší (např. 2 × 30 min v U13).",
+    learn: { to: "/pravidla?rule=basics", label: "Základy hry →" },
+  },
+  {
+    q: "Co dostane hráč za druhou žlutou kartu v jednom zápase?",
+    a: [
       "Pokutu",
       "Volný kop pro soupeře",
       "Červenou kartu a musí ze hřiště",
       "Náhradníka místo sebe"
-    ], correct: 2, hint: "Dvě žluté = jedna…?" },
-  { q: "Kdo smí ve vápně chytat míč rukama?", a: ["Útočník", "Záložník", "Brankář", "Kapitán"], correct: 2,
-    hint: "Má rukavice a jiný dres." },
-  { q: "Jaké rozestavení znamená 4-3-3?", a: [
+    ], correct: 2,
+    hint: "Dvě žluté = jedna…?",
+    explain: "Druhá žlutá v zápase = červená karta. Hráč musí pryč a tým hraje v deseti.",
+    learn: { to: "/pravidla?rule=fouls", label: "Faul a karty →" },
+  },
+  {
+    q: "Kdo smí ve vápně chytat míč rukama?",
+    a: ["Útočník", "Záložník", "Brankář", "Kapitán"], correct: 2,
+    hint: "Má rukavice a jiný dres.",
+    explain: "Jen brankář, a jen ve svém pokutovém území. Mimo vápno už ani on rukama nesmí.",
+    learn: { to: "/pozice", label: "Pozice hráčů →" },
+  },
+  {
+    q: "Jaké rozestavení znamená 4-3-3?",
+    a: [
       "4 obránci, 3 záložníci, 3 útočníci",
       "4 útočníci, 3 záložníci, 3 obránci",
       "4 brankáři, 3 obránci, 3 záložníci",
       "4 záložníci, 3 útočníci, 3 obránci"
-    ], correct: 0, hint: "Čísla se čtou odzadu — od brankáře dopředu." },
-  { q: "Co je 'centr'?", a: [
+    ], correct: 0,
+    hint: "Čísla se čtou odzadu — od brankáře dopředu.",
+    explain: "Čte se odzadu od brankáře: 4 obránci → 3 záložníci → 3 útočníci. Plus brankář dělá dohromady 11.",
+    learn: { to: "/strategie?step=formations", label: "Formace →" },
+  },
+  {
+    q: "Co je 'centr'?",
+    a: [
       "Místo uprostřed hřiště",
       "Přihrávka z křídla do vápna",
       "Hráč ve středu obrany",
       "Sudí na lajně"
-    ], correct: 1, hint: "Děje se to hlavně před brankou." },
-  { q: "Co se stane, když míč přejde celou postranní čáru?", a: [
+    ], correct: 1,
+    hint: "Děje se to hlavně před brankou.",
+    explain: "Centr je přihrávka z křídla doprostřed pokutového území — obvykle vzduchem na hlavu útočníkovi.",
+    learn: { to: "/strategie?step=passing", label: "Přihrávání →" },
+  },
+  {
+    q: "Co se stane, když míč přejde celou postranní čáru?",
+    a: [
       "Roh",
       "Volný kop",
       "Aut",
       "Branka"
-    ], correct: 2, hint: "Hází se zpátky do hřiště rukama." },
-  { q: "Když útočník kopne míč, ten projde brankovou čárou — ale jen půlka — je to gól?", a: [
+    ], correct: 2,
+    hint: "Hází se zpátky do hřiště rukama.",
+    explain: "Aut! Hráč soupeře (toho, kdo se míče nedotkl naposled) hází míč zpátky oběma rukama zezadu přes hlavu.",
+    learn: { to: "/pravidla?rule=set", label: "Roh, aut a volný kop →" },
+  },
+  {
+    q: "Když útočník kopne míč, ten projde brankovou čárou — ale jen půlka — je to gól?",
+    a: [
       "Ano, stačí půlka",
       "Ne, musí celý míč přejít",
       "Jen když to je penalta",
       "Jen když to vidí sudí"
-    ], correct: 1, hint: "Pamatuj si: celý za čárou!" },
+    ], correct: 1,
+    hint: "Pamatuj si: celý za čárou!",
+    explain: "Musí přejít CELÝ míč — ani milimetr méně. Ve velkých zápasech to dnes hlídá i gólová technologie.",
+    learn: { to: "/pravidla?rule=goal", label: "Branka a góly →" },
+  },
 ];
 
 export function QuizPage() {
@@ -62,12 +120,16 @@ export function QuizPage() {
   const [score, setScore] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [done, setDone] = useState(false);
+  // Track per-question correctness to drive the end-screen review.
+  const [results, setResults] = useState([]);
   const q = QUIZ[idx];
 
   const pick = (i) => {
     if (picked !== null) return;
     setPicked(i);
-    if (i === q.correct) setScore(s => s + 1);
+    const correct = i === q.correct;
+    if (correct) setScore(s => s + 1);
+    setResults((r) => [...r, { idx, correct, picked: i }]);
   };
 
   const next = () => {
@@ -79,6 +141,7 @@ export function QuizPage() {
 
   const restart = () => {
     setIdx(0); setPicked(null); setScore(0); setShowHint(false); setDone(false);
+    setResults([]);
   };
 
   if (done) {
@@ -87,6 +150,7 @@ export function QuizPage() {
                   : pct >= 70 ? "Skvělé! Fotbal už umíš docela slušně."
                   : pct >= 40 ? "Není to špatné. Mrkni se ještě na pravidla a zkus to znovu."
                   : "To chce trochu cvičit. Vrať se na pravidla a strategii a pak to zkus znovu!";
+    const missed = results.filter((r) => !r.correct);
     return (
       <div className="page text-center">
         <span className="eyebrow green"><BallIcon size={14}/> Hotovo!</span>
@@ -96,7 +160,38 @@ export function QuizPage() {
         </div>
         <div className="display text-[72px]" style={{ color: "var(--orange-deep)" }}>{score} / {QUIZ.length}</div>
         <p className="lead mx-auto my-4 max-w-[560px]">{message}</p>
-        <div className="flex gap-3 justify-center mt-5">
+
+        {missed.length > 0 && (
+          <div className="card mx-auto max-w-[640px] text-left mt-5 p-5">
+            <div className="display text-xl">Co dotáhnout</div>
+            <p className="text-[14px] text-navySoft mt-1">Tyhle otázky šly mimo. Klikni na lekci a koukni se znovu.</p>
+            <ul className="pl-0 list-none flex flex-col gap-2 mt-3">
+              {missed.map((m) => {
+                const mq = QUIZ[m.idx];
+                return (
+                  <li key={m.idx}>
+                    <div className="card p-3" style={{ borderLeft: "8px solid #e64a3b" }}>
+                      <div className="text-[13px] font-bold text-navySoft tracking-wider uppercase">Otázka {m.idx + 1}</div>
+                      <div className="font-display font-extrabold text-[15px] leading-snug mt-1">{mq.q}</div>
+                      <p className="text-[14px] mt-1.5 opacity-95">{mq.explain}</p>
+                      {mq.learn && (
+                        <Link
+                          to={mq.learn.to}
+                          className="pill orange text-[13px] mt-2 inline-block"
+                          style={{ textDecoration: "none" }}
+                        >
+                          📚 {mq.learn.label}
+                        </Link>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
+        <div className="flex gap-3 justify-center mt-5 flex-wrap">
           <button className="btn primary" onClick={restart}>Hrát znovu</button>
           <button className="btn" onClick={() => navigate("/pravidla")}>Zpět na pravidla</button>
         </div>
@@ -106,7 +201,7 @@ export function QuizPage() {
 
   return (
     <div className="page">
-      <span className="eyebrow green"><BallIcon size={14}/> Kapitola 6</span>
+      <span className="eyebrow green"><BallIcon size={14}/> Kapitola 8</span>
       <h1>Kvíz: co už umíš?</h1>
       <p className="lead">{QUIZ.length} otázek. Klikni na odpověď. Žádný stres — když se spleteš, dozvíš se proč.</p>
 
@@ -160,7 +255,7 @@ export function QuizPage() {
               </button>
             )}
           </div>
-          {showHint && (
+          {showHint && picked === null && (
             <div className="mt-3.5">
               <MascotSay mood="wink" size={56}>{q.hint}</MascotSay>
             </div>
@@ -170,7 +265,22 @@ export function QuizPage() {
               className="mt-3.5 p-3.5 rounded-[12px] border-2 border-navy"
               style={{ background: picked === q.correct ? "#dff5e6" : "#ffe9d6" }}
             >
-              <b>{picked === q.correct ? "✓ Správně!" : "✗ Nesprávně."}</b> Správná odpověď: <b>{q.a[q.correct]}</b>.
+              <div className="flex items-center gap-2.5">
+                <Mascot size={42} mood={picked === q.correct ? "wink" : "default"}/>
+                <div className="flex-1">
+                  <b>{picked === q.correct ? "✓ Správně!" : "✗ Nesprávně."}</b> Správná odpověď: <b>{q.a[q.correct]}</b>.
+                  <p className="text-[14px] mt-1 opacity-95">{q.explain}</p>
+                  {picked !== q.correct && q.learn && (
+                    <Link
+                      to={q.learn.to}
+                      className="pill orange text-[13px] mt-2 inline-block"
+                      style={{ textDecoration: "none" }}
+                    >
+                      📚 {q.learn.label}
+                    </Link>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </div>

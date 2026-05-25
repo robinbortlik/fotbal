@@ -6,21 +6,26 @@ const POSITIONS = [
     desc: "Jediný hráč, který smí ve vápně chytat rukama. Stojí v brance a chrání ji.",
     skills: ["Rychlé reflexy", "Skok", "Komunikace s obranou", "Kop nohou", "Odvaha"],
     famous: ["Petr Čech", "Manuel Neuer", "Iker Casillas"],
+    extras: [
+      "8-sekundové pravidlo — drží míč v rukou nejvýš 8 sekund. Sudí ukazuje rukou odpočet od 5 do 0. Při překročení kope soupeř roh.",
+      "Nesmí chytit „malou domů“ — úmyslnou přihrávku spoluhráče nohou.",
+      "Nesmí chytit do rukou aut od spoluhráče.",
+    ],
     x: 5, y: 32 },
   { id: "cb", name: "Stoper (střední obránce)", short: "CB", emoji: "🛡️", color: "#9BB4D6",
     desc: "Zastavuje útočníky soupeře. Hraje hlavou ve vzdušných soubojích, blokuje střely.",
     skills: ["Síla", "Hra hlavou", "Čtení hry", "Tackle", "Klid"],
-    famous: ["Sergio Ramos", "Virgil van Dijk", "Tomáš Galásek"],
+    famous: ["Sergio Ramos", "Virgil van Dijk", "Tomáš Ujfaluši"],
     x: 22, y: 26 },
   { id: "fb", name: "Krajní obránce", short: "LB / RB", emoji: "🏃‍♂️", color: "#8AB7C9",
     desc: "Brání křídlo a zároveň pomáhá útoku. Hodně běhá nahoru-dolů.",
     skills: ["Vytrvalost", "Rychlost", "Centry", "Tackle"],
-    famous: ["Trent Alexander-Arnold", "Marcelo", "Pavel Nedvěd (i jinde)"],
+    famous: ["Trent Alexander-Arnold", "Marcelo", "Marek Jankulovski"],
     x: 22, y: 12 },
   { id: "cdm", name: "Defenzivní záložník", short: "CDM", emoji: "⚙️", color: "#F2C572",
     desc: "Stojí před obránci. Bere míč soupeři a rozjíždí útok krátkou přihrávkou.",
     skills: ["Tackle", "Přihrávka", "Pozičnost", "Vytrvalost"],
-    famous: ["Casemiro", "Sergio Busquets", "N'Golo Kanté"],
+    famous: ["Casemiro", "Sergio Busquets", "Tomáš Galásek"],
     x: 36, y: 32 },
   { id: "cm", name: "Střední záložník", short: "CM", emoji: "🎯", color: "#F2C572",
     desc: "Mozek týmu. Dirigent všeho — útoku i obrany. Musí hodně myslet.",
@@ -88,6 +93,14 @@ export function PositionsPage() {
             </div>
             <p className="mt-3.5 text-base">{p.desc}</p>
           </div>
+          {p.extras && (
+            <div className="card" style={{ borderLeft: "8px solid var(--pitch)" }}>
+              <div className="display text-lg">Speciální pravidla</div>
+              <ul className="pl-4.5 leading-relaxed mt-2 text-[14px]">
+                {p.extras.map((e, i) => <li key={i}>{e}</li>)}
+              </ul>
+            </div>
+          )}
           <div className="card">
             <div className="display text-lg">Co musíš umět</div>
             <div className="pill-row mt-2.5">
