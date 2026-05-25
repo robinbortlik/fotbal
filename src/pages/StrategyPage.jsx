@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { BallIcon } from "../components";
 import { StratPositions } from "./strategy/StratPositions.jsx";
 import { StratFormations } from "./strategy/StratFormations.jsx";
@@ -6,18 +7,35 @@ import { StratMovement } from "./strategy/StratMovement.jsx";
 import { StratPassing } from "./strategy/StratPassing.jsx";
 import { StratAttackDefense } from "./strategy/StratAttackDefense.jsx";
 import { StratSetPiece } from "./strategy/StratSetPiece.jsx";
+import { StratFairPlay } from "./strategy/StratFairPlay.jsx";
 
 const STRATEGY = [
-  { id: "positions-pitch", title: "Pozice na hřišti", icon: "🧩" },
+  { id: "positions-pitch", title: "Přehled pozic", icon: "🧩" },
   { id: "formations", title: "Formace (drag & drop)", icon: "📐" },
   { id: "movement", title: "Pohyb bez míče", icon: "🏃" },
   { id: "passing", title: "Přihrávání", icon: "↗️" },
   { id: "attack-defense", title: "Útok a obrana", icon: "⚔️" },
   { id: "set-piece", title: "Standardní situace", icon: "🎯" },
+  { id: "fair-play", title: "Fair play", icon: "🤝" },
 ];
 
+const VALID_IDS = STRATEGY.map((s) => s.id);
+
 export function StrategyPage() {
-  const [active, setActive] = useState("formations");
+  const [searchParams] = useSearchParams();
+  const initial = (() => {
+    const fromQuery = searchParams.get("step");
+    return fromQuery && VALID_IDS.includes(fromQuery) ? fromQuery : "formations";
+  })();
+  const [active, setActive] = useState(initial);
+
+  useEffect(() => {
+    const fromQuery = searchParams.get("step");
+    if (fromQuery && VALID_IDS.includes(fromQuery) && fromQuery !== active) {
+      setActive(fromQuery);
+    }
+  }, [searchParams]);
+
   return (
     <div className="page">
       <span className="eyebrow green"><BallIcon size={14}/> Kapitola 2</span>
@@ -45,6 +63,7 @@ export function StrategyPage() {
       {active === "passing" && <StratPassing/>}
       {active === "attack-defense" && <StratAttackDefense/>}
       {active === "set-piece" && <StratSetPiece/>}
+      {active === "fair-play" && <StratFairPlay/>}
     </div>
   );
 }

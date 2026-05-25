@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import {
   Mascot,
   MascotSay,
@@ -174,9 +175,13 @@ export function MovePage() {
 
   return (
     <div className="page">
-      <span className="eyebrow green"><BallIcon size={14}/> Kapitola 8</span>
+      <span className="eyebrow green"><BallIcon size={14}/> Kapitola 6</span>
       <h1>Pohyb podle míče</h1>
       <p className="lead">Přetáhni míč kamkoli na hřiště — celý tým se přerozestaví. Vyber si svou pozici a Kopík ti přesně řekne, kam se v tu chvíli máš pohybovat.</p>
+      <p className="text-[14px] text-navySoft mt-1">
+        Tým se hýbe podle míče. Chceš vědět, kde stojíš podle své pozice (útok vs. obrana)? Mrkni na{" "}
+        <Link to="/zony" className="underline font-bold">Zóny</Link>.
+      </p>
 
       <div className="divider"/>
 
@@ -356,6 +361,11 @@ export function MovePage() {
               <Mascot size={56} mood="wink"/>
               <div className="text-[15px]"><b>Tip:</b> Vyzkoušej preset „Centr z křídla". Vidíš, jak útočníci nabíhají do vápna a stopeři posouvají?</div>
             </div>
+          </div>
+
+          <div className="pill-row">
+            <Link to="/zony" className="pill orange" style={{ textDecoration: "none" }}>Viz také: Zóny pohybu →</Link>
+            <Link to="/strategie?step=movement" className="pill" style={{ textDecoration: "none" }}>Pravidla pohybu bez míče →</Link>
           </div>
         </div>
       </div>

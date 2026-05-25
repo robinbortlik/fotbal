@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   Mascot,
   MascotSay,
@@ -171,9 +172,13 @@ export function ZonesPage() {
 
   return (
     <div className="page">
-      <span className="eyebrow green"><BallIcon size={14}/> Kapitola 7</span>
+      <span className="eyebrow green"><BallIcon size={14}/> Kapitola 5</span>
       <h1>Pohyb v zónách</h1>
       <p className="lead">Kde má hráč stát, když máme míč? A kde, když ho má soupeř? Vyber pozici a sleduj, jak se mění zóna pohybu.</p>
+      <p className="text-[14px] text-navySoft mt-1">
+        Jak máš stát podle své pozice. Chceš pohled, jak se hýbe celý tým podle míče?{" "}
+        <Link to="/pohyb" className="underline font-bold">Pohyb podle míče</Link>.
+      </p>
 
       <div className="divider"/>
 
@@ -340,6 +345,10 @@ export function ZonesPage() {
             Hřiště se s tebou pohybuje — pořád dýchá!
           </p>
         </div>
+      </div>
+
+      <div className="pill-row mt-5">
+        <Link to="/pohyb" className="pill orange" style={{ textDecoration: "none" }}>Viz také: Pohyb podle míče →</Link>
       </div>
     </div>
   );

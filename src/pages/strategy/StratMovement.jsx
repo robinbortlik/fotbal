@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { PitchSVG, Player, Ball, Arrow, Scrubber, MascotSay } from "../../components";
 import { useTimeline } from "../../hooks/useTimeline.js";
 import { interpAt } from "../../lib/pitchGeometry.js";
@@ -41,6 +42,13 @@ export function StratMovement() {
         </div>
         <div className="card orange">
           <b>Tip Kopíka:</b> "Před přihrávkou se zastav, naznač, kam chceš jít, pak změň směr a vyběhni. Obránce tě nestihne!"
+        </div>
+        <div className="card" style={{ borderLeft: "8px solid var(--orange)" }}>
+          <div className="display text-[18px]">Vyzkoušej to celé</div>
+          <p className="mt-1.5 text-[14px] opacity-95">
+            Tady vidíš jednu situaci. Chceš si přesouvat <b>celý tým</b> podle míče po hřišti? Mrkni na interaktivní kapitolu.
+          </p>
+          <Link to="/pohyb" className="btn primary mt-3 inline-block">Pohyb podle míče →</Link>
         </div>
       </div>
     </div>
