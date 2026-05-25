@@ -1,1 +1,6 @@
 .a5c
+dist
+node_modules
+.vite
+.DS_Store
+.playwright-mcp/
