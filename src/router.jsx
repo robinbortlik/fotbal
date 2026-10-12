@@ -1,21 +1,18 @@
-/* Router — HashRouter route table.
-   HashRouter (not BrowserRouter) is intentional: the legacy app shipped with
-   hash-based navigation (`#home`, `#rules`, …) and is hosted on a static page
-   that can't rewrite arbitrary paths to /index.html. createHashRouter keeps
-   the URL shape predictable (`#/pravidla`) while the
-   `useLegacyHashRedirect` hook in App.jsx translates pre-migration hashes
-   like `#rules` → `#/pravidla` so existing links keep working. */
-import { createHashRouter } from "react-router-dom";
+/* HashRouter je záměr: web běží jako statická stránka pod /fotbal/ a hosting
+   neumí přesměrovat libovolnou cestu na index.html. Adresy vypadají jako #/utok. */
+import { createHashRouter, Navigate } from "react-router-dom";
 import RootLayout from "./layouts/RootLayout.jsx";
 import HomePage from "./pages/HomePage.jsx";
-import RulesPage from "./pages/RulesPage.jsx";
-import StrategyPage from "./pages/StrategyPage.jsx";
-import PitchPage from "./pages/PitchPage.jsx";
-import PositionsPage from "./pages/PositionsPage.jsx";
-import ZonesPage from "./pages/ZonesPage.jsx";
-import MovePage from "./pages/MovePage.jsx";
-import GlossaryPage from "./pages/GlossaryPage.jsx";
+import TopicPage from "./pages/TopicPage.jsx";
 import QuizPage from "./pages/QuizPage.jsx";
+import ParentsPage from "./pages/ParentsPage.jsx";
+import { ATTACK } from "./scenes/utok.js";
+import { DEFENSE } from "./scenes/obrana.js";
+import { KEEPER } from "./scenes/brankar.js";
+import { RULES } from "./scenes/pravidla.js";
+import { PITCH } from "./scenes/hriste.js";
+
+const to = (path) => <Navigate to={path} replace />;
 
 export const router = createHashRouter([
   {
@@ -23,14 +20,19 @@ export const router = createHashRouter([
     element: <RootLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: "pravidla", element: <RulesPage /> },
-      { path: "strategie", element: <StrategyPage /> },
-      { path: "hriste", element: <PitchPage /> },
-      { path: "pozice", element: <PositionsPage /> },
-      { path: "zony", element: <ZonesPage /> },
-      { path: "pohyb", element: <MovePage /> },
-      { path: "slovnik", element: <GlossaryPage /> },
+      { path: "hriste", element: <TopicPage topic={PITCH} /> },
+      { path: "pravidla", element: <TopicPage topic={RULES} /> },
+      { path: "utok", element: <TopicPage topic={ATTACK} /> },
+      { path: "obrana", element: <TopicPage topic={DEFENSE} /> },
+      { path: "brankar", element: <TopicPage topic={KEEPER} /> },
       { path: "kviz", element: <QuizPage /> },
+      { path: "pro-rodice", element: <ParentsPage /> },
+      // Staré adresy z předchozí verze webu
+      { path: "strategie", element: to("/utok") },
+      { path: "pohyb", element: to("/utok") },
+      { path: "zony", element: to("/obrana") },
+      { path: "pozice", element: to("/hriste") },
+      { path: "*", element: to("/") },
     ],
   },
 ]);

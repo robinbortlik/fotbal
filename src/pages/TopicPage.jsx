@@ -1,0 +1,105 @@
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Scene } from "../components/Scene.jsx";
+import { Icon } from "../components/Icons.jsx";
+import { Video } from "../components/Video.jsx";
+import { VIDEOS } from "../scenes/videos.js";
+
+/* Stránka tématu (Pravidla, Útok, Obrana, Brankář): seznam situací + přehrávač.
+   topic = { id, title, lead, scenes: [scéna | { id, title, icon, Component }] }; videa v src/scenes/videos.js
+   Component = vlastní interaktivní situace; dostane children (tlačítko „Další“) a vykreslí je
+   ve svém postranním sloupci — stejně jako <Scene>.
+   Vybraná situace je v URL (?s=id), aby šla poslat odkazem. */
+const SEEN = "fotbal:seen";
+const readSeen = () => {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(SEEN) || "[]"));
+  } catch {
+    return new Set();
+  }
+};
+
+export function TopicPage({ topic }) {
+  const [params, setParams] = useSearchParams();
+  const [seen, setSeen] = useState(readSeen); // dokoukané situace → fajfka v seznamu
+  const markSeen = (key) => {
+    if (seen.has(key)) return;
+    const next = new Set(seen).add(key);
+    setSeen(next);
+    try {
+      localStorage.setItem(SEEN, JSON.stringify([...next]));
+    } catch {
+      /* jen pro tuto návštěvu */
+    }
+  };
+  const i = Math.max(0, topic.scenes.findIndex((s) => s.id === params.get("s")));
+  const scene = topic.scenes[i];
+  const next = topic.scenes[i + 1];
+  const pick = (s, scroll) => {
+    setParams({ s: s.id }, { replace: true });
+    if (scroll) document.getElementById("situace")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  const Custom = scene.Component;
+  useEffect(() => {
+    if (Custom) markSeen(topic.id + "/" + scene.id); // interaktivní situace nemají konec → stačí ji otevřít
+  }, [topic.id, scene.id]);
+  useEffect(() => {
+    document.title = `${topic.title} – Fotbalové ABC`;
+    if (import.meta.env.DEV) import("../lib/lint.js").then((m) => m.lintTopic(topic));
+  }, [topic]);
+  const videos = VIDEOS[topic.id] || [];
+  const video = videos.find((v) => v.scene === scene.id);
+  const nextBtn = (
+    <>
+      {video && <Video key={video.id} v={video} />}
+      {next && (
+        <button className="btn next" onClick={() => pick(next, true)}>
+          Další: {next.title} <Icon name="next" />
+        </button>
+      )}
+    </>
+  );
+
+  return (
+    <div className={"page topic topic-" + topic.id}>
+      <header className="topic-head">
+        <h1>{topic.title}</h1>
+        {topic.lead && <p className="lead">{topic.lead}</p>}
+      </header>
+      <div className="topic-body">
+        <nav className="scene-list" aria-label="Situace">
+          {topic.scenes.map((s) => (
+            <button key={s.id} className="scene-pick" aria-current={s === scene} onClick={() => pick(s)}>
+              <span className="scene-ico" aria-hidden="true">
+                {s.icon}
+              </span>
+              {s.title}
+              {seen.has(topic.id + "/" + s.id) && <Icon name="check" size={22} className="seen" />}
+            </button>
+          ))}
+        </nav>
+        <section className="scene-main" id="situace" aria-label={scene.title}>
+          {Custom ? (
+            <Custom key={topic.id + scene.id}>{nextBtn}</Custom>
+          ) : (
+            <Scene key={topic.id + scene.id} scene={scene} onEnded={() => markSeen(topic.id + "/" + scene.id)}>
+              {nextBtn}
+            </Scene>
+          )}
+        </section>
+      </div>
+      {videos.length > 0 && (
+        <section className="videos" aria-labelledby="videa">
+          <h2 id="videa">Videa z opravdového hřiště</h2>
+          <div className="video-grid">
+            {videos.map((v) => (
+              <Video key={v.id} v={v} />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+export default TopicPage;
