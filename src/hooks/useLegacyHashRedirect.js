@@ -22,12 +22,12 @@ import { useEffect } from "react";
 const LEGACY_MAP = {
   "#home": "#/",
   "#rules": "#/pravidla",
-  "#strategy": "#/strategie",
+  "#strategy": "#/utok",
   "#pitch": "#/hriste",
-  "#positions": "#/pozice",
-  "#zones": "#/zony",
-  "#move": "#/pohyb",
-  "#glossary": "#/slovnik",
+  "#positions": "#/hriste",
+  "#zones": "#/obrana",
+  "#move": "#/utok",
+  "#glossary": "#/",
   "#quiz": "#/kviz",
 };
 

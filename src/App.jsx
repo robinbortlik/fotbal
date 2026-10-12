@@ -17,8 +17,6 @@ import { router } from "./router.jsx";
    postMessage protocol owned by `useTweaks`. */
 
 const TWEAK_DEFAULTS = {
-  homeVariant: "A",
-  showMascot: true,
   highContrast: false,
 };
 

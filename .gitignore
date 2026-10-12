@@ -4,3 +4,6 @@ node_modules
 .vite
 .DS_Store
 .playwright-mcp/
+.env*
+.wrangler
+/*.png

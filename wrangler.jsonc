@@ -1,0 +1,18 @@
+// Cloudflare Workers – jen statické soubory z `npm run build` (žádný Worker kód).
+// Nasazení: `npm run deploy`.
+{
+  "name": "fotbalove-abc",
+  "compatibility_date": "2026-10-12",
+  "assets": {
+    "directory": "./dist",
+    // HashRouter přesměrování nepotřebuje; tohle jen pošle /cokoli na úvodní stránku místo 404.
+    "not_found_handling": "single-page-application"
+  },
+  // Vlastní doména (zóna fotbalove-abc.cz je v Cloudflare); DNS záznamy a certifikát zařídí wrangler sám.
+  // S routes by se *.workers.dev vypnula – necháváme ji jako záložní adresu.
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "fotbalove-abc.cz", "custom_domain": true },
+    { "pattern": "www.fotbalove-abc.cz", "custom_domain": true }
+  ]
+}
