@@ -183,6 +183,27 @@ svg {
 button.footer-link {
   text-decoration: underline;
 }
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Text stránky pro roboty bez JavaScriptu (scripts/seo.mjs, v #root). Aplikace ho po načtení nahradí;
+   lidem se ukáže, jen když se do 3 s nenačte. */
+.seo {
+  visibility: hidden;
+  animation: seo-show 0s 3s forwards;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+@keyframes seo-show {
+  to {
+    visibility: visible;
+  }
+}
 
 /* Lišta se souhlasem se statistikami (Consent.jsx): dole nad menu, obě volby stejně výrazné */
 .consent {

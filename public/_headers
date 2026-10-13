@@ -1,0 +1,3 @@
+# Cloudflare: hlavičky statických souborů. llms.txt je česky → bez charset by ho některé nástroje četly jako Latin-1.
+/llms.txt
+  Content-Type: text/plain; charset=utf-8

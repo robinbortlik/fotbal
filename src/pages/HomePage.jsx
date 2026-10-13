@@ -5,7 +5,7 @@ import { Say } from "../components/Scene.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { W, L } from "../lib/pitch.js";
 import { say, PHRASES } from "../lib/voice.js";
-import { NAV } from "../lib/nav.js";
+import { NAV, PAGES } from "../lib/nav.js";
 
 /* Úvod: přepínač „Máme míč / Nemáme míč“ — nejdůležitější otázka fotbalu.
    Pozice jsou v podílech hřiště (x · W, y · L), takže sedí pro jakýkoli rozměr. */
@@ -114,7 +114,7 @@ function Legend() {
 
 export function HomePage() {
   useEffect(() => {
-    document.title = "Fotbalové ABC – fotbal pro přípravku";
+    document.title = PAGES["/"].title;
   }, []);
   return (
     <div className="page home">

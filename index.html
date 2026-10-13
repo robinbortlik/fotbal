@@ -6,10 +6,42 @@
   <meta name="description" content="Fotbal pro děti z přípravky: pravidla 5 + 1, útok, obrana a brankář v animacích na trenérské tabuli." />
   <meta name="theme-color" content="#2e9b53" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='44' fill='white' stroke='%2317233b' stroke-width='8'/><polygon points='50,30 66,42 60,61 40,61 34,42' fill='%2317233b'/></svg>" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <link rel="canonical" href="https://fotbalove-abc.cz/" />
+  <!-- Náhled při sdílení odkazu (Facebook, WhatsApp, Messenger, X…). Adresy musí být absolutní; obrázek je public/og.png.
+       Titulek, popis, canonical a og:url/title/description přepíše pro každou stránku scripts/seo.mjs (z src/lib/nav.js a src/scenes). -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Fotbalové ABC" />
+  <meta property="og:locale" content="cs_CZ" />
+  <meta property="og:url" content="https://fotbalove-abc.cz/" />
+  <meta property="og:title" content="Fotbalové ABC – fotbal pro přípravku" />
+  <meta property="og:description" content="Pravidla 5 + 1 a herní situace pro přípravku, v animacích na trenérské tabuli. Pro děti 5–10 let, rodiče a trenéry." />
+  <meta property="og:image" content="https://fotbalove-abc.cz/og.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Fotbalové ABC: Kopík a trenérská tabule s hráči v sestavě 5 + 1" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <!-- Název webu ve výsledcích Googlu (structured data WebSite) -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Fotbalové ABC",
+      "alternateName": "Fotbal ABC",
+      "url": "https://fotbalove-abc.cz/",
+      "inLanguage": "cs",
+      "description": "Pravidla 5 + 1 a herní situace pro přípravku, v animacích na trenérské tabuli. Pro děti 5–10 let, rodiče a trenéry."
+    }
+  </script>
   <title>Fotbalové ABC – fotbal pro přípravku</title>
 </head>
 <body>
   <div id="root"></div>
+  <!-- Dialog „Přidat na plochu“ (open source @khmyznikov/pwa-install), ovládá ho src/lib/install.js -->
+  <pwa-install manual-apple manual-chrome manifest-url="/manifest.webmanifest"
+    install-description="Přidejte si Fotbalové ABC na plochu. Otevře se jedním ťuknutím přes celou obrazovku a funguje i bez internetu, včetně Kopíkova hlasu."
+    styles='{"--tint-color": "#2e9b53"}'></pwa-install>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

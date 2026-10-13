@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Scene } from "../components/Scene.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { Video } from "../components/Video.jsx";
 import { VIDEOS } from "../scenes/videos.js";
+import { pageTitle } from "../lib/nav.js";
 
 /* Stránka tématu (Pravidla, Útok, Obrana, Brankář): seznam situací + přehrávač.
    topic = { id, title, lead, scenes: [scéna | { id, title, icon, Component }] }; videa v src/scenes/videos.js
    Component = vlastní interaktivní situace; dostane children (tlačítko „Další“) a vykreslí je
    ve svém postranním sloupci — stejně jako <Scene>.
-   Vybraná situace je v URL (?s=id), aby šla poslat odkazem. */
+   Vybraná situace je v adrese (/utok/roztahni-se), aby šla poslat odkazem a našly ji vyhledávače. */
 const SEEN = "fotbal:seen";
 const readSeen = () => {
   try {
@@ -20,7 +21,8 @@ const readSeen = () => {
 };
 
 export function TopicPage({ topic }) {
-  const [params, setParams] = useSearchParams();
+  const { scene: sid } = useParams();
+  const navigate = useNavigate();
   const [seen, setSeen] = useState(readSeen); // dokoukané situace → fajfka v seznamu
   const markSeen = (key) => {
     if (seen.has(key)) return;
@@ -32,11 +34,12 @@ export function TopicPage({ topic }) {
       /* jen pro tuto návštěvu */
     }
   };
-  const i = Math.max(0, topic.scenes.findIndex((s) => s.id === params.get("s")));
+  const found = topic.scenes.findIndex((s) => s.id === sid);
+  const i = Math.max(0, found); // neznámá situace → první
   const scene = topic.scenes[i];
   const next = topic.scenes[i + 1];
   const pick = (s, scroll) => {
-    setParams({ s: s.id }, { replace: true });
+    navigate(`/${topic.id}/${s.id}`, { replace: true });
     if (scroll) document.getElementById("situace")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   const Custom = scene.Component;
@@ -44,9 +47,11 @@ export function TopicPage({ topic }) {
     if (Custom) markSeen(topic.id + "/" + scene.id); // interaktivní situace nemají konec → stačí ji otevřít
   }, [topic.id, scene.id]);
   useEffect(() => {
-    document.title = `${topic.title} – Fotbalové ABC`;
     if (import.meta.env.DEV) import("../lib/lint.js").then((m) => m.lintTopic(topic));
   }, [topic]);
+  useEffect(() => {
+    document.title = pageTitle(found >= 0 && scene.title, topic.title);
+  }, [topic, found]);
   const videos = VIDEOS[topic.id] || [];
   const video = videos.find((v) => v.scene === scene.id);
   const nextBtn = (

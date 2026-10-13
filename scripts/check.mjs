@@ -1,5 +1,5 @@
 /* Kontrola dat a logiky bez prohlížeče:  npm run check
-   1) ballAt — míč u nohy, příjem přihrávky ze správné strany, vedení míče.
+   1) ballAt — míč u nohy, příjem přihrávky ze správné strany, vedení míče; staré odkazy za # → nové adresy.
    2) lint všech témat (src/lib/lint.js) + videa ukazují na existující situace.
    Skončí chybou, když něco nesedí. */
 import assert from "node:assert/strict";
@@ -21,6 +21,14 @@ try {
   assert.deepEqual(ball(5), [10, 27.5]); // vede míč
   const held = ballAt([[0, "b", 0], [3, "b", 0]], 1, (id, tt) => at(P[id], tt), () => 1);
   assert.deepEqual([held.x, held.y], [10, 20]); // [t, "id", 0] = míč v rukou (na středu hráče)
+
+  const { fromHash } = await load("/src/lib/nav.js"); // staré odkazy za # → nové adresy
+  assert.equal(fromHash("#/utok?s=roztahni-se"), "/utok/roztahni-se");
+  assert.equal(fromHash("#/kviz"), "/kviz");
+  assert.equal(fromHash("#/"), "/");
+  assert.equal(fromHash("#rules"), "/pravidla");
+  assert.equal(fromHash("#situace"), null); // kotva na stránce
+  assert.equal(fromHash(""), null);
 
   const { lintTopic } = await load("/src/lib/lint.js");
   const { VIDEOS } = await load("/src/scenes/videos.js");
