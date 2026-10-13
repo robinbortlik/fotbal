@@ -10,6 +10,7 @@ import { RULES } from "../scenes/pravidla.js";
 import { ATTACK } from "../scenes/utok.js";
 import { DEFENSE } from "../scenes/obrana.js";
 import { KEEPER } from "../scenes/brankar.js";
+import { PAGES } from "../lib/nav.js";
 
 /* Kvíz „Co uděláš ty?“ — otázky jsou přímo ve scénách (pole quiz). Scéna se zastaví v čase
    quiz.at, dítě odpoví a scéna se dohraje: ukáže správné řešení. */
@@ -31,7 +32,7 @@ export function QuizPage() {
   const [round, setRound] = useState(() => shuffle(ALL).slice(0, ROUND));
   const [results, setResults] = useState([]);
   useEffect(() => {
-    document.title = "Kvíz – Fotbalové ABC";
+    document.title = PAGES["/kviz"].title;
   }, []);
   const again = () => {
     setRound(shuffle(ALL).slice(0, ROUND));
@@ -147,7 +148,7 @@ function Done({ results, onAgain }) {
           <ul>
             {missed.map(({ topic, scene }) => (
               <li key={topic.id + scene.id}>
-                <Link to={`/${topic.id}?s=${scene.id}`}>
+                <Link to={`/${topic.id}/${scene.id}`}>
                   <span aria-hidden="true">{scene.icon}</span> {topic.title}: {scene.title}
                 </Link>
               </li>

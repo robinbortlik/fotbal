@@ -5,7 +5,7 @@
   "compatibility_date": "2026-10-12",
   "assets": {
     "directory": "./dist",
-    // HashRouter přesměrování nepotřebuje; tohle jen pošle /cokoli na úvodní stránku místo 404.
+    // /utok/roztahni-se → utok/roztahni-se.html (scripts/seo.mjs); adresa bez souboru → index.html, aplikace si ji zobrazí sama.
     "not_found_handling": "single-page-application"
   },
   // Vlastní doména (zóna fotbalove-abc.cz je v Cloudflare); DNS záznamy a certifikát zařídí wrangler sám.

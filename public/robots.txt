@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fotbalove-abc.cz/sitemap.xml

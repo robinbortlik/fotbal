@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { Icon } from "../components/Icons.jsx";
 import { Video } from "../components/Video.jsx";
 import { VIDEOS } from "../scenes/videos.js";
+import { PAGES } from "../lib/nav.js";
 
 /* Pro rodiče a trenéry — jediná „textová“ stránka webu. Pravidla podle FAČR
    (Pravidla fotbalu malých forem 2023, Soutěžní řád), ověřeno 10/2026. */
-const RULES = [
+export const RULES = [
   ["Hráči", "5 v poli + brankář (nejméně 4 + 1)"],
   ["Hřiště", "43–45 × 28–30 m (doporučen větší rozměr)"],
   ["Branky", "5 × 2 m, se sítí, zajištěné proti převržení"],
@@ -27,7 +28,7 @@ const RULES = [
   ["Výsledky", "zapisují se, ale tabulky přípravek se nevedou ani nezveřejňují"],
 ];
 
-const YOUNGER = [
+export const YOUNGER = [
   "hraje 4 + 1 na hřišti 35–37 × 24–26 m, branky 5 × 2 nebo 3 × 2 m, míč velikosti 3",
   "aut se smí vhodit rukama, přihrát nohou, nebo vyvést vedením",
   "brankář smí s míčem vyjet a „malá domů“ je povolená",
@@ -42,7 +43,7 @@ const SLOGANS = [
   ["Fair play", ["Po zápase podej ruku.", "Chyba? Nevadí, hraj dál!", "Rodiče fandí, ale nekoučují."]],
 ];
 
-const SOURCES = [
+export const SOURCES = [
   ["FAČR: Pravidla fotbalu malých forem — starší přípravka 5+1 (2023)", "https://facr.fotbal.cz/document/download/120826"],
   ["FAČR: Pravidla fotbalu malých forem — mladší přípravka 4+1 (2023)", "https://facr.fotbal.cz/document/download/120823"],
   ["FAČR: Pravidla fotbalu (rozcestník)", "https://www.fotbal.cz/trenink/pravidla-fotbalu/p460"],
@@ -57,7 +58,7 @@ const SOURCES = [
 
 export function ParentsPage() {
   useEffect(() => {
-    document.title = "Pro rodiče a trenéry – Fotbalové ABC";
+    document.title = PAGES["/pro-rodice"].title;
   }, []);
   return (
     <div className="page doc">
@@ -71,7 +72,7 @@ export function ParentsPage() {
             <b>Pusťte jednu situaci.</b> Žádné čtení navíc — Kopík titulky sám přečte a vysvětlí proč (hlas vypnete tlačítkem <i>Čtu nahlas</i>).
           </li>
           <li>
-            <b>Zeptejte se: „Co vidíš?“</b> Nechte dítě říct, kdo má míč a kam kdo běží. Pak přepněte na <i>Takhle ne</i> a porovnejte.
+            <b>Zeptejte se: „Co vidíš?“</b> Nechte dítě říct, kdo má míč a kam kdo běží. Po správné variantě se sama pustí <i>Takhle ne</i> — porovnejte je.
           </li>
           <li>
             <b>Jedna věc na trénink.</b> Vyberte jedno heslo a zkuste ho venku v malé hře 2:2 až 5:5. Chvalte snahu, ne jen výsledek.

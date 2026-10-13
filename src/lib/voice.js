@@ -4,7 +4,9 @@ import recorded from "../voice.json";
 /* Čtení nahlas — pro děti, které ještě nečtou.
    1) Nahrané věty z ElevenLabs: public/voice/<hash>.mp3 (vyrobí `npm run voice`, seznam v src/voice.json).
    2) Věta, která nahraná není → český hlas prohlížeče (Web Speech API); bez něj ticho.
-   Výchozí je zapnuto; vypnutí si pamatuje prohlížeč. */
+   Výchozí je zapnuto; vypnutí si pamatuje prohlížeč.
+   Nainstalovaná aplikace (spuštěná z plochy) si nahrávky jednou stáhne do úložiště (~13 MB), ať Kopík mluví
+   i bez internetu. Na webu se nic navíc nestahuje. */
 const KEY = "fotbal:voice";
 const synth = typeof window !== "undefined" ? window.speechSynthesis : null;
 const audio = typeof Audio !== "undefined" ? new Audio() : null; // jeden přehrávač: iOS ho po prvním kliknutí odemkne
@@ -55,6 +57,32 @@ export function hash(text) {
 const czech = () => synth?.getVoices().find((v) => v.lang?.toLowerCase().startsWith("cs"));
 const canSpeak = () => have.size > 0 || !!czech();
 
+const file = (h) => `/voice/${h}.mp3`;
+const CACHE = "voice";
+const installed = typeof window !== "undefined" && (matchMedia("(display-mode: standalone)").matches || navigator.standalone === true);
+if (installed && window.caches && !navigator.connection?.saveData)
+  addEventListener("load", async () => {
+    const cache = await caches.open(CACHE);
+    const want = new Set([...have].map((h) => new URL(file(h), location.origin).href));
+    for (const r of await cache.keys()) if (!want.has(r.url)) await cache.delete(r); // přenahrané věty
+    for (const u of want)
+      if (!(await cache.match(u)))
+        try {
+          await cache.add(u);
+        } catch {
+          return; // bez internetu → zbytek při dalším spuštění
+        }
+  });
+
+// Nahrávka z úložiště (jako blob, ten jde přehrát všude i bez internetu), jinak ze sítě.
+let blob = null;
+async function source(h) {
+  const hit = await window.caches?.match(file(h)).catch(() => null);
+  if (blob) URL.revokeObjectURL(blob);
+  blob = hit ? URL.createObjectURL(await hit.blob()) : null;
+  return blob || file(h);
+}
+
 function stop() {
   token++;
   audio?.pause();
@@ -69,10 +97,14 @@ function playOne(text, then) {
   const fin = () => !done && (done = true) && then();
   const h = hash(text);
   if (audio && have.has(h)) {
-    audio.src = `${import.meta.env.BASE_URL}voice/${h}.mp3`;
-    audio.onended = fin;
-    audio.onerror = fin;
-    audio.play().catch(fin); // prohlížeč přehrání nepovolil → pokračuj potichu
+    const my = token;
+    source(h).then((src) => {
+      if (my !== token) return; // mezitím stop() nebo jiná věta
+      audio.src = src;
+      audio.onended = fin;
+      audio.onerror = fin;
+      audio.play().catch(fin); // prohlížeč přehrání nepovolil → pokračuj potichu
+    });
     return;
   }
   const voice = czech();

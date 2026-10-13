@@ -1,25 +1,27 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { Consent, statsChoice, trackPage } from "../components/Consent.jsx";
+import { Consent, statsChoice } from "../components/Consent.jsx";
 import { Kopik } from "../components/Kopik.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { TweaksPanel, TweakSection, TweakToggle } from "../components/tweaks";
 import { useTweaks } from "../hooks/useTweaks.jsx";
 import { useVoice } from "../lib/voice.js";
+import { showInstall, useCanInstall } from "../lib/install.js";
 import { NAV } from "../lib/nav.js";
 
 /* Společný rám: horní lišta (na mobilu menu dole), obsah, patička, panel Tweaks
    (protokol s hostitelským iframem — viz CLAUDE.md, neměnit). */
 export default function RootLayout() {
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
+  const page = pathname.split("/")[1]; // /utok/roztahni-se → utok
   const [tweaks, setTweak] = useTweaks();
   const voice = useVoice();
   const [consent, setConsent] = useState(() => statsChoice() == null); // ještě nevybral → lišta dole
+  const canInstall = useCanInstall();
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, [pathname]);
-  useEffect(trackPage, [pathname, search]); // statistiky (jen se souhlasem)
+    window.scrollTo({ top: 0, behavior: "instant" }); // jiná stránka → nahoru; jiná situace téhož tématu ne
+  }, [page]);
 
   return (
     <div className="app" data-contrast={tweaks.highContrast ? "high" : "normal"}>
@@ -53,12 +55,22 @@ export default function RootLayout() {
           Fotbalové ABC je pro děti z přípravky a jejich rodiče a trenéry. Hrajeme podle pravidel FAČR
           pro přípravku (5 + 1).
         </p>
-        <Link to="/pro-rodice" className="footer-link">
-          Pro rodiče a trenéry: přehled pravidel a zdroje
-        </Link>
-        <button className="footer-link" onClick={() => setConsent(true)}>
-          Nastavení cookies
-        </button>
+        <div className="footer-links">
+          <Link to="/pro-rodice" className="footer-link">
+            Pro rodiče a trenéry: přehled pravidel a zdroje
+          </Link>
+          <Link to="/ochrana-soukromi" className="footer-link">
+            Ochrana osobních údajů
+          </Link>
+          <button className="footer-link" onClick={() => setConsent(true)}>
+            Nastavení cookies
+          </button>
+          {canInstall && (
+            <button className="footer-link" onClick={showInstall}>
+              Nainstalovat jako aplikaci
+            </button>
+          )}
+        </div>
       </footer>
       {consent && <Consent onClose={() => setConsent(false)} />}
 
