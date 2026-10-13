@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Icon } from "../components/Icons.jsx";
 import { Video } from "../components/Video.jsx";
 import { VIDEOS } from "../scenes/videos.js";
-import { PAGES } from "../lib/nav.js";
+import { PAGES, BOOK } from "../lib/nav.js";
 
 /* Pro rodiče a trenéry — jediná „textová“ stránka webu. Pravidla podle FAČR
    (Pravidla fotbalu malých forem 2023, Soutěžní řád), ověřeno 10/2026. */
@@ -35,7 +35,7 @@ export const YOUNGER = [
   "doporučená hrací doba 4 × 15 min",
 ];
 
-const SLOGANS = [
+export const SLOGANS = [
   ["Útok (máme míč)", ["Máme míč? Roztáhni se!", "Ukaž se, ať ti přihrají!", "Veď míč tam, kde nikdo není.", "Klička – a zrychli!", "Před střelou koukni na bránu.", "Po střele dobíhej!"]],
   ["Obrana (nemáme míč)", ["Nemáme míč? Bráníme všichni!", "Mezi soupeře a naši bránu!", "Nejbližší jde na míč.", "Kamarád jde na míč? Jisti ho zezadu.", "Bokem – vytlač ho ke straně.", "Míč vezmi, ne jen odkopni."]],
   ["Přepnutí", ["Ztráta? Hned zpátky pro míč!", "Získali jsme míč? Hned na bránu!", "Nejde to dopředu? Podrž míč."]],
@@ -64,6 +64,17 @@ export function ParentsPage() {
     <div className="page doc">
       <h1>Pro rodiče a trenéry</h1>
       <p className="lead">Web je pro děti z přípravky (5–10 let). Všechno ukazuje na hře 5 + 1, jak ji hraje starší přípravka podle pravidel FAČR.</p>
+
+      <section>
+        <h2>Kniha k vytištění</h2>
+        <p>
+          Celý web na papíře: každá situace jako komiks krok za krokem (Takhle ano / Takhle ne), kvíz, pravidla v kostce,
+          hesla na trénink a diplom. Na tisk doma i na trénink (PDF, A4 na šířku).
+        </p>
+        <a {...BOOK} className="btn go">
+          <Icon name="install" /> Stáhnout knihu
+        </a>
+      </section>
 
       <section>
         <h2>Jak web používat s dětmi</h2>

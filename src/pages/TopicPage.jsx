@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Scene } from "../components/Scene.jsx";
+import { Scene, reducedMotion } from "../components/Scene.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { Video } from "../components/Video.jsx";
 import { VIDEOS } from "../scenes/videos.js";
 import { pageTitle } from "../lib/nav.js";
+import { stop } from "../lib/voice.js";
 
 /* Stránka tématu (Pravidla, Útok, Obrana, Brankář): seznam situací + přehrávač.
    topic = { id, title, lead, scenes: [scéna | { id, title, icon, Component }] }; videa v src/scenes/videos.js
@@ -38,10 +39,21 @@ export function TopicPage({ topic }) {
   const i = Math.max(0, found); // neznámá situace → první
   const scene = topic.scenes[i];
   const next = topic.scenes[i + 1];
+  const [run, setRun] = useState(0); // klik na už vybranou situaci ji pustí znovu od začátku
   const pick = (s, scroll) => {
-    navigate(`/${topic.id}/${s.id}`, { replace: true });
+    stop(); // Kopík nedočte větu ze staré scény
+    if (s === scene) setRun((r) => r + 1);
+    else navigate(`/${topic.id}/${s.id}`, { replace: true });
     if (scroll) document.getElementById("situace")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  // Na mobilu je seznam situací vodorovný pás: vybraná jede doprostřed, ať je vidět, že jsou i další.
+  const list = useRef();
+  useEffect(() => {
+    const el = list.current;
+    const l = el.getBoundingClientRect();
+    const b = el.querySelector('[aria-current="true"]').getBoundingClientRect();
+    el.scrollTo({ left: el.scrollLeft + b.left - l.left - (l.width - b.width) / 2, behavior: reducedMotion() ? "auto" : "smooth" });
+  }, [topic.id, scene.id]);
   const Custom = scene.Component;
   useEffect(() => {
     if (Custom) markSeen(topic.id + "/" + scene.id); // interaktivní situace nemají konec → stačí ji otevřít
@@ -72,7 +84,7 @@ export function TopicPage({ topic }) {
         {topic.lead && <p className="lead">{topic.lead}</p>}
       </header>
       <div className="topic-body">
-        <nav className="scene-list" aria-label="Situace">
+        <nav className="scene-list" aria-label="Situace" ref={list}>
           {topic.scenes.map((s) => (
             <button key={s.id} className="scene-pick" aria-current={s === scene} onClick={() => pick(s)}>
               <span className="scene-ico" aria-hidden="true">
@@ -85,9 +97,9 @@ export function TopicPage({ topic }) {
         </nav>
         <section className="scene-main" id="situace" aria-label={scene.title}>
           {Custom ? (
-            <Custom key={topic.id + scene.id}>{nextBtn}</Custom>
+            <Custom key={topic.id + scene.id + run}>{nextBtn}</Custom>
           ) : (
-            <Scene key={topic.id + scene.id} scene={scene} onEnded={() => markSeen(topic.id + "/" + scene.id)}>
+            <Scene key={topic.id + scene.id + run} scene={scene} onEnded={() => markSeen(topic.id + "/" + scene.id)}>
               {nextBtn}
             </Scene>
           )}

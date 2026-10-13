@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import { Link } from "react-router-dom";
 import { Pitch, Player, Ball, Mark } from "../components/Board.jsx";
 import { Say } from "../components/Scene.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { W, L } from "../lib/pitch.js";
 import { say, PHRASES } from "../lib/voice.js";
-import { NAV, PAGES } from "../lib/nav.js";
+import { NAV, PAGES, BOOK } from "../lib/nav.js";
 
 /* Úvod: přepínač „Máme míč / Nemáme míč“ — nejdůležitější otázka fotbalu.
    Pozice jsou v podílech hřiště (x · W, y · L), takže sedí pro jakýkoli rozměr. */
-const SHAPES = {
+export const SHAPES = {
   attack: {
     us: [[0.5, 0.08], [0.14, 0.3], [0.86, 0.3], [0.5, 0.46], [0.12, 0.7], [0.82, 0.74]],
     them: [[0.5, 0.94], [0.36, 0.8], [0.64, 0.8], [0.5, 0.66], [0.32, 0.6], [0.68, 0.58]],
@@ -28,13 +29,23 @@ const NUMS = [1, 2, 3, 4, 5, 6];
 function Hero() {
   const [phase, setPhase] = useState("attack");
   const [prev, setPrev] = useState(null);
+  const [snap, setSnap] = useState(false); // hráči přeskočí bez přechodu
   const shape = SHAPES[phase];
   const m = (pt) => ({ x: pt[0] * W, y: pt[1] * L });
   const holder = m(shape[shape.ball.team][shape.ball.i]);
   const ball = { x: holder.x, y: holder.y + (shape.ball.team === "us" ? 1.5 : -1.5) };
   const choose = (p) => {
-    if (p === phase) return;
-    setPrev(phase);
+    const from = p !== phase ? phase : p === "attack" ? "defend" : "attack";
+    if (p === phase) {
+      // Znovu stejné tlačítko: hráči skočí do druhého postavení a přeběhnou znovu.
+      flushSync(() => {
+        setSnap(true);
+        setPhase(from);
+      });
+      void document.body.offsetWidth; // prohlížeč si skok zapíše, jinak by přechod nezačal
+      setSnap(false);
+    }
+    setPrev(from);
     setPhase(p);
     say(SHAPES[p].text);
   };
@@ -67,7 +78,7 @@ function Hero() {
               })}
             </g>
           )}
-          <g className="glide">
+          <g className={snap ? "glide snap" : "glide"}>
             {shape.them.map((pt, i) => (
               <Player key={"t" + i} {...m(pt)} team="them" gk={i === 0} />
             ))}
@@ -84,7 +95,7 @@ function Hero() {
 
 /* Jak číst tabuli — značky, které děti uvidí ve všech animacích. Malá SVG používají stejné
    komponenty jako hřiště (y = L − 2 → svisle uprostřed obrázku 8 × 4). */
-const LEGEND = [
+export const LEGEND = [
   ["My (žlutí)", <Player x={4} y={L - 2} n={7} />],
   ["Soupeř (modří)", <Player x={4} y={L - 2} team="them" />],
   ["Náš brankář", <Player x={4} y={L - 2} gk n={1} />],
@@ -133,6 +144,9 @@ export function HomePage() {
             </Link>
           ))}
         </div>
+        <p className="book-link">
+          Chcete to mít na papíře? <a {...BOOK}>Stáhněte si knihu k vytištění (PDF)</a>.
+        </p>
       </section>
     </div>
   );

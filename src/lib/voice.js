@@ -83,7 +83,7 @@ async function source(h) {
   return blob || file(h);
 }
 
-function stop() {
+export function stop() {
   token++;
   audio?.pause();
   synth?.cancel();

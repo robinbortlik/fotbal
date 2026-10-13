@@ -26,25 +26,30 @@ export const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion:
    (s follow: true v aktuálním čase — čára jde s hráčem). */
 export function Scene({ scene, children, onEnded }) {
   const [bad, setBad] = useState(null); // null = scéna se právě otevřela (rozběhne se až za chvilku)
+  const [run, setRun] = useState(0);
+  const show = (b) => {
+    setBad(b);
+    setRun((r) => r + 1); // i klik na už vybranou variantu ji pustí znovu
+  };
   const s = bad && scene.bad ? { ...scene, ...scene.bad } : scene;
   const compare = scene.bad && (
     <div className="compare" role="group" aria-label="Porovnej">
-      <button className="cmp cmp-good" aria-pressed={!bad} onClick={() => setBad(false)}>
+      <button className="cmp cmp-good" aria-pressed={!bad} onClick={() => show(false)}>
         <Icon name="check" size={22} /> Takhle ano
       </button>
-      <button className="cmp cmp-bad" aria-pressed={!!bad} onClick={() => setBad(true)}>
+      <button className="cmp cmp-bad" aria-pressed={!!bad} onClick={() => show(true)}>
         <Icon name="cross" size={22} /> Takhle ne
       </button>
     </div>
   );
   return (
     <Play
-      key={bad ? "bad" : "good"}
+      key={run}
       s={s}
       compare={compare}
-      delay={bad === null ? 2000 : 0}
+      delay={bad === null ? 1200 : 0}
       onEnded={bad ? null : onEnded}
-      onNext={bad === null && scene.bad ? () => setBad(true) : null}
+      onNext={bad === null && scene.bad ? () => show(true) : null}
     >
       {children}
     </Play>
@@ -63,7 +68,7 @@ export function beatAt(s, t) {
 function Play({ s, compare, delay, children, onEnded, onNext }) {
   const still = reducedMotion();
   const { time, setTime, playing, setPlaying } = useTimeline(s.dur, false, false);
-  // Pustí se sama: po otevření scény za 2 s (dítě se rozkouká), po přepnutí Ano/Ne hned.
+  // Pustí se sama: po otevření scény za 1,2 s (dítě se rozkouká), po přepnutí Ano/Ne hned.
   const auto = useRef();
   useEffect(() => {
     if (still) {

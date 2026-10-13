@@ -11,6 +11,9 @@ export const NAV = [
 
 /* Titulek stránky: „Situace – Téma – Fotbalové ABC“. Stejný v prohlížeči (document.title)
    i v HTML pro vyhledávače, které po buildu vyrábí scripts/seo.mjs. */
+// Kniha k vytištění (public/, dělá ji `npm run book`).
+export const BOOK = { href: "/fotbalove-abc.pdf", download: "Fotbalove-ABC-kniha.pdf" };
+
 export const pageTitle = (...parts) => [...parts, "Fotbalové ABC"].filter(Boolean).join(" – ");
 
 /* Stránky mimo témata (témata a situace bere scripts/seo.mjs ze src/scenes). */

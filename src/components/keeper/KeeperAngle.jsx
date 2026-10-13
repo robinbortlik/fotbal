@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Pitch, Player, Ball, Mark } from "../Board.jsx";
 import { Say } from "../Scene.jsx";
-import { W, L, GOAL_W, sy } from "../../lib/pitch.js";
+import { W, L, GOAL_W, PAD, sy } from "../../lib/pitch.js";
 import { Choice, GOOD_BAD, useSpeak } from "./parts.jsx";
 
 /* Kde stát — dítě táhne (nebo ťukne) míč po naší polovině a brankář se sám staví na spojnici
@@ -20,6 +20,9 @@ const BAD = {
   text: "Stojíš na čáře uprostřed? U tyče je díra!",
   say: "Stojíš uprostřed na čáře? Když přijde míč ze strany, zůstane ti u tyče díra a střelec ji snadno trefí.",
 };
+
+const WHY =
+  "Brankář se staví na pomyslnou spojnici míče a středu branky, kousek před brankovou čarou: z pohledu střelce tak zakryje bránu rovnoměrně na obě strany a zmenší úhel ke střele. Kdo zůstane uprostřed na čáře, nechá při míči ze strany volnou bližší tyč.";
 
 const R = 1.3; // poloměr hráče na tabuli (Board.jsx)
 const GX = W / 2; // střed brány (na brankové čáře y = 0)
@@ -75,8 +78,6 @@ export function KeeperAngle({ children }) {
   const drag = useRef(false);
   const ballRef = useRef(null);
   const bad = mode === "bad";
-  const k = bad ? STUCK : keeperSpot(ball);
-  const gaps = bad ? holes(ball, k) : [];
   const line = bad ? BAD : moved ? GOOD : HINT;
   useSpeak(line.say);
 
@@ -105,11 +106,12 @@ export function KeeperAngle({ children }) {
     move({ x: ball.x + v[0], y: ball.y + v[1] });
   };
 
-  const tri = `${ball.x},${sy(ball.y)} ${POSTS[0]},${sy(0)} ${POSTS[1]},${sy(0)}`;
   return (
     <div className="scene">
       <div className="board">
-        <Pitch
+        <AnglePitch
+          ball={ball}
+          bad={bad}
           label="Kde stát: posuň míč a brankář se postaví mezi míč a střed brány"
           role="group"
           className="gk-pitch"
@@ -117,59 +119,78 @@ export function KeeperAngle({ children }) {
           onPointerMove={(e) => drag.current && move(fromEvent(e))}
           onPointerUp={() => (drag.current = false)}
           onPointerCancel={() => (drag.current = false)}
-        >
-          <polygon className="gk-shot" points={tri} />
-          {gaps.map(([a, z]) => (
-            <polygon key={a} className="gk-hole" points={`${ball.x},${sy(ball.y)} ${a},${sy(0)} ${z},${sy(0)}`} />
-          ))}
-          {POSTS.map((x) => (
-            <Mark key={x} m={{ kind: "line" }} a={ball} b={{ x, y: 0 }} />
-          ))}
-          {!bad && (
-            <>
-              <line className="gk-mid" x1={ball.x} y1={sy(ball.y)} x2={GX} y2={sy(0)} />
-              <circle className="gk-center" cx={GX} cy={sy(0)} r={0.45} />
-            </>
-          )}
-          <g className="gk-keeper">
-            <Player team="us" gk n={1} x={k.x} y={k.y} />
-          </g>
-          <g
-            ref={ballRef}
-            className="gk-ball"
-            tabIndex={0}
-            role="button"
-            aria-label="Míč – posuň ho šipkami"
-            onKeyDown={onKey}
-            onPointerDown={(e) => {
-              drag.current = true;
-              e.currentTarget.ownerSVGElement.setPointerCapture(e.pointerId);
-            }}
-          >
-            <circle className="gk-hit" cx={ball.x} cy={sy(ball.y)} r={2.8} />
-            {!moved && <circle className="gk-hint" cx={ball.x} cy={sy(ball.y)} r={1.7} />}
-            <circle className="gk-focus" cx={ball.x} cy={sy(ball.y)} r={1.5} />
-            <Ball x={ball.x} y={ball.y} />
-          </g>
-          {gaps.length > 0 && <HoleLabel ball={ball} gap={gaps.reduce((g, h) => (h[1] - h[0] > g[1] - g[0] ? h : g))} />}
-        </Pitch>
+          ballEl={
+            <g
+              ref={ballRef}
+              className="gk-ball"
+              tabIndex={0}
+              role="button"
+              aria-label="Míč – posuň ho šipkami"
+              onKeyDown={onKey}
+              onPointerDown={(e) => {
+                drag.current = true;
+                e.currentTarget.ownerSVGElement.setPointerCapture(e.pointerId);
+              }}
+            >
+              <circle className="gk-hit" cx={ball.x} cy={sy(ball.y)} r={2.8} />
+              {!moved && <circle className="gk-hint" cx={ball.x} cy={sy(ball.y)} r={1.7} />}
+              <circle className="gk-focus" cx={ball.x} cy={sy(ball.y)} r={1.5} />
+              <Ball x={ball.x} y={ball.y} />
+            </g>
+          }
+        />
       </div>
       <h2 className="scene-title">Kde stát</h2>
       <Choice label="Porovnej" value={mode} onChange={setMode} options={GOOD_BAD} />
       <Say text={line.text} spoken={line.say} />
       <details className="why">
         <summary>Pro rodiče a trenéry</summary>
-        <p>
-          Brankář se staví na pomyslnou spojnici míče a středu branky, kousek před brankovou čarou: z pohledu
-          střelce tak zakryje bránu rovnoměrně na obě strany a zmenší úhel ke střele. Kdo zůstane uprostřed na
-          čáře, nechá při míči ze strany volnou bližší tyč.
-        </p>
+        <p>{WHY}</p>
       </details>
       {children}
     </div>
   );
 }
 KeeperAngle.TEXTS = [HINT.say, GOOD.say, BAD.say];
+const HALF = `${-PAD} ${sy(20)} ${W + PAD * 2} ${20 + PAD}`; // v knize jen kus hřiště u naší brány
+KeeperAngle.PRINT = {
+  frames: [
+    { tone: "good", text: GOOD.text, art: <AnglePitch ball={{ x: 23.5, y: 10 }} viewBox={HALF} /> },
+    { tone: "good", text: "Míč jde jinam? Posuň se s ním.", art: <AnglePitch ball={{ x: 8, y: 15 }} viewBox={HALF} /> },
+    { tone: "bad", text: BAD.text, art: <AnglePitch ball={{ x: 23.5, y: 10 }} viewBox={HALF} bad /> },
+  ],
+  why: WHY,
+};
+
+/* Hřiště s „trojúhelníkem střely“ a brankářem pro míč v ball (Takhle ne: brankář uprostřed na čáře).
+   ballEl = míč: v aplikaci tahací, v knize obyčejný. */
+function AnglePitch({ ball, bad, ballEl = <Ball x={ball.x} y={ball.y} />, ...rest }) {
+  const k = bad ? STUCK : keeperSpot(ball);
+  const gaps = bad ? holes(ball, k) : [];
+  const tri = `${ball.x},${sy(ball.y)} ${POSTS[0]},${sy(0)} ${POSTS[1]},${sy(0)}`;
+  return (
+    <Pitch {...rest}>
+      <polygon className="gk-shot" points={tri} />
+      {gaps.map(([a, z]) => (
+        <polygon key={a} className="gk-hole" points={`${ball.x},${sy(ball.y)} ${a},${sy(0)} ${z},${sy(0)}`} />
+      ))}
+      {POSTS.map((x) => (
+        <Mark key={x} m={{ kind: "line" }} a={ball} b={{ x, y: 0 }} />
+      ))}
+      {!bad && (
+        <>
+          <line className="gk-mid" x1={ball.x} y1={sy(ball.y)} x2={GX} y2={sy(0)} />
+          <circle className="gk-center" cx={GX} cy={sy(0)} r={0.45} />
+        </>
+      )}
+      <g className="gk-keeper">
+        <Player team="us" gk n={1} x={k.x} y={k.y} />
+      </g>
+      {ballEl}
+      {gaps.length > 0 && <HoleLabel ball={ball} gap={gaps.reduce((g, h) => (h[1] - h[0] > g[1] - g[0] ? h : g))} />}
+    </Pitch>
+  );
+}
 
 /* Štítek „Díra!“ na ose největší díry, kousek před brankou. */
 function HoleLabel({ ball, gap: [a, z] }) {

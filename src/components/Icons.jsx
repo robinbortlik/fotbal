@@ -42,6 +42,12 @@ const P = {
       <path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.3 6.3a8 8 0 0 1 0 11.4" />
     </>
   ),
+  install: (
+    <>
+      <rect x="6" y="2.5" width="12" height="19" rx="2.5" />
+      <path d="M12 6.5v8M9.5 12l2.5 2.5 2.5-2.5" />
+    </>
+  ),
   play: <path d="M8 5.5v13l10.5-6.5z" fill="currentColor" />,
   pause: <path d="M7.5 5.5h3v13h-3zM13.5 5.5h3v13h-3z" fill="currentColor" />,
   replay: (

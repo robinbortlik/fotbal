@@ -16,6 +16,7 @@ Vite + React 18, plain global CSS (no Tailwind). No test framework, no linter.
 - `npm run preview` — serve the build
 - `npm run check` — the one runnable check: ball logic asserts + lint of every scene/topic + video ids. Keep it green.
 - `ELEVENLABS_API_KEY=… npm run voice` — re-record captions after changing any spoken text (see Read-aloud).
+- `npm run book` — re-print the PDF book `public/fotbalove-abc.pdf` after changing scenes or texts (see Book).
 
 ## Architecture
 
@@ -48,7 +49,8 @@ canonical, og:*, plus a `.seo` text + links in `#root` for crawlers without JS �
 - `src/scenes/videos.js` — YouTube videos per topic (`scene` = id of the situation it belongs to).
   `src/components/Video.jsx` loads nothing from YouTube until clicked (youtube-nocookie).
 - `src/components/keeper/` — custom goalkeeper scenes (stance figure, interactive positioning, hands).
-  Every custom component must list its spoken sentences in `Component.TEXTS` (for voice generation).
+  Every custom component must list its spoken sentences in `Component.TEXTS` (for voice generation) and its pictures for
+  the book in `Component.PRINT` (`{ frames: [{ art, text, tone? }], why }`).
 
 ### Read-aloud
 `src/lib/voice.js` plays pre-recorded ElevenLabs MP3s from `public/voice/<hash>.mp3` (list in
@@ -61,10 +63,22 @@ ones (voice „Jan – Kind Educator“, model `eleven_v4`) and deletes unused f
 never be committed or shipped to the browser. Spoken strings must be static (no runtime concatenation).
 Voice is ON by default (turning it off is remembered in localStorage `fotbal:voice`); browsers allow sound only after the
 first tap, so `voice.js` unlocks the single shared `Audio` element on the first touch/click (needed for iOS). Scenes start
-by themselves 2 s after opening (`Play` `delay`), immediately after switching „Takhle ano / ne“. When „Takhle ano“ ends
+by themselves 1.2 s after opening (`Play` `delay`), immediately after switching „Takhle ano / ne“. Clicking the already
+selected situation, „Takhle ano / ne“ or (home) „Máme / Nemáme míč“ plays it again; picking a situation silences Kopík (`stop`).
+On mobile the situation list is a horizontal strip — the selected one scrolls to its middle. When „Takhle ano“ ends
 and Kopík has finished, 1.5 s pause, Kopík says `PHRASES.bad` and „Takhle ne“ plays by itself (`onNext`, only from the
 opening state; replay, toggle or leaving cancels it). `say`'s `onEnd` also fires when speech is cut off (🔊, voice off),
 otherwise a scene waiting for Kopík would freeze.
+
+### Book (PDF to print)
+`book.html` + `src/book/Book.jsx` lay the whole site out as A4-landscape pages (cover, Kopík + how to read the board, contents,
+per topic an opener with an illustration, then one page per situation, quiz with answers upside down, rules, slogans, diploma).
+A situation page is a comic: `SceneBoard` at the end of each beat (`shot` — before a mark that started in that beat disappears),
+„Takhle ne“ underneath without the beats it shares with „Takhle ano“, and `why`; page numbers are computed up front for the contents.
+`scripts/book.mjs` builds it with Vite (no PWA, no `public/`) and prints it with headless Chrome into `public/fotbalove-abc.pdf`
+(committed, ~7 MB, linked as `BOOK` from `nav.js` on the home page, Pro rodiče and footer; not precached). Keep the PDF small: Chrome
+embeds webp losslessly, so the book aliases the keeper photos to JPEG copies `src/book/img/brankar-*.jpg`, and `book.css` replaces
+SVG patterns (goal net, red hatch) with flat fills. Illustrations `src/book/img/*.jpg` were made with Gemini in the user's Chrome.
 
 ### Analytics — only with consent
 `src/components/Consent.jsx`: Google Analytics 4 (`G-T1RYP3MGRD`) loads only after „Povolit“ in the bottom bar (choice in
@@ -80,8 +94,9 @@ you add a third-party service or a new browser-storage key.
 a Workbox service worker that precaches the app (`autoUpdate`; every navigation gets the precached `index.html`; voice MP3s
 are not precached — see Read-aloud).
 Install dialog = open source `<pwa-install>` (`@khmyznikov/pwa-install`, element in `index.html`, lazy-loaded by
-`src/lib/install.js`): offered by itself once (`fotbal:install`) on the home page of a returning visitor, otherwise
-footer „Nainstalovat jako aplikaci“. Icons are rendered from the Kopík SVG; re-render them if Kopík changes.
+`src/lib/install.js`): offered by itself once (`fotbal:install`) on the home page of a returning visitor, otherwise the
+install button next to the voice button in the top bar (and a footer link). The top bar is full: its label breakpoints in
+`index.css` were measured so nothing overflows at 320–1440 px — re-measure after adding anything to it. Icons are rendered from the Kopík SVG; re-render them if Kopík changes.
 Share preview: Open Graph / Twitter meta in `index.html` with absolute URLs, image `public/og.png` (1200×630, < 300 kB for
 WhatsApp) composed from the home-page board, Kopík and menu icons; per-page og:title/description/url come from `scripts/seo.mjs`.
 After changing it, re-scrape in the Facebook Sharing Debugger.

@@ -7,7 +7,7 @@ import { TweaksPanel, TweakSection, TweakToggle } from "../components/tweaks";
 import { useTweaks } from "../hooks/useTweaks.jsx";
 import { useVoice } from "../lib/voice.js";
 import { showInstall, useCanInstall } from "../lib/install.js";
-import { NAV } from "../lib/nav.js";
+import { NAV, BOOK } from "../lib/nav.js";
 
 /* Společný rám: horní lišta (na mobilu menu dole), obsah, patička, panel Tweaks
    (protokol s hostitelským iframem — viz CLAUDE.md, neměnit). */
@@ -38,8 +38,14 @@ export default function RootLayout() {
             </NavLink>
           ))}
         </nav>
+        {canInstall && (
+          <button className="install-app" onClick={showInstall} title="Nainstalovat jako aplikaci">
+            <Icon name="install" size={22} />
+            <span>Nainstalovat</span>
+          </button>
+        )}
         {voice.ready && (
-          <button className="voice" aria-pressed={voice.on} onClick={voice.toggle}>
+          <button className="voice" aria-pressed={voice.on} onClick={voice.toggle} title="Číst nahlas">
             <Icon name="speaker" size={22} />
             <span>{voice.on ? "Čtu nahlas" : "Číst nahlas"}</span>
           </button>
@@ -59,6 +65,9 @@ export default function RootLayout() {
           <Link to="/pro-rodice" className="footer-link">
             Pro rodiče a trenéry: přehled pravidel a zdroje
           </Link>
+          <a {...BOOK} className="footer-link">
+            Kniha k vytištění (PDF)
+          </a>
           <Link to="/ochrana-soukromi" className="footer-link">
             Ochrana osobních údajů
           </Link>

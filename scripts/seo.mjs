@@ -15,7 +15,7 @@ const cut = (s, n = 155) => (s.length <= n ? s : s.slice(0, s.lastIndexOf(" ", n
 const vite = await createServer({ server: { middlewareMode: true }, appType: "custom", logLevel: "error" });
 const load = (p) => vite.ssrLoadModule(p);
 try {
-  const { NAV, PAGES, pageTitle } = await load("/src/lib/nav.js");
+  const { NAV, PAGES, pageTitle, BOOK } = await load("/src/lib/nav.js");
   const { RULES, YOUNGER, SOURCES } = await load("/src/pages/ParentsPage.jsx");
   const topics = {};
   for (const f of (await fs.readdir("src/scenes")).filter((f) => f !== "videos.js"))
@@ -92,6 +92,7 @@ try {
     "## Optional",
     "",
     `- [Pro rodiče a trenéry](${SITE}/pro-rodice): pravidla, hesla na trénink a videa`,
+    `- [Kniha k vytištění](${SITE}${BOOK.href}): všechny situace jako komiks, kvíz, pravidla a hesla (PDF, A4)`,
     ...SOURCES.map(([name, url]) => `- [${name}](${url})`),
   );
   await fs.writeFile("dist/llms.txt", out.join("\n") + "\n");
