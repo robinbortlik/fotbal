@@ -4,7 +4,7 @@ import { Kopik } from "./Kopik.jsx";
 import { Icon } from "./Icons.jsx";
 import { at, ballAt } from "../lib/pitch.js";
 import { useTimeline } from "../hooks/useTimeline.js";
-import { PHRASES, say, useVoice } from "../lib/voice.js";
+import { PHRASES, say, stop, useVoice } from "../lib/voice.js";
 
 export const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
@@ -23,9 +23,10 @@ export const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion:
      quiz:    { at, ask, options: [{ text, ok }] } // otázka do Kvízu: scéna se zastaví v čase at
    }
    from / to / at: [x, y] | "idHráče" | "ball" — pozice v čase začátku značky
-   (s follow: true v aktuálním čase — čára jde s hráčem). */
-export function Scene({ scene, children, onEnded }) {
-  const [bad, setBad] = useState(null); // null = scéna se právě otevřela (rozběhne se až za chvilku)
+   (s follow: true v aktuálním čase — čára jde s hráčem).
+   next = { title, go } — kam vede „Další“ v nabídce na konci (jako konec videa na YouTube). */
+export function Scene({ scene, children, onEnded, next }) {
+  const [bad, setBad] = useState(null); // null = celá situace od začátku: „Takhle ano“, pak sama „Takhle ne“
   const [run, setRun] = useState(0);
   const show = (b) => {
     setBad(b);
@@ -47,9 +48,11 @@ export function Scene({ scene, children, onEnded }) {
       key={run}
       s={s}
       compare={compare}
-      delay={bad === null ? 1200 : 0}
+      delay={run ? 0 : 1200} // po otevření se dítě chvilku rozkouká, po kliknutí hned
       onEnded={bad ? null : onEnded}
       onNext={bad === null && scene.bad ? () => show(true) : null}
+      onReplay={() => show(null)}
+      next={next}
     >
       {children}
     </Play>
@@ -65,17 +68,21 @@ export function beatAt(s, t) {
   return bi;
 }
 
-function Play({ s, compare, delay, children, onEnded, onNext }) {
+function Play({ s, compare, delay, children, onEnded, onNext, onReplay, next }) {
   const still = reducedMotion();
   const { time, setTime, playing, setPlaying } = useTimeline(s.dur, false, false);
   // Pustí se sama: po otevření scény za 1,2 s (dítě se rozkouká), po přepnutí Ano/Ne hned.
   const auto = useRef();
+  const [waiting, setWaiting] = useState(!still);
   useEffect(() => {
     if (still) {
       setTime(s.dur);
       return;
     }
-    auto.current = setTimeout(() => setPlaying(true), delay);
+    auto.current = setTimeout(() => {
+      setWaiting(false);
+      setPlaying(true);
+    }, delay);
     return () => clearTimeout(auto.current);
   }, []);
 
@@ -137,44 +144,76 @@ function Play({ s, compare, delay, children, onEnded, onNext }) {
     };
   }, [chain]);
 
+  // Konec jako u videa: přes tabuli „Znovu“ a „Další“ (na mobilu děti nevědí, že seznam situací nahoře jede do strany).
+  // Jen když opravdu dohrála (ne hned po otevření bez animací) a nenavazuje „Takhle ne“.
+  const [played, setPlayed] = useState(false);
+  useEffect(() => {
+    if (playing) setPlayed(true);
+  }, [playing]);
+  const over = done && played && !chain;
+
+  // Ovládání jako u videa, přímo na tabuli: ťuknutí zastaví, při pauze překryv s velkým „Pustit“.
+  // Čekání na Kopíka (held) ani rozjezd po otevření není pauza — tabule se nezakryje.
+  const held = voice.current.held;
+  const paused = !playing && !waiting && !held && (!ended || !played);
+  const play = () => {
+    clearTimeout(auto.current); // kliklo samo, nečekáme
+    setWaiting(false);
+    if (ended) voice.current.spoken = -1; // znovu od začátku = znovu i číst
+    setPlaying(true);
+  };
+  const pause = () => {
+    const v = voice.current;
+    v.held = false;
+    if (v.talking) {
+      v.spoken = -1; // jako video ztichne; po puštění řekne titulek znovu celý
+      stop();
+    }
+    setPlaying(false);
+    hush();
+  };
+
   return (
     <div className="scene">
-      <SceneBoard s={s} time={time} />
+      <SceneBoard s={s} time={time}>
+        {(playing || held || waiting) && (
+          <button className="board-tap" onClick={waiting ? play : pause} aria-label={waiting ? "Pustit" : "Zastavit"} />
+        )}
+        {paused && (
+          <button className="board-play" onClick={play} aria-label="Pustit">
+            <span className="end-ico">
+              <Icon name="play" size={44} />
+            </span>
+          </button>
+        )}
+        <div className="board-progress" aria-hidden="true">
+          {beats.map((b, i) => {
+            const end = beats[i + 1]?.t ?? s.dur;
+            return <span key={i} style={{ "--fill": Math.max(0, Math.min(1, (time - b.t) / (end - b.t || 1))) }} />;
+          })}
+        </div>
+        {over && (
+          <div className="board-end">
+            <button className="end-btn" onClick={onReplay} aria-label="Znovu">
+              <span className="end-ico">
+                <Icon name="replay" size={34} />
+              </span>
+              <span className="end-label">Znovu</span>
+            </button>
+            {next && (
+              <button className="end-btn end-next" onClick={next.go} aria-label={`Další: ${next.title}`}>
+                <span className="end-ico">
+                  <Icon name="next" size={40} />
+                </span>
+                <span className="end-label">Další</span>
+              </button>
+            )}
+          </div>
+        )}
+      </SceneBoard>
       <h2 className="scene-title">{s.title}</h2>
       {compare}
       <Say text={note ?? beat?.text} spoken={note ?? beat?.say} />
-      <div className="controls">
-        <button
-          className="play"
-          onClick={() => {
-            clearTimeout(auto.current); // kliklo samo, nečekáme
-            if (ended) voice.current.spoken = -1; // znovu od začátku = znovu i číst
-            setPlaying(!playing);
-          }}
-          aria-label={playing ? "Zastavit" : ended ? "Pustit znovu" : "Pustit"}
-        >
-          <Icon name={playing ? "pause" : ended ? "replay" : "play"} size={30} />
-        </button>
-        <div className="beats">
-          {beats.map((b, i) => {
-            const end = beats[i + 1]?.t ?? s.dur;
-            const fill = Math.max(0, Math.min(1, (time - b.t) / (end - b.t || 1)));
-            return (
-              <button
-                key={i}
-                className="beat"
-                style={{ "--fill": fill }}
-                aria-label={`Krok ${i + 1}: ${b.text}`}
-                aria-current={i === bi}
-                onClick={() => {
-                  voice.current.spoken = -1;
-                  setTime(b.t + 0.001);
-                }}
-              />
-            );
-          })}
-        </div>
-      </div>
       {s.why && (
         <details className="why">
           <summary>Pro rodiče a trenéry</summary>
@@ -186,8 +225,8 @@ function Play({ s, compare, delay, children, onEnded, onNext }) {
   );
 }
 
-/* Tabule se scénou v čase time — čisté vykreslení, bez hodin (používá i Kvíz). */
-export function SceneBoard({ s, time }) {
+/* Tabule se scénou v čase time — čisté vykreslení, bez hodin (používá i Kvíz). children = vrstva přes tabuli. */
+export function SceneBoard({ s, time, children }) {
   const byId = Object.fromEntries((s.players || []).map((p) => [p.id, p]));
   const pos = (id, t) => at(byId[id]?.path, t);
   const fwd = (id) => (byId[id]?.team === "them" ? -1 : 1);
@@ -216,6 +255,7 @@ export function SceneBoard({ s, time }) {
         {ball && <Ball x={ball.x} y={ball.y} />}
         {marks.filter((m) => isTop(m) || (m.kind === "zone" && m.text)).map(draw("over"))}
       </Pitch>
+      {children}
     </div>
   );
 }
