@@ -586,6 +586,28 @@ button.footer-link {
   transform: translateY(3px);
   box-shadow: 0 1px 0 var(--ink);
 }
+/* Prohlížeč nepustil zvuk (na stránku se ještě neťuklo) → výzva pod bublinou */
+.say-unmute {
+  grid-column: 1 / -1;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 6px 18px 6px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--us);
+  box-shadow: var(--press);
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 18px;
+  animation: nudge 1.6s ease-in-out 0.6s infinite;
+}
+.say-unmute:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--ink);
+}
 @keyframes pop {
   from {
     transform: scale(0.94);
@@ -924,6 +946,33 @@ button.footer-link {
 }
 .again-list a {
   font-weight: 700;
+}
+/* Kopík mluví: pusa se otvírá a zavírá (bez animací zůstane jen víc otevřená) */
+.kopik-mouth {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+}
+.kopik.talking .kopik-mouth {
+  transform: scaleY(1.5);
+  animation: talk 0.7s ease-in-out infinite;
+}
+@keyframes talk {
+  0%,
+  100% {
+    transform: scaleY(1.4);
+  }
+  20% {
+    transform: scaleY(0.35);
+  }
+  45% {
+    transform: scaleY(1.9);
+  }
+  65% {
+    transform: scaleY(0.6);
+  }
+  85% {
+    transform: scaleY(1.5);
+  }
 }
 .kopik-jump {
   animation: jump 0.9s ease-in-out 3;

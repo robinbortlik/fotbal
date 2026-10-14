@@ -1,7 +1,14 @@
-/* Kopík — míč s obličejem, průvodce webem. Čistě SVG, velikost v px. */
-export function Kopik({ size = 64, className = "" }) {
+/* Kopík — míč s obličejem, průvodce webem. Čistě SVG, velikost v px.
+   talking = hýbe pusou (když opravdu hraje jeho hlas — useSpeech ve voice.js). */
+export function Kopik({ size = 64, className = "", talking = false }) {
   return (
-    <svg viewBox="0 0 100 100" width={size} height={size} className={"kopik " + className} aria-hidden="true">
+    <svg
+      viewBox="0 0 100 100"
+      width={size}
+      height={size}
+      className={"kopik " + (talking ? "talking " : "") + className}
+      aria-hidden="true"
+    >
       <defs>
         <clipPath id="kopik-clip">
           <circle cx="50" cy="50" r="44" />
@@ -24,8 +31,10 @@ export function Kopik({ size = 64, className = "" }) {
       <circle cx="65.6" cy="47" r="1.4" fill="#fff" />
       <circle cx="27" cy="62" r="4.5" fill="#FF9AA8" opacity="0.7" />
       <circle cx="73" cy="62" r="4.5" fill="#FF9AA8" opacity="0.7" />
-      <path className="kopik-mouth" d="M40 64 Q50 75 60 64 Z" fill="var(--ink)" stroke="var(--ink)" strokeWidth="3" strokeLinejoin="round" />
-      <path d="M45 69 Q50 72 55 69" fill="#FF6B6B" />
+      <g className="kopik-mouth">
+        <path d="M40 64 Q50 75 60 64 Z" fill="var(--ink)" stroke="var(--ink)" strokeWidth="3" strokeLinejoin="round" />
+        <path d="M45 69 Q50 72 55 69" fill="#FF6B6B" />
+      </g>
     </svg>
   );
 }

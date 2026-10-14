@@ -4,7 +4,7 @@ import { SceneBoard, Say, beatAt } from "../components/Scene.jsx";
 import { Kopik } from "../components/Kopik.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { useTimeline } from "../hooks/useTimeline.js";
-import { say, PHRASES } from "../lib/voice.js";
+import { say, PHRASES, useSpeech } from "../lib/voice.js";
 import { PITCH } from "../scenes/hriste.js";
 import { RULES } from "../scenes/pravidla.js";
 import { ATTACK } from "../scenes/utok.js";
@@ -125,12 +125,13 @@ function Done({ results, onAgain }) {
   const good = results.filter((r) => r.ok).length;
   const missed = results.filter((r) => !r.ok);
   const text = good === results.length ? PHRASES.allRight : good >= results.length / 2 ? PHRASES.most : PHRASES.some;
+  const { speaking } = useSpeech();
   useEffect(() => {
     say(text);
   }, []);
   return (
     <section className="done">
-      <Kopik size={120} className="kopik-jump" />
+      <Kopik size={120} className="kopik-jump" talking={speaking} />
       <p className="score">
         {good} z {results.length}
       </p>

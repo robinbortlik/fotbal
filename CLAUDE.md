@@ -62,7 +62,11 @@ no service-worker range requests needed; the normal website downloads nothing ex
 ones (voice „Jan – Kind Educator“, model `eleven_v4`) and deletes unused files. The API key must
 never be committed or shipped to the browser. Spoken strings must be static (no runtime concatenation).
 Voice is ON by default (turning it off is remembered in localStorage `fotbal:voice`); browsers allow sound only after the
-first tap, so `voice.js` unlocks the single shared `Audio` element on the first touch/click (needed for iOS). Scenes start
+first tap, so `voice.js` unlocks the single shared `Audio` element on the first touch/click (needed for iOS). A page can't
+know the device volume or mute switch, so `useSpeech()` (voice.js) exposes what it can: `speaking` (audio/speech is really
+playing, from media events) moves Kopík's mouth (`<Kopik talking>`), so a kid on a muted phone sees him talk; `blocked`
+(the browser refused to play because nobody tapped the page yet, e.g. a shared link) shows „Ťukni a Kopík promluví“
+under the `<Say>` bubble until sound gets unlocked. Scenes start
 by themselves 1.2 s after opening (`Play` `delay`), immediately after switching „Takhle ano / ne“. Clicking the already
 selected situation, „Takhle ano / ne“ or (home) „Máme / Nemáme míč“ plays it again; picking a situation silences Kopík (`stop`).
 On mobile the situation list is a horizontal strip — the selected one scrolls to its middle. When „Takhle ano“ ends

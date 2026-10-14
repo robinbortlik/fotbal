@@ -4,7 +4,7 @@ import { Kopik } from "./Kopik.jsx";
 import { Icon } from "./Icons.jsx";
 import { at, ballAt } from "../lib/pitch.js";
 import { useTimeline } from "../hooks/useTimeline.js";
-import { PHRASES, say, stop, useVoice } from "../lib/voice.js";
+import { PHRASES, say, stop, useSpeech, useVoice } from "../lib/voice.js";
 
 export const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
@@ -263,16 +263,22 @@ export function SceneBoard({ s, time, children }) {
 /* Kopík + bublina s textem + tlačítko přečíst (spoken = delší verze nahlas). */
 export function Say({ text, spoken = text, size = 64 }) {
   const { ready } = useVoice();
+  const { speaking, blocked } = useSpeech();
   if (!text) return null;
   return (
     <div className="say">
-      <Kopik size={size} />
+      <Kopik size={size} talking={speaking} />
       <p className="say-text" key={text} aria-live="polite">
         {text}
       </p>
       {ready && (
         <button className="say-btn" onClick={() => say(spoken, { force: true })} aria-label="Přečíst nahlas">
           <Icon name="speaker" size={26} />
+        </button>
+      )}
+      {ready && blocked && (
+        <button className="say-unmute" onClick={() => say(spoken, { force: true })}>
+          <Icon name="speaker" size={22} /> Ťukni a Kopík promluví
         </button>
       )}
     </div>
