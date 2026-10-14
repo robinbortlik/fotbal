@@ -128,8 +128,9 @@ inbound `__activate_edit_mode` / `__deactivate_edit_mode`; outbound `__edit_mode
 then components by section. Mobile ≤ 760 px: menu becomes a bottom tab bar.
 
 ### Deployment
-Cloudflare Workers static assets (`wrangler.jsonc`, Worker `fotbalove-abc`, no Worker code): `npm run deploy`
-(= build + `npx wrangler deploy`; needs `npx wrangler login`). Live on `https://fotbalove-abc.cz` + `www` (`routes` with
+Cloudflare Workers static assets (`wrangler.jsonc`, Worker `fotbalove-abc`, no Worker code). Deploys automatically on
+every push to `master` (a merged PR goes live by itself; no workflow in this repo, Cloudflare builds it). Manual fallback:
+`npm run deploy` (= build + `npx wrangler deploy`; needs `npx wrangler login`). Live on `https://fotbalove-abc.cz` + `www` (`routes` with
 `custom_domain: true`, zone active in Cloudflare, registrar Webglobe points NS to Cloudflare); `workers_dev: true` keeps
 `fotbalove-abc.robinbortlik.workers.dev` as a fallback. Cloudflare serves `/utok/roztahni-se` from `utok/roztahni-se.html`
 (`/utok/` and `/utok.html` redirect to `/utok`) and any unknown path as `index.html` (`not_found_handling`). `npx wrangler dev`
