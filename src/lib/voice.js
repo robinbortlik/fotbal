@@ -23,8 +23,9 @@ try {
 
 /* Co se právě děje se zvukem — pro Kopíkova ústa (useSpeech). speaking = opravdu hraje (podle událostí
    přehrávače, ne podle toho, že jsme o přehrání požádali): ztlumený telefon to nepozná, ale dítě uvidí,
-   že Kopík mluví, a přidá si zvuk. */
-const live = { speaking: false };
+   že Kopík mluví, a přidá si zvuk. blocked = prohlížeč přehrání odmítl, protože se na stránku ještě neťuklo
+   (otevřený odkaz, scéna se rozběhne sama) — to poznat jde, <Say> pak nabídne „Ťukni a Kopík promluví“. */
+const live = { speaking: false, blocked: false };
 const watchers = new Set();
 const setLive = (k, v) => {
   if (live[k] === v) return;
@@ -32,7 +33,10 @@ const setLive = (k, v) => {
   watchers.forEach((f) => f({ ...live }));
 };
 if (audio) {
-  audio.addEventListener("playing", () => setLive("speaking", !audio.src.startsWith("data:")));
+  audio.addEventListener("playing", () => {
+    setLive("speaking", !audio.src.startsWith("data:"));
+    setLive("blocked", false); // i tiché odemknutí po prvním ťuknutí: další věty už půjdou
+  });
   ["pause", "ended", "error", "emptied"].forEach((e) => audio.addEventListener(e, () => setLive("speaking", false)));
 }
 
@@ -119,7 +123,10 @@ function playOne(text, then) {
       audio.src = src;
       audio.onended = fin;
       audio.onerror = fin;
-      audio.play().catch(fin); // prohlížeč přehrání nepovolil → pokračuj potichu
+      audio.play().catch((e) => {
+        if (e?.name === "NotAllowedError") setLive("blocked", true);
+        fin(); // prohlížeč přehrání nepovolil → pokračuj potichu
+      });
     });
     return;
   }
@@ -130,7 +137,8 @@ function playOne(text, then) {
   u.lang = voice.lang;
   u.rate = 0.92;
   u.onstart = () => setLive("speaking", true);
-  u.onend = u.onerror = () => {
+  u.onend = u.onerror = (e) => {
+    if (e.error === "not-allowed") setLive("blocked", true);
     setLive("speaking", false);
     fin();
   };

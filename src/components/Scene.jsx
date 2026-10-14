@@ -263,7 +263,7 @@ export function SceneBoard({ s, time, children }) {
 /* Kopík + bublina s textem + tlačítko přečíst (spoken = delší verze nahlas). */
 export function Say({ text, spoken = text, size = 64 }) {
   const { ready } = useVoice();
-  const { speaking } = useSpeech();
+  const { speaking, blocked } = useSpeech();
   if (!text) return null;
   return (
     <div className="say">
@@ -274,6 +274,11 @@ export function Say({ text, spoken = text, size = 64 }) {
       {ready && (
         <button className="say-btn" onClick={() => say(spoken, { force: true })} aria-label="Přečíst nahlas">
           <Icon name="speaker" size={26} />
+        </button>
+      )}
+      {ready && blocked && (
+        <button className="say-unmute" onClick={() => say(spoken, { force: true })}>
+          <Icon name="speaker" size={22} /> Ťukni a Kopík promluví
         </button>
       )}
     </div>
