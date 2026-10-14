@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Say } from "../Scene.jsx";
+import { BoardEnd, Say } from "../Scene.jsx";
 import { Art, Choice, Label, Photo, useSpeak } from "./parts.jsx";
 import high from "../../assets/brankar/ruce-w.webp";
 import low from "../../assets/brankar/kosicek.webp";
@@ -50,16 +50,17 @@ function HandsArt({ isHigh }) {
   );
 }
 
-export function KeeperHands({ children }) {
+export function KeeperHands({ children, onReplay, next }) {
   const [mode, setMode] = useState("high");
   const isHigh = mode === "high";
   const line = isHigh ? HIGH : LOW;
-  useSpeak(line.say);
+  const done = useSpeak(line.say);
 
   return (
     <div className="scene">
       <div className="board">
         <HandsArt isHigh={isHigh} />
+        {done && <BoardEnd onReplay={onReplay} next={next} />}
       </div>
       <h2 className="scene-title">Jak chytat</h2>
       <Choice label="Jaký míč letí" value={mode} onChange={setMode} options={MODES} />

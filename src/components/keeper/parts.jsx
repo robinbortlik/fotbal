@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "../Icons.jsx";
 import { say } from "../../lib/voice.js";
 import { W, L, PAD } from "../../lib/pitch.js";
@@ -8,11 +8,21 @@ import "./keeper.css";
 
 /* Přečte text nahlas (když má dítě zapnuté čtení), kdykoli se změní — jako titulky ve <Scene>.
    Komponenty sem dávají mluvenou verzi (say: titulek + proč), stejnou jako tlačítko 🔊 (Say spoken)
-   a Component.TEXTS, ze kterých se nahrává hlas. */
+   a Component.TEXTS, ze kterých se nahrává hlas. Vrací true, až Kopík dořekne (nejdřív za 3 s, ať se to stihne
+   přečíst) → na tabuli „Znovu“ a „Další“ jako na konci animované situace. */
 export function useSpeak(text) {
+  const [done, setDone] = useState(false);
   useEffect(() => {
-    if (text) say(text);
+    setDone(false);
+    let live = true;
+    const t0 = Date.now();
+    const end = () => setTimeout(() => live && setDone(true), Math.max(0, 3000 - (Date.now() - t0)));
+    say(text, { onEnd: end }) || end(); // bez hlasu: jen čas na přečtení
+    return () => {
+      live = false;
+    };
   }, [text]);
+  return done;
 }
 
 /* Přepínač dvou stavů. options: [{ id, text, tone?: "good" | "bad", icon? }].

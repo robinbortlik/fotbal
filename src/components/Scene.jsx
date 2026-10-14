@@ -61,6 +61,27 @@ export function Scene({ scene, children, onEnded, next }) {
 }
 
 /* Aktuální titulek v čase t. */
+/* Dořečené první „Takhle ano“ → 1,5 s pauza, Kopík řekne PHRASES.bad a sám pustí „Takhle ne“ (next).
+   Vrací větu pro bublinu. Přepnutí, „Znovu“ nebo odchod řetěz zruší (on zhasne / odmontování). */
+export function useChain(on, next) {
+  const [note, setNote] = useState(null);
+  useEffect(() => {
+    if (!on) return;
+    let live = true;
+    const go = () => live && next();
+    const t = setTimeout(() => {
+      setNote(PHRASES.bad);
+      say(PHRASES.bad, { onEnd: go }) || setTimeout(go, 2000); // bez hlasu: chvíli na přečtení
+    }, 1500);
+    return () => {
+      live = false;
+      clearTimeout(t);
+      setNote(null);
+    };
+  }, [on]);
+  return note;
+}
+
 export function beatAt(s, t) {
   let bi = 0;
   (s.beats || []).forEach((b, i) => {
@@ -128,22 +149,8 @@ function Play({ s, compare, delay, children, onEnded, onNext, onReplay, next }) 
 
   // Děti se učí i z chyb: po „Takhle ano“ chvilka ticha, Kopík ohlásí „Takhle ne“ a ta se pustí sama.
   // Přehrát znovu, přepnout nebo odejít ze scény to zruší (cleanup).
-  const [note, setNote] = useState(null);
   const chain = done && !!onNext && !still;
-  useEffect(() => {
-    if (!chain) return;
-    let live = true;
-    const go = () => live && onNext();
-    const t = setTimeout(() => {
-      setNote(PHRASES.bad);
-      say(PHRASES.bad, { onEnd: go }) || setTimeout(go, 2000); // bez hlasu: chvíli na přečtení
-    }, 1500);
-    return () => {
-      live = false;
-      clearTimeout(t);
-      setNote(null);
-    };
-  }, [chain]);
+  const note = useChain(chain, onNext);
 
   // Konec jako u videa: přes tabuli „Znovu“ a „Další“ (na mobilu děti nevědí, že seznam situací nahoře jede do strany).
   // Jen když opravdu dohrála (ne hned po otevření bez animací) a nenavazuje „Takhle ne“.
@@ -193,24 +200,7 @@ function Play({ s, compare, delay, children, onEnded, onNext, onReplay, next }) 
             return <span key={i} style={{ "--fill": Math.max(0, Math.min(1, (time - b.t) / (end - b.t || 1))) }} />;
           })}
         </div>
-        {over && (
-          <div className="board-end">
-            <button className="end-btn" onClick={onReplay} aria-label="Znovu">
-              <span className="end-ico">
-                <Icon name="replay" size={34} />
-              </span>
-              <span className="end-label">Znovu</span>
-            </button>
-            {next && (
-              <button className="end-btn end-next" onClick={next.go} aria-label={`Další: ${next.title}`}>
-                <span className="end-ico">
-                  <Icon name="next" size={40} />
-                </span>
-                <span className="end-label">Další</span>
-              </button>
-            )}
-          </div>
-        )}
+        {over && <BoardEnd onReplay={onReplay} next={next} />}
       </SceneBoard>
       <h2 className="scene-title">{s.title}</h2>
       {compare}
@@ -227,6 +217,28 @@ function Play({ s, compare, delay, children, onEnded, onNext, onReplay, next }) 
 }
 
 /* Tabule se scénou v čase time — čisté vykreslení, bez hodin (používá i Kvíz). children = vrstva přes tabuli. */
+/* Konec situace jako u videa: tabule ztmavne, přes ni „Znovu“ a „Další“ (i vlastní situace, brankář). */
+export function BoardEnd({ onReplay, next }) {
+  return (
+    <div className="board-end">
+      <button className="end-btn" onClick={onReplay} aria-label="Znovu">
+        <span className="end-ico">
+          <Icon name="replay" size={34} />
+        </span>
+        <span className="end-label">Znovu</span>
+      </button>
+      {next && (
+        <button className="end-btn end-next" onClick={next.go} aria-label={`Další: ${next.title}`}>
+          <span className="end-ico">
+            <Icon name="next" size={40} />
+          </span>
+          <span className="end-label">Další</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
 export function SceneBoard({ s, time, children }) {
   const byId = Object.fromEntries((s.players || []).map((p) => [p.id, p]));
   const pos = (id, t) => at(byId[id]?.path, t);

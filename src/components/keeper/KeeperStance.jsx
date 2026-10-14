@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Say } from "../Scene.jsx";
+import { BoardEnd, Say, useChain } from "../Scene.jsx";
 import { Art, Choice, GOOD_BAD, Label, Photo, useSpeak } from "./parts.jsx";
 import ready from "../../assets/brankar/postoj-ano.webp";
 import sloppy from "../../assets/brankar/postoj-ne.webp";
@@ -39,20 +39,28 @@ function StanceArt({ bad }) {
   );
 }
 
-export function KeeperStance({ children }) {
+export function KeeperStance({ children, onReplay, next }) {
   const [mode, setMode] = useState("good");
+  const [opening, setOpening] = useState(true); // jen první „Takhle ano“ pokračuje samo na „Takhle ne“
   const bad = mode === "bad";
   const line = bad ? BAD : GOOD;
-  useSpeak(line.say);
+  const done = useSpeak(line.say);
+  const chain = done && opening && !bad;
+  const note = useChain(chain, () => setMode("bad"));
+  const pick = (m) => {
+    setOpening(false);
+    setMode(m);
+  };
 
   return (
     <div className="scene">
       <div className="board">
         <StanceArt bad={bad} />
+        {done && !chain && <BoardEnd onReplay={onReplay} next={next} />}
       </div>
       <h2 className="scene-title">Připravený postoj</h2>
-      <Choice label="Porovnej" value={mode} onChange={setMode} options={GOOD_BAD} />
-      <Say text={line.text} spoken={line.say} />
+      <Choice label="Porovnej" value={mode} onChange={pick} options={GOOD_BAD} />
+      <Say text={note ?? line.text} spoken={note ?? line.say} />
       <details className="why">
         <summary>Pro rodiče a trenéry</summary>
         <p>{WHY}</p>
