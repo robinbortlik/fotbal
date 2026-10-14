@@ -38,7 +38,7 @@ export const YOUNGER = [
 
 export const SLOGANS = [
   ["Útok (máme míč)", ["Máme míč? Roztáhni se!", "Ukaž se, ať ti přihrají!", "Veď míč tam, kde nikdo není.", "Klička – a zrychli!", "Před střelou koukni na bránu.", "Po střele dobíhej!"]],
-  ["Obrana (nemáme míč)", ["Nemáme míč? Bráníme všichni!", "Mezi soupeře a naši bránu!", "Nejbližší jde na míč.", "Kamarád jde na míč? Jisti ho zezadu.", "Bokem – vytlač ho ke straně.", "Míč vezmi, ne jen odkopni."]],
+  ["Obrana (nemáme míč)", ["Nemáme míč? Bráníme všichni!", "Mezi soupeře a naši bránu!", "Nejbližší jde na míč.", "Kamarád jde na míč? Jisti ho zezadu.", "Bokem – vytlač ho ke straně.", "Míč vezmi, ne jen odkopni.", "Aut nebo roh soupeře? Hlídej svého hráče."]],
   ["Přepnutí", ["Ztráta? Hned zpátky pro míč!", "Získali jsme míč? Hned na bránu!", "Nejde to dopředu? Podrž míč."]],
   ["Brankář", ["Stůj mezi míčem a středem brány.", "Ruce do W!", "Nízký míč? Košíček!", "Křič včas a nahlas!", "I brankář hraje nohama."]],
   ["Fair play", ["Po zápase podej ruku.", "Chyba? Nevadí, hraj dál!", "Rodiče fandí, ale nekoučují."]],
