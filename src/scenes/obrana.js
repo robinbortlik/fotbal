@@ -552,9 +552,181 @@ const keep = {
   },
 };
 
+/* 8. Aut soupeře: každý si najde soupeře a stojí mezi ním a bránou (Ty hlídáš toho u čáry).
+   Ostatní hlídají stejně v obou variantách, liší se jen Ty. */
+const throwInTeam = [
+  { id: "g", team: "us", gk: true, n: 1, path: [[0, 15, 2.5], [2.6, 15, 2.5], [4.8, 13.8, 2.6]] },
+  { id: "po", team: "us", n: 3, path: [[0, 20.5, 11], [2.6, 20.5, 11], [5.0, 13.4, 12.5]] },
+  { id: "st", team: "us", n: 4, path: [[0, 14, 19], [2.6, 14, 19], [5.0, 7.1, 20.7]] },
+  { id: "lu", team: "us", n: 5, path: [[0, 8.5, 27], [2.6, 8.5, 27], [5.0, 11.5, 24.5]] },
+  { id: "pu", team: "us", n: 6, dim: true, path: [[0, 21.5, 27.5], [5.0, 19.5, 23]] },
+  { id: "G", team: "them", gk: true, dim: true, path: [[0, 15, 42.5]] },
+  { id: "t1", team: "them", dim: true, path: [[0, 16, 33]] },
+  // vhazující dojde s míčem v rukou za postranní čáru
+  { id: "t2", team: "them", path: [[0, 2.5, 19], [1.8, -1.1, 16.5]] },
+  { id: "t3", team: "them", path: [[0, 6, 23.5]] },
+  { id: "t5", team: "them", path: [[0, 13, 15.5]] },
+];
+const throwInStart = { t: 0, text: "Aut pro soupeře. Komu hodí?", say: "Míč je v autu a vhazovat bude soupeř. Komu asi hodí?" };
+const throwInMarks = [
+  { kind: "run", from: "po", to: [13.4, 12.5], t: [2.6, 5.0] },
+  { kind: "run", from: "st", to: [7.1, 20.7], t: [2.6, 5.0] },
+];
+
+const throwIn = {
+  id: "aut-soupere",
+  title: "Aut soupeře",
+  icon: "🙌",
+  dur: 12.4,
+  beats: [
+    throwInStart,
+    { t: 2.6, text: "Najdi si soupeře a jdi k němu!", say: "Každý si najde jednoho soupeře a běží k němu. Ty hlídáš toho, který stojí u čáry." },
+    { t: 5.2, text: "Stůj blíž k bráně než on.", say: "Stůj mezi ním a naší bránou, kousek od něj. Koukej na míč i na soupeře." },
+    { t: 7.8, text: "Hodí to k čáře – a ty jsi u míče první!", say: "Soupeř hodí míč podél čáry. Jsi blíž k bráně než on, a tak jsi u míče první!" },
+    { t: 10.4, text: "Pamatuj: při autu hlídej svého soupeře.", say: "Pamatuj si: když soupeř vhazuje, najdi si svého hráče a stůj blíž k bráně než on." },
+  ],
+  players: [
+    ...throwInTeam,
+    {
+      id: "ty", team: "us", n: 2, tag: "Ty", hl: true,
+      path: [[0, 9.5, 13.5], [2.6, 9.5, 13.5], [5.0, 6.4, 11.1], [7.8, 6.4, 11.1], [8.7, 4.2, 7.4], [9.2, 4.2, 7.4], [10.6, 8.2, 9.4]],
+    },
+    // naběhne si podél čáry za tebe — míč hozený za něj máš ale ty
+    { id: "t4", team: "them", path: [[0, 6.5, 17], [2.2, 4.5, 13.5], [7.8, 4.5, 13.5], [8.8, 2.6, 9.8]] },
+  ],
+  ball: [[0, "t2", 0], [7.8, "t2", 0], [8.7, 2.6, 7.4], [9.0, "ty"], [10.6, "ty"]],
+  marks: [
+    ...throwInMarks,
+    { kind: "run", from: "ty", to: [6.4, 11.1], t: [2.6, 5.0] },
+    { kind: "line", from: "t4", to: [15, 0], t: [5.2, 7.8] },
+    { kind: "check", at: [12, 6.8], t: [9.2] },
+  ],
+  why: "Při autu soupeře si každý najde jednoho soupeře poblíž míče a postaví se mezi něj a vlastní branku, asi 2–3 m od něj, tak aby viděl míč i jeho. Míč hozený za záda soupeře pak získá obránce. Pozor i na vhazujícího – po vhození bývá volný. Soupeř stojí nejméně 2 m od vhazujícího; mladší přípravka (U8–U9) smí aut i přihrát nohou nebo vyvést, hlídá se stejně.",
+  quiz: {
+    at: 2.45,
+    ask: "Soupeř vhazuje aut. Co uděláš?",
+    options: [
+      { text: "Najdu si soupeře a hlídám ho", ok: true },
+      { text: "Jen koukám, kam hodí", ok: false },
+      { text: "Počkám vepředu na míč", ok: false },
+    ],
+  },
+  bad: {
+    dur: 12.4,
+    beats: [
+      throwInStart,
+      { t: 2.6, text: "Ty jen stojíš a koukáš na míč…", say: "Kamarádi si našli soupeře, ale ty jen stojíš a koukáš na míč. Soupeře u čáry nikdo nehlídá." },
+      { t: 5.2, text: "Vhodí volnému – a ten běží na bránu!", say: "Soupeř hodí míč volnému hráči u čáry. Ten běží s míčem rovnou na naši bránu." },
+      { t: 7.8, text: "Střela – a gól.", say: "Střela a gól! Za svým soupeřem jsi přiběhl pozdě." },
+      { t: 10.4, text: "Příště si najdi soupeře a hlídej ho!", say: "Při autu nestůj a nekoukej jen na míč. Najdi si soupeře a stůj blíž k bráně než on." },
+    ],
+    players: [
+      ...throwInTeam,
+      { id: "ty", team: "us", n: 2, tag: "Ty", hl: true, path: [[0, 9.5, 13.5], [5.6, 9.5, 13.5], [7.8, 12, 9.8]] },
+      { id: "t4", team: "them", path: [[0, 6.5, 17], [2.2, 4.5, 13.5], [5.2, 4.5, 13.5], [6.0, 3.2, 10.8], [7.8, 8.4, 6.6]] },
+    ],
+    ball: [[0, "t2", 0], [5.2, "t2", 0], [6.0, "t4"], [7.8, "t4"], [8.6, 13, -0.8]],
+    marks: [
+      ...throwInMarks,
+      { kind: "x", at: [9.6, 17.2], t: [2.6] },
+      { kind: "zone", rect: [1, 3, 8, 8.5], at: [4.2, 4.2], tone: "bad", text: "Volno", t: [5.2, 7.0] },
+      { kind: "dribble", team: "them", from: [3.2, 9.3], to: [8.4, 5.1], t: [6.0] },
+      { kind: "shot", from: [8.4, 5.1], to: [13, -0.8], t: [7.8] },
+    ],
+  },
+};
+
+/* 9. Roh soupeře: každý hlídá jednoho soupeře, mezi ním a bránou (Ty toho uprostřed).
+   Ostatní hlídají stejně v obou variantách, liší se jen Ty. Roh se kope z pravého rohu u naší branky. */
+const cornerTeam = [
+  { id: "lo", team: "us", n: 2, path: [[0, 12.4, 2.5], [2.6, 12.4, 2.5], [4.4, 10.4, 3.3]] },
+  { id: "po", team: "us", n: 3, path: [[0, 21.2, 3.4], [2.6, 21.2, 3.4], [4.6, 20.6, 7.3]] },
+  { id: "lu", team: "us", n: 5, path: [[0, 12.3, 7.6], [2.6, 12.3, 7.6], [4.6, 10.1, 12.5]] },
+  { id: "G", team: "them", gk: true, dim: true, path: [[0, 15, 42.5]] },
+  { id: "t1", team: "them", path: [[0, 9, 15.2]] },
+  // kopající dojde s míčem do rohu a položí ho do rohové čtvrtkružnice
+  { id: "t2", team: "them", path: [[0, 25.5, 4], [2.0, 31, -1], [7.4, 31, -1], [7.8, 30.4, -0.4]] },
+  { id: "t3", team: "them", path: [[0, 22.4, 9.6]] },
+  { id: "t5", team: "them", path: [[0, 8, 5]] },
+];
+const cornerStart = { t: 0, text: "Roh pro soupeře. Kdo hlídá koho?", say: "Míč přešel naši brankovou čáru a naposledy jsme se ho dotkli my. Roh pro soupeře! Kdo hlídá koho?" };
+const cornerMarks = [
+  { kind: "zone", circle: [29.5, 0.5, 5], tone: "good", t: [2.3, 5.2] },
+  { kind: "label", at: [24.2, -0.6], text: "5 m", t: [2.3, 5.2] },
+  { kind: "run", from: "lo", to: [10.4, 3.3], t: [2.6, 4.6] },
+  { kind: "run", from: "po", to: [20.6, 7.3], t: [2.6, 4.6] },
+  { kind: "run", from: "lu", to: [10.1, 12.5], t: [2.6, 4.6] },
+];
+
+const corner = {
+  id: "roh-soupere",
+  title: "Roh soupeře",
+  icon: "🚩",
+  dur: 12.4,
+  beats: [
+    cornerStart,
+    { t: 2.6, text: "Každý si najde jednoho soupeře.", say: "Každý si najde jednoho soupeře a jde k němu. Ty hlídáš toho, který stojí uprostřed před bránou." },
+    { t: 5.2, text: "Stůj mezi ním a bránou. Koukej na míč!", say: "Stůj mezi ním a naší bránou a koukej na míč i na něj. Kam poběží on, poběžíš i ty." },
+    { t: 7.8, text: "Jsi u míče první – pošli ho ke straně!", say: "Soupeř kopne roh, ale ty jsi u míče první. Pošli ho ke straně kamarádovi, pryč od naší brány." },
+    { t: 10.4, text: "Pamatuj: při rohu hlídej svého hráče.", say: "Pamatuj si: při rohu soupeře hlídej svého hráče a stůj mezi ním a naší bránou." },
+  ],
+  players: [
+    { id: "g", team: "us", gk: true, n: 1, path: [[0, 15, 1.3]] },
+    ...cornerTeam,
+    { id: "ty", team: "us", n: 4, tag: "Ty", hl: true, path: [[0, 18.2, 4.4], [2.6, 18.2, 4.4], [4.6, 15.2, 6.7], [7.8, 15.2, 6.7], [8.6, 18.4, 5.6]] },
+    // šestka hlídá krátký roh (5 m od míče) a po zisku s míčem vyrazí podél čáry
+    { id: "pu", team: "us", n: 6, path: [[0, 24, 16], [2.6, 24, 16], [4.8, 27, 5.5], [9.6, 27, 5.5], [12.4, 27.6, 12.5]] },
+    // při rohu si naběhne k bližší tyči — ty jdeš s ním a jsi u míče dřív
+    { id: "t4", team: "them", path: [[0, 14.4, 9.6], [7.8, 14.4, 9.6], [8.6, 16.4, 8.6]] },
+  ],
+  ball: [[0, "t2", 0], [2.0, "t2", 0], [2.3, 29.5, 0.5], [7.8, 29.5, 0.5], [8.6, "ty"], [9.4, "pu"], [12.4, "pu"]],
+  marks: [
+    ...cornerMarks,
+    { kind: "run", from: "ty", to: [15.2, 6.7], t: [2.6, 4.6] },
+    { kind: "run", from: "pu", to: [27, 5.5], t: [2.6, 4.8] },
+    { kind: "pass", from: [19.8, 5], to: [25.8, 5.4], t: [8.6] },
+    { kind: "check", at: [23.2, 1.6], t: [9.4] },
+  ],
+  why: "Při rohu soupeře jsou všichni zpátky a každý hlídá jednoho soupeře: stojí mezi ním a brankou, kousek od něj, a vidí míč i jeho. Když soupeř vyběhne, jde s ním. Jeden hráč stojí 5 m od míče proti krátkému rohu. Získaný míč posílá ke straně, pryč od branky, ne doprostřed před ni. Podle pravidel FAČR pro 5 + 1 stojíme při rohu nejméně 5 m od míče.",
+  quiz: {
+    at: 2.45,
+    ask: "Roh pro soupeře. Kam se postavíš?",
+    options: [
+      { text: "Mezi soupeře a bránu", ok: true },
+      { text: "Za soupeře", ok: false },
+      { text: "Ke kopajícímu do rohu", ok: false },
+    ],
+  },
+  bad: {
+    dur: 12.4,
+    beats: [
+      cornerStart,
+      { t: 2.6, text: "Ty koukáš jen na míč…", say: "Kamarádi si našli soupeře, ale ty koukáš jen na míč. Hráče uprostřed nikdo nehlídá." },
+      { t: 5.2, text: "Soupeř uprostřed je volný!", say: "Soupeř uprostřed stojí úplně sám. Nikdo z nás u něj není." },
+      { t: 7.8, text: "Roh přímo k němu – a gól.", say: "Soupeř kopne roh přímo k němu a on hned střílí. Gól!" },
+      { t: 10.4, text: "Příště hlídej svého hráče, ne jen míč!", say: "Kdo kouká jen na míč, ztratí svého hráče. Příště stůj mezi ním a bránou a hlídej ho." },
+    ],
+    players: [
+      { id: "g", team: "us", gk: true, n: 1, path: [[0, 15, 1.3], [7.8, 15, 1.3], [8.6, 16.4, 1.2]] },
+      ...cornerTeam,
+      { id: "ty", team: "us", n: 4, tag: "Ty", hl: true, path: [[0, 18.2, 4.4], [2.6, 18.2, 4.4], [4.6, 19.6, 1.8]] },
+      { id: "pu", team: "us", n: 6, path: [[0, 24, 16], [2.6, 24, 16], [4.8, 27, 5.5]] },
+      { id: "t4", team: "them", path: [[0, 14.4, 9.6], [7.8, 14.4, 9.6], [8.6, 14.6, 8.2]] },
+    ],
+    ball: [[0, "t2", 0], [2.0, "t2", 0], [2.3, 29.5, 0.5], [7.8, 29.5, 0.5], [8.6, "t4"], [9.4, 12.9, -0.8]],
+    marks: [
+      ...cornerMarks,
+      { kind: "run", from: "pu", to: [27, 5.5], t: [2.6, 4.8] },
+      { kind: "x", at: [22.6, 0.9], t: [4.6] },
+      { kind: "zone", circle: [14.4, 9.6, 3.4], at: [14.4, 14.2], tone: "bad", text: "Volno", t: [5.2, 7.8] },
+      { kind: "shot", from: [15.9, 7.5], to: [12.9, -0.8], t: [8.6] },
+    ],
+  },
+};
+
 export const DEFENSE = {
   id: "obrana",
   title: "Obrana",
   lead: "Nemáme míč. Chráníme bránu!",
-  scenes: [regain, goalSide, nearest, cover, side, patience, keep],
+  scenes: [regain, goalSide, nearest, cover, side, patience, keep, throwIn, corner],
 };
