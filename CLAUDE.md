@@ -69,6 +69,8 @@ playing, from media events) moves Kopík's mouth (`<Kopik talking>`), so a kid o
 under the `<Say>` bubble until sound gets unlocked. Scenes start
 by themselves 1.2 s after opening (`Play` `delay`), immediately after switching „Takhle ano / ne“. Clicking the already
 selected situation, „Takhle ano / ne“ or (home) „Máme / Nemáme míč“ plays it again; picking a situation silences Kopík (`stop`).
+The home board starts dimmed with a play button (first-time visitors didn't know what to do): it plays „Máme míč“, after
+Kopík „Nemáme míč“, then shows „Znovu“; the switch buttons cancel it.
 On mobile the situation list is a horizontal strip — the selected one scrolls to its middle. When „Takhle ano“ ends
 and Kopík has finished, 1.5 s pause, Kopík says `PHRASES.bad` and „Takhle ne“ plays by itself (`onNext`, only from the
 opening state; replay, toggle or leaving cancels it). `say`'s `onEnd` also fires when speech is cut off (🔊, voice off),
