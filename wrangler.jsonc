@@ -1,5 +1,5 @@
 // Cloudflare Workers – jen statické soubory z `npm run build` (žádný Worker kód).
-// Nasazení: `npm run deploy`.
+// Nasazení: samo po každém pushi do master (ručně `npm run deploy`).
 {
   "name": "fotbalove-abc",
   "compatibility_date": "2026-10-12",
