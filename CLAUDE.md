@@ -44,6 +44,11 @@ canonical, og:*, plus a `.seo` text + links in `#root` for crawlers without JS �
   skeleton (`.board`, `.scene-title`, `<Say>`, `.scene-extra`, `{children}`).
 - `src/pages/TopicPage.jsx` renders any topic; `src/pages/QuizPage.jsx` collects `scene.quiz` from all
   topics. Scene ids must be unique within a topic (they appear in URLs `?s=`).
+- Age category: the site is built for *starší přípravka* U10–U11 (5 + 1, default). The top-bar `<select>` switches to
+  *mladší přípravka* U8–U9 (4 + 1), remembered in localStorage `fotbal:age` (`src/lib/age.js`). Only scenes whose rules
+  differ carry `younger: { …scene keys… }`, merged over the scene by `forAge` (TopicPage, Quiz; `bad: null` / `quiz: null`
+  drop them): hřiště/pet-plus-jedna, hřiště/velikost, pravidla/aut, pravidla/kop-od-branky, brankar/mala-domu. Lint, voice
+  and SEO include the variants; the book prints U10–U11 only, so the U10–U11 `why` texts mention the U8–U9 difference.
 - `src/lib/lint.js` — data check (overlaps, bounds, caption length/spacing, labels covering a player or the ball — move a zone label with `at`). Runs on every topic page
   in DEV (`console.warn`, not in the prod bundle) and in `npm run check`. Keep it at zero warnings.
 - `src/scenes/videos.js` — YouTube videos per topic (`scene` = id of the situation it belongs to).
@@ -108,8 +113,9 @@ a Workbox service worker that precaches the app (`autoUpdate`; every navigation 
 are not precached — see Read-aloud).
 Install dialog = open source `<pwa-install>` (`@khmyznikov/pwa-install`, element in `index.html`, lazy-loaded by
 `src/lib/install.js`): offered by itself once (`fotbal:install`) on the home page of a returning visitor, otherwise the
-install button next to the voice button in the top bar (and a footer link). The top bar is full: its label breakpoints in
-`index.css` were measured so nothing overflows at 320–1440 px — re-measure after adding anything to it. Icons are rendered from the Kopík SVG; re-render them if Kopík changes.
+install button next to the voice button in the top bar (and a footer link). The top bar is full (brand, menu, U10–U11 select,
+install, voice): its label breakpoints in `index.css` were measured (with a 15 px scrollbar, install button forced, longer
+„Číst nahlas“) so nothing overflows at 320–1600 px — re-measure after adding anything to it. Icons are rendered from the Kopík SVG; re-render them if Kopík changes.
 Share preview: Open Graph / Twitter meta in `index.html` with absolute URLs, image `public/og.png` (1200×630, < 300 kB for
 WhatsApp) composed from the home-page board, Kopík and menu icons; per-page og:title/description/url come from `scripts/seo.mjs`.
 After changing it, re-scrape in the Facebook Sharing Debugger.

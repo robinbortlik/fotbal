@@ -29,7 +29,7 @@ export function PrivacyPage() {
             útoky (oprávněný zájem, čl. 6 odst. 1 písm. f) GDPR).
           </li>
           <li>
-            Prohlížeč si pamatuje jen vaše nastavení: zapnutý hlas, volbu u statistik, které situace dítě už vidělo a jestli jsme už nabídli instalaci.
+            Prohlížeč si pamatuje jen vaše nastavení: zapnutý hlas, kategorii přípravky (U8–U9 / U10–U11), volbu u statistik, které situace dítě už vidělo a jestli jsme už nabídli instalaci.
             Aby web fungoval i bez internetu, uloží si prohlížeč jeho soubory; nainstalovaná aplikace navíc nahrávky Kopíkova hlasu (asi 13 MB).
             Všechno zůstává ve vašem zařízení a nikam se neposílá.
           </li>

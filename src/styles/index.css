@@ -162,6 +162,19 @@ svg {
   background: var(--ink);
   color: var(--us);
 }
+/* Kategorie U10–U11 / U8–U9: nativní výběr, jen vzhled jako tlačítka vedle. */
+.age {
+  appearance: none;
+  padding: 8px 32px 8px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2317233b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center / 12px 8px;
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+}
 .footer {
   margin-top: 40px;
   padding: 28px 24px calc(28px + var(--tabbar));
@@ -1295,8 +1308,8 @@ button.footer-link {
 }
 
 /* ── Tablet a mobil ──────────────────────────────────────────────────── */
-/* Šířky lišty změřené (menu, Čtu nahlas, Nainstalovat): pod nimi by přetekla. */
-@media (max-width: 1299px) {
+/* Šířky lišty změřené (menu, U10–U11, Čtu nahlas, Nainstalovat; s posuvníkem 15 px): pod nimi by přetekla. */
+@media (max-width: 1439px) {
   .nav-link span {
     display: none;
   }
@@ -1329,7 +1342,7 @@ button.footer-link {
     --board-w: min(calc((100vh - 280px) * 0.699), 503px, 45vw);
   }
 }
-@media (max-width: 1419px) {
+@media (max-width: 1549px) {
   .install-app span {
     display: none;
   }
@@ -1339,9 +1352,22 @@ button.footer-link {
     display: none;
   }
 }
-@media (min-width: 761px) and (max-width: 1000px) {
+@media (min-width: 761px) and (max-width: 1139px) {
   .brand > span {
     display: none;
+  }
+}
+@media (min-width: 761px) and (max-width: 1000px) {
+  .topbar {
+    gap: 12px;
+  }
+  .nav-link.active span {
+    display: none; /* tablet na výšku: jen ikony, vybraná je žlutá */
+  }
+}
+@media (max-width: 469px) {
+  .brand > span {
+    display: none; /* telefon: Kopík zůstává jako odkaz na úvod */
   }
 }
 @media (max-width: 860px) {
@@ -1374,6 +1400,10 @@ button.footer-link {
   .voice,
   .install-app {
     padding: 8px 11px;
+  }
+  .age {
+    padding: 8px 26px 8px 10px;
+    background-position: right 9px center;
   }
   .consent-btns {
     width: 100%;

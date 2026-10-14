@@ -215,14 +215,17 @@ const throwOut = {
 /* Malá domů: obránce v tísni přihraje nohou zpátky. Brankář se nabídne vedle branky, míč
    NEchytá rukama, zpracuje ho nohou a vrátí ho kamarádovi, který se mezitím uvolnil.
    Takhle ne: brankář míč chytí do rukou → nepřímý volný kop pro soupeře před naší bránou. */
+const backPassStart = [
+  { t: 0, text: "Soupeř honí kamaráda. Ukaž se mu!", say: "Soupeř honí kamaráda s míčem. Ukaž se mu bokem, ať ti může přihrát zpátky." },
+  { t: 2.6, text: "Kamarád ti přihraje nohou zpátky.", say: "Kamarád ti přihraje nohou zpátky. Tomu se říká malá domů a platí pro ni zvláštní pravidlo." },
+];
 const backPass = {
   id: "mala-domu",
   title: "Malá domů",
   icon: "🦶",
   dur: 11.6,
   beats: [
-    { t: 0, text: "Soupeř honí kamaráda. Ukaž se mu!", say: "Soupeř honí kamaráda s míčem. Ukaž se mu bokem, ať ti může přihrát zpátky." },
-    { t: 2.6, text: "Kamarád ti přihraje nohou zpátky.", say: "Kamarád ti přihraje nohou zpátky. Tomu se říká malá domů a platí pro ni zvláštní pravidlo." },
+    ...backPassStart,
     { t: 5.2, text: "Malou domů nechytej. Zpracuj ji nohou!", say: "Malou domů nesmíš chytit do rukou, to by byl volný kop pro soupeře. Zpracuj ji nohou jako hráč v poli." },
     { t: 7.8, text: "Kamarád se uvolnil. Přihraj mu!", say: "Mezitím se kamarád uvolnil od soupeře. Přihraj mu a míč máme zase v bezpečí." },
   ],
@@ -245,7 +248,28 @@ const backPass = {
     { kind: "dribble", from: [3.8, 10.6], to: [4.4, 18], t: [9.0] },
     { kind: "check", at: [7.0, 3.2], t: [9.2] },
   ],
-  why: "„Malá domů“ je v 5+1 zakázaná (Pravidla FAČR 2023, pravidlo III): brankář nesmí chytit do rukou úmyslnou přihrávku nohou od spoluhráče. Trestá se nepřímým volným kopem z hranice pokutového území na spojnici s místem přestupku – proto brankář takový míč zpracuje nohou a rozehraje.",
+  why: "„Malá domů“ je v 5+1 zakázaná (Pravidla FAČR 2023, pravidlo III): brankář nesmí chytit do rukou úmyslnou přihrávku nohou od spoluhráče. Trestá se nepřímým volným kopem z hranice pokutového území na spojnici s místem přestupku – proto brankář takový míč zpracuje nohou a rozehraje. V mladší přípravce (U8–U9) ji chytit smí.",
+  // Mladší přípravka: malou domů chytit smí → chytí a hodí míč kamarádovi, který se uvolnil. Špatně to tu není.
+  younger: {
+    beats: [
+      ...backPassStart,
+      { t: 5.2, text: "Malou domů smíš chytit do rukou.", say: "V mladší přípravce smíš malou domů chytit do rukou. Ve starší už ne, tak ji zkoušej hrát i nohou." },
+      { t: 7.8, text: "Kamarád se uvolnil. Hoď mu míč!", say: "Mezitím se kamarád uvolnil od soupeře. Hoď mu míč a máme ho zase v bezpečí." },
+    ],
+    ball: [[0, 8.5, 11.0], [2.6, 8.2, 9.9], [3.4, 8.2, 9.9], [5.2, 11.4, 4.6], [5.5, "g", 0], [7.8, "g", 0], [8.8, "a"], [11.6, "a"]],
+    marks: [
+      { kind: "run", from: [15, 2.5], to: [11.4, 3.1], t: [0.4, 2.2] },
+      { kind: "pass", from: [8.2, 9.9], to: [11.4, 4.6], t: [3.4, 5.2] },
+      { kind: "label", at: [5.8, 3.2], text: "Rukama!", tone: "good", t: [5.2, 7.8] },
+      { kind: "run", from: [8.2, 11.4], to: [3.6, 8.6], t: [3.4, 5.8] },
+      { kind: "pass", from: [11.4, 3.1], to: [3.6, 10.1], t: [7.8, 9.0] },
+      { kind: "dribble", from: [3.8, 10.6], to: [4.4, 18], t: [9.0] },
+      { kind: "check", at: [7.0, 3.2], t: [9.2] },
+    ],
+    why: "V mladší přípravce (4 + 1) je „malá domů“ povolená (Pravidla FAČR 2023, pravidlo III): brankář smí chytit do rukou i úmyslnou přihrávku nohou od spoluhráče. Ve starší přípravce už je zakázaná, proto je dobré, když ji brankář zkouší zpracovat i nohou.",
+    bad: null,
+    quiz: null, // obě odpovědi by byly správně
+  },
   quiz: {
     at: 4.4,
     ask: "Kamarád ti přihrál nohou. Co uděláš?",
@@ -257,8 +281,7 @@ const backPass = {
   bad: {
     dur: 12.8,
     beats: [
-      { t: 0, text: "Soupeř honí kamaráda. Ukaž se mu!", say: "Soupeř honí kamaráda s míčem. Ukaž se mu bokem, ať ti může přihrát zpátky." },
-      { t: 2.6, text: "Kamarád ti přihraje nohou zpátky.", say: "Kamarád ti přihraje nohou zpátky. Tomu se říká malá domů a platí pro ni zvláštní pravidlo." },
+      ...backPassStart,
       { t: 5.2, text: "Ty ale míč chytíš do rukou.", say: "Ty ale míč chytíš do rukou. A to brankář nesmí, když mu kamarád přihrál nohou." },
       { t: 7.8, text: "Písk! Nepřímý volný kop pro soupeře.", say: "Sudí pískne a soupeř kope nepřímý volný kop. A to kousek před naší bránou!" },
       { t: 10.4, text: "Malou domů nechytej. Hraj ji nohou!", say: "Volný kop tak blízko brány je nebezpečný. Příště malou domů zpracuj nohou, ne rukama." },

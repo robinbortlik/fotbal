@@ -22,8 +22,8 @@ const texts = new Set(Object.values(PHRASES));
 for (const f of await fs.readdir("src/scenes")) {
   for (const topic of Object.values(await load(`/src/scenes/${f}`))) {
     for (const s of topic?.scenes || []) {
-      [s, s.bad].forEach((v) => v?.beats?.forEach((b) => texts.add(b.say ?? b.text)));
-      if (s.quiz) [s.quiz.ask, ...s.quiz.options.map((o) => o.text)].forEach((t) => texts.add(t));
+      [s, s.bad, s.younger, s.younger?.bad].forEach((v) => v?.beats?.forEach((b) => texts.add(b.say ?? b.text)));
+      [s.quiz, s.younger?.quiz].forEach((q) => q && [q.ask, ...q.options.map((o) => o.text)].forEach((t) => texts.add(t)));
       (s.Component?.TEXTS || []).forEach((t) => texts.add(t));
     }
   }

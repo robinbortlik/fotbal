@@ -29,9 +29,10 @@ export const RULES = [
 ];
 
 export const YOUNGER = [
-  "hraje 4 + 1 na hřišti 35–37 × 24–26 m, branky 5 × 2 nebo 3 × 2 m, míč velikosti 3",
-  "aut se smí vhodit rukama, přihrát nohou, nebo vyvést vedením",
-  "brankář smí s míčem vyjet a „malá domů“ je povolená",
+  "hraje 4 + 1 na hřišti 35–37 × 24–26 m (i na minihřišti s mantinely), branky 5 × 2 nebo 3 × 2 m, míč velikosti 3",
+  "aut se smí vhodit rukama, přihrát nohou, nebo vyvést (míč napřed v klidu na čáře); po vyvedení platí gól nejdřív třetím dotykem",
+  "při kopu od branky smí brankář míč vyvést, přihrát nohou, nebo vyhodit rukou (rukou i přes půlku)",
+  "„malá domů“ je povolená a brankář smí míč položený na zem znovu zvednout",
   "doporučená hrací doba 4 × 15 min",
 ];
 
@@ -63,7 +64,7 @@ export function ParentsPage() {
   return (
     <div className="page doc">
       <h1>Pro rodiče a trenéry</h1>
-      <p className="lead">Web je pro děti z přípravky (5–10 let). Všechno ukazuje na hře 5 + 1, jak ji hraje starší přípravka podle pravidel FAČR.</p>
+      <p className="lead">Web je pro děti z přípravky (5–10 let). Všechno ukazuje na hře 5 + 1, jak ji hraje starší přípravka (U10–U11) podle pravidel FAČR. Mladší přípravka (U8–U9) hraje 4 + 1 a pár pravidel má jinak — přepněte nahoře na U8–U9 a tyto situace se ukážou podle jejích pravidel.</p>
 
       <section>
         <h2>Kniha k vytištění</h2>
@@ -95,7 +96,7 @@ export function ParentsPage() {
       </section>
 
       <section>
-        <h2>Pravidla 5 + 1 v kostce</h2>
+        <h2>Pravidla 5 + 1 v kostce (U10–U11)</h2>
         <table className="rules">
           <tbody>
             {RULES.map(([k, v]) => (

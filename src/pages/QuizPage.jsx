@@ -11,12 +11,14 @@ import { ATTACK } from "../scenes/utok.js";
 import { DEFENSE } from "../scenes/obrana.js";
 import { KEEPER } from "../scenes/brankar.js";
 import { PAGES } from "../lib/nav.js";
+import { forAge, useAge } from "../lib/age.js";
 
 /* Kvíz „Co uděláš ty?“ — otázky jsou přímo ve scénách (pole quiz). Scéna se zastaví v čase
-   quiz.at, dítě odpoví a scéna se dohraje: ukáže správné řešení. */
-const ALL = [PITCH, RULES, ATTACK, DEFENSE, KEEPER].flatMap((topic) =>
-  topic.scenes.filter((s) => s.quiz).map((scene) => ({ topic, scene }))
-);
+   quiz.at, dítě odpoví a scéna se dohraje: ukáže správné řešení. Otázky podle vybrané kategorie (U8–U9 / U10–U11). */
+const all = (age) =>
+  [PITCH, RULES, ATTACK, DEFENSE, KEEPER].flatMap((topic) =>
+    topic.scenes.map((s) => forAge(s, age)).filter((s) => s.quiz).map((scene) => ({ topic, scene }))
+  );
 const ROUND = 8;
 
 const shuffle = (a) => {
@@ -29,13 +31,18 @@ const shuffle = (a) => {
 };
 
 export function QuizPage() {
-  const [round, setRound] = useState(() => shuffle(ALL).slice(0, ROUND));
+  const age = useAge();
+  return <Quiz key={age} age={age} />; // jiná kategorie → nové kolo
+}
+
+function Quiz({ age }) {
+  const [round, setRound] = useState(() => shuffle(all(age)).slice(0, ROUND));
   const [results, setResults] = useState([]);
   useEffect(() => {
     document.title = PAGES["/kviz"].title;
   }, []);
   const again = () => {
-    setRound(shuffle(ALL).slice(0, ROUND));
+    setRound(shuffle(all(age)).slice(0, ROUND));
     setResults([]);
   };
   const n = results.length;

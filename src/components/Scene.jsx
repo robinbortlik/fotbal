@@ -21,6 +21,7 @@ export const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion:
      why:     "věta pro trenéra/rodiče" (nepovinné)
      bad:     { …stejné klíče… }                  // varianta „Takhle ne“ (nepovinné)
      quiz:    { at, ask, options: [{ text, ok }] } // otázka do Kvízu: scéna se zastaví v čase at
+     younger: { …stejné klíče… }                  // mladší přípravka U8–U9, kde má jiná pravidla (src/lib/age.js)
    }
    from / to / at: [x, y] | "idHráče" | "ball" — pozice v čase začátku značky
    (s follow: true v aktuálním čase — čára jde s hráčem).

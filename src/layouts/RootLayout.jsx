@@ -5,7 +5,8 @@ import { Kopik } from "../components/Kopik.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { TweaksPanel, TweakSection, TweakToggle } from "../components/tweaks";
 import { useTweaks } from "../hooks/useTweaks.jsx";
-import { useVoice } from "../lib/voice.js";
+import { stop, useVoice } from "../lib/voice.js";
+import { AGES, setAge, useAge } from "../lib/age.js";
 import { showInstall, useCanInstall } from "../lib/install.js";
 import { NAV, BOOK } from "../lib/nav.js";
 
@@ -18,6 +19,7 @@ export default function RootLayout() {
   const voice = useVoice();
   const [consent, setConsent] = useState(() => statsChoice() == null); // ještě nevybral → lišta dole
   const canInstall = useCanInstall();
+  const age = useAge();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" }); // jiná stránka → nahoru; jiná situace téhož tématu ne
@@ -38,6 +40,22 @@ export default function RootLayout() {
             </NavLink>
           ))}
         </nav>
+        <select
+          className="age"
+          value={age}
+          onChange={(e) => {
+            stop(); // Kopík nedočte větu z druhé kategorie
+            setAge(e.target.value);
+          }}
+          aria-label="Kategorie přípravky"
+          title="Pravidla pro: U10–U11 = starší přípravka (5 + 1), U8–U9 = mladší přípravka (4 + 1)"
+        >
+          {AGES.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.label}
+            </option>
+          ))}
+        </select>
         {canInstall && (
           <button className="install-app" onClick={showInstall} title="Nainstalovat jako aplikaci">
             <Icon name="install" size={22} />
@@ -59,7 +77,7 @@ export default function RootLayout() {
       <footer className="footer">
         <p>
           Fotbalové ABC je pro děti z přípravky a jejich rodiče a trenéry. Hrajeme podle pravidel FAČR
-          pro přípravku (5 + 1).
+          pro starší přípravku U10–U11 (5 + 1); kde má mladší přípravka U8–U9 (4 + 1) jiná pravidla, přepněte nahoře.
         </p>
         <div className="footer-links">
           <Link to="/pro-rodice" className="footer-link">

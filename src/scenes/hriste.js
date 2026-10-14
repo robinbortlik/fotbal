@@ -39,7 +39,7 @@ const team = {
     { kind: "label", at: [15, 11.6], text: "5 hráčů v poli", tone: "us", t: [7.9] },
     { kind: "label", at: [15, 33.4], text: "Soupeř: 5 + 1", t: [9.2] },
   ],
-  why: "Starší přípravka hraje podle pravidel FAČR 5 + 1: pět hráčů v poli a brankář (nejméně 4 + 1), soupeř stejně. Doporučené rozestavení je 2-1-2 a děti se mají na postech střídat, i v brance.",
+  why: "Starší přípravka hraje podle pravidel FAČR 5 + 1: pět hráčů v poli a brankář (nejméně 4 + 1), soupeř stejně. Doporučené rozestavení je 2-1-2 a děti se mají na postech střídat, i v brance. Mladší přípravka (U8–U9) hraje 4 + 1.",
   // všichni už stojí na místech, štítek „5 hráčů v poli“ ještě není
   quiz: {
     at: 7.8,
@@ -50,8 +50,49 @@ const team = {
       { text: "Jedenáct", ok: false },
     ],
   },
+  // Mladší přípravka: 4 + 1 ve čtverci (2 vzadu, 2 vpředu), soupeř zrcadlově.
+  younger: {
+    title: "Hraje nás 4 + 1",
+    beats: [
+      { t: 0, text: "Hrajeme 4 + 1. Je nás pět!", say: "Hrajeme čtyři plus jedna. Čtyři a jedna je pět a tolik nás je na hřišti." },
+      { t: 2.6, text: "Jeden je brankář. Má jiný dres.", say: "Jeden z nás je brankář. Má jiný dres, aby každý poznal, že smí chytat rukama." },
+      { t: 5.4, text: "Čtyři hráči hrají v poli.", say: "Čtyři hráči hrají v poli. Každý má své místo, dva vzadu a dva vpředu." },
+      { t: 9.2, text: "Soupeř má taky 4 + 1. To je fér!", say: "Soupeř má taky čtyři hráče v poli a brankáře. Pět proti pěti, to je fér." },
+    ],
+    players: [
+      { id: "g", team: "us", gk: true, n: 1, path: [[0, 15, 7.2], [2.8, 15, 7.2], [4.2, 15, 2.5]] },
+      { id: "a", team: "us", n: 2, path: [[0, 12.6, 8.6], [5.5, 12.6, 8.6], [7.3, 8.5, 9.5]] },
+      { id: "b", team: "us", n: 3, path: [[0, 17.4, 8.6], [5.5, 17.4, 8.6], [7.3, 21.5, 9.5]] },
+      { id: "c", team: "us", n: 4, path: [[0, 12.6, 11.4], [5.5, 12.6, 11.4], [7.7, 9.5, 18.5]] },
+      { id: "d", team: "us", n: 5, path: [[0, 17.4, 11.4], [5.5, 17.4, 11.4], [7.7, 20.5, 18.5]] },
+      { id: "G", team: "them", gk: true, path: [[0, 15, 42.5]] },
+      { id: "t1", team: "them", path: [[0, 8.5, 35.5]] },
+      { id: "t2", team: "them", path: [[0, 21.5, 35.5]] },
+      { id: "t3", team: "them", path: [[0, 9.5, 26.5]] },
+      { id: "t4", team: "them", path: [[0, 20.5, 26.5]] },
+    ],
+    marks: [
+      { kind: "label", at: [21, 2.5], text: "Brankář", tone: "us", t: [3.8] },
+      { kind: "label", at: [15, 14], text: "4 hráči v poli", tone: "us", t: [7.9] },
+      { kind: "label", at: [15, 31], text: "Soupeř: 4 + 1", t: [9.2] },
+    ],
+    why: "Mladší přípravka hraje podle pravidel FAČR 4 + 1: čtyři hráči v poli a brankář, soupeř stejně. Pro tuto kategorii FAČR doporučuje rozestavení do čtverce (2-2) a děti se mají na postech střídat, i v brance.",
+    quiz: {
+      at: 7.8,
+      ask: "Kolik našich hraje v poli?",
+      options: [
+        { text: "Čtyři", ok: true },
+        { text: "Pět", ok: false },
+        { text: "Jedenáct", ok: false },
+      ],
+    },
+  },
 };
 
+const sizeEnd = [
+  { t: 7.2, text: "Hřiště dospělých je víc než dvakrát delší.", say: "Hřiště dospělých je víc než dvakrát delší i širší. Pro tebe by bylo moc velké." },
+  { t: 10, text: "Na malém hřišti máš míč častěji.", say: "Na malém hřišti nemáš k míči nikdy daleko. Proto si kopneš mnohem častěji." },
+];
 const size = {
   id: "velikost",
   title: "Velikost hřiště",
@@ -61,8 +102,7 @@ const size = {
     { t: 0, text: "Tohle je naše hřiště." },
     { t: 2.4, text: "Je dlouhé 45 metrů…", say: "Je dlouhé čtyřicet pět metrů, od jedné branky ke druhé." },
     { t: 4.8, text: "…a široké 30 metrů.", say: "A široké je třicet metrů, z jedné strany na druhou." },
-    { t: 7.2, text: "Hřiště dospělých je víc než dvakrát delší.", say: "Hřiště dospělých je víc než dvakrát delší i širší. Pro tebe by bylo moc velké." },
-    { t: 10, text: "Na malém hřišti máš míč častěji.", say: "Na malém hřišti nemáš k míči nikdy daleko. Proto si kopneš mnohem častěji." },
+    ...sizeEnd,
   ],
   players: [],
   ball: [[0, 15, 22.5]],
@@ -75,7 +115,24 @@ const size = {
     { kind: "run", from: [15, 11], to: [29.7, 11], t: [4.8] },
     { kind: "label", at: [15, 11], text: "30 m", tone: "us", t: [4.8] },
   ],
-  why: "Podle pravidel FAČR pro 5 + 1 má hřiště 43–45 × 28–30 m (doporučuje se větší rozměr), hřiště dospělých bývá 105 × 68 m. Na malém hřišti má každé dítě mnohem víc doteků s míčem.",
+  why: "Podle pravidel FAČR pro 5 + 1 má hřiště 43–45 × 28–30 m (doporučuje se větší rozměr), hřiště dospělých bývá 105 × 68 m. Na malém hřišti má každé dítě mnohem víc doteků s míčem. Mladší přípravka (U8–U9) hraje na 35–37 × 24–26 m.",
+  younger: {
+    beats: [
+      { t: 0, text: "Tohle je naše hřiště." },
+      { t: 2.4, text: "Je dlouhé 37 metrů…", say: "Je dlouhé třicet sedm metrů, od jedné branky ke druhé." },
+      { t: 4.8, text: "…a široké 26 metrů.", say: "A široké je dvacet šest metrů, z jedné strany na druhou." },
+      ...sizeEnd,
+    ],
+    marks: [
+      { kind: "run", from: [3, 22.5], to: [3, 0.3], t: [2.4] },
+      { kind: "run", from: [3, 22.5], to: [3, 44.7], t: [2.4] },
+      { kind: "label", at: [3, 22.5], text: "37 m", tone: "us", t: [2.4] },
+      { kind: "run", from: [15, 11], to: [0.3, 11], t: [4.8] },
+      { kind: "run", from: [15, 11], to: [29.7, 11], t: [4.8] },
+      { kind: "label", at: [15, 11], text: "26 m", tone: "us", t: [4.8] },
+    ],
+    why: "Podle pravidel FAČR pro mladší přípravku (4 + 1) má hřiště 35–37 × 24–26 m (doporučuje se větší rozměr), hrát se smí i na minihřišti s mantinely; hřiště dospělých bývá 105 × 68 m. Na malém hřišti má každé dítě mnohem víc doteků s míčem.",
+  },
 };
 
 const lines = {
@@ -175,7 +232,7 @@ const goals = {
     { kind: "shot", from: [15, 36.5], to: [13.1, 45.8], t: [6.6] },
     { kind: "label", at: [23.6, 43.4], text: "5 m × 2 m", tone: "us", t: [8] },
   ],
-  why: "Branky pro 5 + 1 jsou podle pravidel FAČR 5 × 2 m, se sítí a zajištěné proti převržení. Nejmenší děti si často pletou, kterou branku brání – pomáhá ukazovat směr útoku.",
+  why: "Branky pro 5 + 1 jsou podle pravidel FAČR 5 × 2 m, se sítí a zajištěné proti převržení (mladší přípravka smí hrát i na branky 3 × 2 m). Nejmenší děti si často pletou, kterou branku brání – pomáhá ukazovat směr útoku.",
 };
 
 const box = {
