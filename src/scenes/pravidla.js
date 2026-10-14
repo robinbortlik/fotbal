@@ -134,7 +134,37 @@ const throwIn = {
     { kind: "label", at: [3.4, 30.3], text: "2 m", t: [5.2, 8] },
     { kind: "pass", from: [-1.1, 30.3], to: [3.6, 26.4], t: [8] },
   ],
-  why: "Aut je, když celý míč přejde postranní čáru po zemi i vzduchem; vhazuje soupeř hráče, který se míče dotkl naposledy. U 5 + 1 se vhazuje rukama (obě ruce s míčem za hlavou, obě nohy na zemi), soupeř stojí nejméně 2 m a přímo z autu gól neplatí.",
+  why: "Aut je, když celý míč přejde postranní čáru po zemi i vzduchem; vhazuje soupeř hráče, který se míče dotkl naposledy. U 5 + 1 se vhazuje rukama (obě ruce s míčem za hlavou, obě nohy na zemi), soupeř stojí nejméně 2 m a přímo z autu gól neplatí. Mladší přípravka (U8–U9) smí aut i přihrát nohou nebo vyvést.",
+  // Mladší přípravka: míč se položí na čáru a hráč ho vyvede do hřiště (smí i vhodit nebo přihrát nohou),
+  // modrý napadá až po prvním doteku → přihrávka volnému kamarádovi.
+  younger: {
+    dur: 13,
+    beats: [
+      { t: 0, text: "Vedeš míč podél čáry.", say: "Vedeš míč podél postranní čáry. Modrý hráč ti ho chce vzít." },
+      { t: 2.6, text: "Modrý kopl míč ven. Aut pro nás!", say: "Modrý kopl míč celý za čáru. Dotkl se ho poslední, a proto aut rozehráváme my." },
+      { t: 5.2, text: "Soupeř musí stát aspoň 2 m od tebe.", say: "Soupeř musí stát aspoň dva metry od tebe. Při rozehrávání ti tak nemůže překážet." },
+      { t: 7.8, text: "Smíš vhodit, přihrát nohou, nebo vyvést.", say: "Polož míč na čáru. Smíš ho vhodit rukama, přihrát nohou, nebo s ním vyjet do hřiště." },
+      { t: 10.4, text: "Vyjel jsi s míčem. Přihraj volnému!", say: "Vyjel jsi s míčem do hřiště. Teď přihraj kamarádovi, který je volný." },
+    ],
+    players: [
+      { id: "d", team: "us", n: 5, tag: "Ty", hl: true, path: [[0, 7, 24.5], [0.4, 7, 24.5], [2.4, 7, 27], [3.4, 7, 27], [5, -0.4, 28.4], [8, -0.4, 28.4], [9.8, 3.6, 28.6]] },
+      { id: "e", team: "us", n: 6, path: [[0, 12, 21], [3.4, 12, 21], [5.6, 6.5, 24.2], [10, 6.5, 24.2], [11, 8, 22.6]] },
+      { id: "t1", team: "them", path: [[0, 10, 32.5], [0.4, 10, 32.5], [2.4, 8.2, 30.8], [3.6, 8.2, 30.8], [5, 3.8, 33.5], [8.4, 3.8, 33.5], [10.2, 4.8, 31.8]] },
+      { id: "t2", team: "them", path: [[0, 15, 29], [3.4, 15, 29], [5.6, 9, 27.5]] },
+    ],
+    // Míč za čarou → položený na čáru (před nohama) → vyvedení → přihrávka šestce.
+    ball: [[0, "d"], [2.4, "d"], [2.6, 7.4, 28.8], [3.3, -1.4, 30.5], [5, -1.4, 30.5], [5.4, -0.4, 29.9], [8, "d"], [9.8, "d"], [11, "e"], [13, "e"]],
+    marks: [
+      { kind: "dribble", from: [7, 26], to: [7, 28.3], t: [0.4, 3.4] },
+      { kind: "zone", rect: [-0.4, 22, 0.8, 16], tone: "us", t: [3] },
+      { kind: "label", at: [-0.2, 36.8], text: "Aut", tone: "us", t: [3] },
+      { kind: "zone", circle: [-0.4, 28.4, 3.3], tone: "good", t: [5.2, 8] },
+      { kind: "label", at: [3.2, 28.6], text: "2 m", t: [5.2, 8] },
+      { kind: "dribble", from: [0.4, 29.9], to: [3.6, 30.1], t: [7.8, 10.4] },
+      { kind: "pass", from: [3.6, 30.1], to: [7.8, 24.1], t: [10] },
+    ],
+    why: "U mladší přípravky (4 + 1) se aut rozehrává třemi způsoby: vhozením rukama (obě ruce s míčem za hlavou, obě nohy na zemi), přihrávkou nohou, nebo vyvedením – míč se nejdřív položí do klidu na pomezní čáru. Soupeř stojí nejméně 2 m. Přímo z autu gól neplatí, po vyvedení nejdříve třetím dotykem.",
+  },
 };
 
 const corner = {
@@ -191,6 +221,8 @@ const gkTeam = [
   { id: "t3", team: "them", path: [[0, 14, 19], [2.8, 14, 19], [4.8, 13.5, 16.5]] },
   { id: "t4", team: "them", path: [[0, 17.5, 11.5], [1.4, 17.5, 11.5], [3.4, 19.5, 9]] },
 ];
+const gkOut = { t: 5.2, text: "Modří musí ven z pokutového území.", say: "Modří musí ven z pokutového území. Brankář tak má klid a místo na přihrávku." };
+const gkEnd = { t: 10.4, text: "Míč je u tebe. Teď smí modrý napadat.", say: "Jakmile se míče dotkneš, smí modrý napadat. Rozhlédni se a přihraj rychle dál." };
 const gkStart = [
   { t: 0, text: "Modrý hráč střílí na naši bránu." },
   { t: 2.6, text: "Vedle! Kop od branky pro nás.", say: "Vedle! Míč přešel naši brankovou čáru a naposledy se ho dotkl modrý, proto kopeme od branky my." },
@@ -205,9 +237,9 @@ const goalKick = {
   dur: 12.8,
   beats: [
     ...gkStart,
-    { t: 5.2, text: "Modří musí ven z pokutového území.", say: "Modří musí ven z pokutového území. Brankář tak má klid a místo na přihrávku." },
+    gkOut,
     { t: 7.8, text: "Brankář ti přihraje krátce po zemi.", say: "Brankář kope míč ze země a přihrát smí komukoli, i tobě v území. Krátká přihrávka po zemi je nejbezpečnější." },
-    { t: 10.4, text: "Míč je u tebe. Teď smí modrý napadat.", say: "Jakmile se míče dotkneš, smí modrý napadat. Rozhlédni se a přihraj rychle dál." },
+    gkEnd,
   ],
   players: [
     { id: "a", team: "us", n: 2, tag: "Ty", hl: true, path: [[0, 8, 9], [2.6, 8, 9], [4.6, 5.5, 3.2], [10.4, 5.5, 3.2], [11.5, 5, 6]] },
@@ -225,7 +257,17 @@ const goalKick = {
     { kind: "pass", from: [16, 3], to: [5.5, 4.7], t: [8] },
     { kind: "pass", from: [5.4, 5.4], to: [5.1, 13.5], t: [10.8] },
   ],
-  why: "Kop od branky následuje, když celý míč přejde naši brankovou čáru mimo branku a naposledy se ho dotkl soupeř. U 5 + 1 kope brankář míč ze země jen nohou, soupeř musí z pokutového území a napadat smí až po prvním doteku hráče, který přihrávku převzal; míč nesmí bez doteku země či hráče přeletět půlicí čáru (jinak nepřímý volný kop soupeře z půlicí čáry).",
+  why: "Kop od branky následuje, když celý míč přejde naši brankovou čáru mimo branku a naposledy se ho dotkl soupeř. U 5 + 1 kope brankář míč ze země jen nohou, soupeř musí z pokutového území a napadat smí až po prvním doteku hráče, který přihrávku převzal; míč nesmí bez doteku země či hráče přeletět půlicí čáru (jinak nepřímý volný kop soupeře z půlicí čáry). Mladší přípravka (U8–U9): brankář smí míč i vyvést nebo vyhodit rukou.",
+  // Mladší přípravka: animace stejná (krátká přihrávka platí i tam), Kopík řekne, co brankář smí navíc.
+  younger: {
+    beats: [
+      ...gkStart,
+      gkOut,
+      { t: 7.8, text: "Brankář ti přihraje krátce po zemi.", say: "Brankář smí míč přihrát, vyvést, nebo hodit rukou. Krátká přihrávka po zemi je nejbezpečnější." },
+      gkEnd,
+    ],
+    why: "U mladší přípravky (4 + 1) smí brankář při kopu od branky míč přihrát nohou, vyvést (soupeř ho pak smí napadat po prvním doteku nohou) nebo vyhodit rukou – rukou i přes půlku. Soupeř musí z pokutového území. Nohou míč nesmí bez doteku země či hráče přeletět půlicí čáru (jinak nepřímý volný kop soupeře z půlicí čáry).",
+  },
   quiz: {
     at: 7.4,
     ask: "Kop od branky. Kam kopne brankář?",
@@ -239,7 +281,7 @@ const goalKick = {
     beats: [
       ...gkStart,
       { t: 5.2, text: "Brankář ale nakopne míč daleko dopředu.", say: "Brankář ale nakopne míč daleko dopředu. Míč letí vzduchem přes půlku hřiště." },
-      { t: 7.8, text: "To se nesmí! Volný kop pro modré z půlky.", say: "Z pokutového území nesmí míč přeletět půlku vzduchem. Modří proto kopou volný kop z půlicí čáry." },
+      { t: 7.8, text: "To se nesmí! Volný kop pro modré z půlky.", say: "Kopnutý míč nesmí z území přeletět půlku vzduchem. Modří proto kopou volný kop z půlicí čáry." },
       { t: 10.4, text: "Příště přihraj krátce a po zemi.", say: "Příště přihraj krátce po zemi kamarádovi. Míč tak zůstane náš." },
     ],
     players: [
@@ -450,7 +492,7 @@ const subs = {
     { kind: "pass", from: [23, 19.5], to: [22.6, 26.5], t: [5.4, 7] },
     { kind: "run", from: [-1.1, 20.5], to: [9, 22.5], t: [5.2, 7.6] },
   ],
-  why: "U 5 + 1 je střídání opakované a bez přerušení hry: kdykoli, kolikrát chcete, ale jen v prostoru střídaček a tak, aby na hřišti bylo vždy právě 5 hráčů a brankář. Nový hráč vběhne, až když střídaný opustí hřiště.",
+  why: "U 5 + 1 je střídání opakované a bez přerušení hry: kdykoli, kolikrát chcete, ale jen v prostoru střídaček a tak, aby na hřišti bylo vždy právě 5 hráčů a brankář (u mladší přípravky 4 a brankář). Nový hráč vběhne, až když střídaný opustí hřiště.",
 };
 
 const fairPlay = {

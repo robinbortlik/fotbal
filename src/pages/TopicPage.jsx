@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Scene, reducedMotion } from "../components/Scene.jsx";
 import { Icon } from "../components/Icons.jsx";
@@ -6,6 +6,7 @@ import { Video } from "../components/Video.jsx";
 import { VIDEOS } from "../scenes/videos.js";
 import { NAV, pageTitle } from "../lib/nav.js";
 import { stop } from "../lib/voice.js";
+import { forAge, useAge } from "../lib/age.js";
 
 /* Stránka tématu (Pravidla, Útok, Obrana, Brankář): seznam situací + přehrávač.
    topic = { id, title, lead, scenes: [scéna | { id, title, icon, Component }] }; videa v src/scenes/videos.js
@@ -35,10 +36,12 @@ export function TopicPage({ topic }) {
       /* jen pro tuto návštěvu */
     }
   };
-  const found = topic.scenes.findIndex((s) => s.id === sid);
+  const age = useAge();
+  const scenes = useMemo(() => topic.scenes.map((s) => forAge(s, age)), [topic, age]); // U8–U9: kde se pravidla liší
+  const found = scenes.findIndex((s) => s.id === sid);
   const i = Math.max(0, found); // neznámá situace → první
-  const scene = topic.scenes[i];
-  const next = topic.scenes[i + 1];
+  const scene = scenes[i];
+  const next = scenes[i + 1];
   const [run, setRun] = useState(0); // klik na už vybranou situaci ji pustí znovu od začátku
   const pick = (s, scroll) => {
     stop(); // Kopík nedočte větu ze staré scény
@@ -63,7 +66,7 @@ export function TopicPage({ topic }) {
   }, [topic]);
   useEffect(() => {
     document.title = pageTitle(found >= 0 && scene.title, topic.title);
-  }, [topic, found]);
+  }, [topic, found, scene.title]);
   // „Další“ přes tabuli na konci scény: další situace, za poslední situací další téma (za Brankářem Kvíz).
   const after = NAV[NAV.findIndex((n) => n.id === topic.id) + 1];
   const onward = next ? { title: next.title, go: () => pick(next) } : after && { title: after.label, go: () => navigate(after.path) };
@@ -88,7 +91,7 @@ export function TopicPage({ topic }) {
       </header>
       <div className="topic-body">
         <nav className="scene-list" aria-label="Situace" ref={list}>
-          {topic.scenes.map((s) => (
+          {scenes.map((s) => (
             <button key={s.id} className="scene-pick" aria-current={s === scene} onClick={() => pick(s)}>
               <span className="scene-ico" aria-hidden="true">
                 {s.icon}
@@ -103,7 +106,7 @@ export function TopicPage({ topic }) {
             <Custom key={topic.id + scene.id + run}>{nextBtn}</Custom>
           ) : (
             <Scene
-              key={topic.id + scene.id + run}
+              key={topic.id + scene.id + run + age}
               scene={scene}
               next={onward}
               onEnded={() => markSeen(topic.id + "/" + scene.id)}

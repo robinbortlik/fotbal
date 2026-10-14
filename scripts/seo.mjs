@@ -39,7 +39,12 @@ try {
     const lead = `${t.lead} V animacích: ${t.scenes.map((s) => s.title).join(", ")}.`;
     pages.push({ url: n.path, title: pageTitle(t.title), description: cut(lead), h1: t.title, text: [lead], links: list });
     for (const s of t.scenes) {
-      const text = [spoken(s), s.bad?.beats && `Takhle ne: ${said(s.bad.beats)}`, s.why && `Pro rodiče a trenéry: ${s.why}`];
+      const text = [
+        spoken(s),
+        s.bad?.beats && `Takhle ne: ${said(s.bad.beats)}`,
+        s.why && `Pro rodiče a trenéry: ${s.why}`,
+        s.younger?.why && `Mladší přípravka (U8–U9): ${s.younger.why}`,
+      ];
       pages.push({ url: `/${t.id}/${s.id}`, title: pageTitle(s.title, t.title), description: cut(spoken(s)), h1: s.title, text: text.filter(Boolean), links: list });
     }
   }
@@ -82,7 +87,8 @@ try {
     for (const s of t.scenes) {
       const bad = s.bad?.beats ? ` Takhle ne: ${said(s.bad.beats)}` : "";
       const why = s.why ? ` Proč: ${s.why}` : "";
-      out.push(`- [${s.title}](${SITE}/${t.id}/${s.id}): ${spoken(s)}${bad}${why}`);
+      const young = s.younger?.why ? ` Mladší přípravka (U8–U9): ${s.younger.why}` : "";
+      out.push(`- [${s.title}](${SITE}/${t.id}/${s.id}): ${spoken(s)}${bad}${why}${young}`);
     }
   }
   out.push("", "## Pravidla 5 + 1 v kostce", "", ...RULES.map(([k, v]) => `- ${k}: ${v}`));

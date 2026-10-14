@@ -13,8 +13,10 @@ export function lintTopic(topic) {
     if (ids.has(sc.id)) out.push(`${sc.id}: duplicitní id`);
     ids.add(sc.id);
     if (sc.Component) continue;
-    check(sc, sc.id, out);
-    if (sc.bad) check({ ...sc, ...sc.bad }, sc.id + " (Takhle ne)", out);
+    for (const [v, name] of [[sc, sc.id], ...(sc.younger ? [[{ ...sc, ...sc.younger }, sc.id + " (U8–U9)"]] : [])]) {
+      check(v, name, out);
+      if (v.bad) check({ ...v, ...v.bad }, name + " (Takhle ne)", out);
+    }
   }
   out.forEach((m) => console.warn(`[scéna] ${topic.id}/${m}`));
   return out;
