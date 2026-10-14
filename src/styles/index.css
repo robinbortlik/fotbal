@@ -925,6 +925,33 @@ button.footer-link {
 .again-list a {
   font-weight: 700;
 }
+/* Kopík mluví: pusa se otvírá a zavírá (bez animací zůstane jen víc otevřená) */
+.kopik-mouth {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+}
+.kopik.talking .kopik-mouth {
+  transform: scaleY(1.5);
+  animation: talk 0.7s ease-in-out infinite;
+}
+@keyframes talk {
+  0%,
+  100% {
+    transform: scaleY(1.4);
+  }
+  20% {
+    transform: scaleY(0.35);
+  }
+  45% {
+    transform: scaleY(1.9);
+  }
+  65% {
+    transform: scaleY(0.6);
+  }
+  85% {
+    transform: scaleY(1.5);
+  }
+}
 .kopik-jump {
   animation: jump 0.9s ease-in-out 3;
 }
