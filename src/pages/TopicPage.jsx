@@ -4,7 +4,7 @@ import { Scene, reducedMotion } from "../components/Scene.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { Video } from "../components/Video.jsx";
 import { VIDEOS } from "../scenes/videos.js";
-import { pageTitle } from "../lib/nav.js";
+import { NAV, pageTitle } from "../lib/nav.js";
 import { stop } from "../lib/voice.js";
 
 /* Stránka tématu (Pravidla, Útok, Obrana, Brankář): seznam situací + přehrávač.
@@ -64,6 +64,9 @@ export function TopicPage({ topic }) {
   useEffect(() => {
     document.title = pageTitle(found >= 0 && scene.title, topic.title);
   }, [topic, found]);
+  // „Další“ přes tabuli na konci scény: další situace, za poslední situací další téma (za Brankářem Kvíz).
+  const after = NAV[NAV.findIndex((n) => n.id === topic.id) + 1];
+  const onward = next ? { title: next.title, go: () => pick(next) } : after && { title: after.label, go: () => navigate(after.path) };
   const videos = VIDEOS[topic.id] || [];
   const video = videos.find((v) => v.scene === scene.id);
   const nextBtn = (
@@ -99,7 +102,12 @@ export function TopicPage({ topic }) {
           {Custom ? (
             <Custom key={topic.id + scene.id + run}>{nextBtn}</Custom>
           ) : (
-            <Scene key={topic.id + scene.id + run} scene={scene} onEnded={() => markSeen(topic.id + "/" + scene.id)}>
+            <Scene
+              key={topic.id + scene.id + run}
+              scene={scene}
+              next={onward}
+              onEnded={() => markSeen(topic.id + "/" + scene.id)}
+            >
               {nextBtn}
             </Scene>
           )}

@@ -23,9 +23,10 @@ export const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion:
      quiz:    { at, ask, options: [{ text, ok }] } // otázka do Kvízu: scéna se zastaví v čase at
    }
    from / to / at: [x, y] | "idHráče" | "ball" — pozice v čase začátku značky
-   (s follow: true v aktuálním čase — čára jde s hráčem). */
-export function Scene({ scene, children, onEnded }) {
-  const [bad, setBad] = useState(null); // null = scéna se právě otevřela (rozběhne se až za chvilku)
+   (s follow: true v aktuálním čase — čára jde s hráčem).
+   next = { title, go } — kam vede „Další“ v nabídce na konci (jako konec videa na YouTube). */
+export function Scene({ scene, children, onEnded, next }) {
+  const [bad, setBad] = useState(null); // null = celá situace od začátku: „Takhle ano“, pak sama „Takhle ne“
   const [run, setRun] = useState(0);
   const show = (b) => {
     setBad(b);
@@ -47,9 +48,11 @@ export function Scene({ scene, children, onEnded }) {
       key={run}
       s={s}
       compare={compare}
-      delay={bad === null ? 1200 : 0}
+      delay={run ? 0 : 1200} // po otevření se dítě chvilku rozkouká, po kliknutí hned
       onEnded={bad ? null : onEnded}
       onNext={bad === null && scene.bad ? () => show(true) : null}
+      onReplay={() => show(null)}
+      next={next}
     >
       {children}
     </Play>
@@ -65,7 +68,7 @@ export function beatAt(s, t) {
   return bi;
 }
 
-function Play({ s, compare, delay, children, onEnded, onNext }) {
+function Play({ s, compare, delay, children, onEnded, onNext, onReplay, next }) {
   const still = reducedMotion();
   const { time, setTime, playing, setPlaying } = useTimeline(s.dur, false, false);
   // Pustí se sama: po otevření scény za 1,2 s (dítě se rozkouká), po přepnutí Ano/Ne hned.
@@ -137,9 +140,36 @@ function Play({ s, compare, delay, children, onEnded, onNext }) {
     };
   }, [chain]);
 
+  // Konec jako u videa: přes tabuli „Znovu“ a „Další“ (na mobilu děti nevědí, že seznam situací nahoře jede do strany).
+  // Jen když opravdu dohrála (ne hned po otevření bez animací) a nenavazuje „Takhle ne“.
+  const [played, setPlayed] = useState(false);
+  useEffect(() => {
+    if (playing) setPlayed(true);
+  }, [playing]);
+  const over = done && played && !chain;
+
   return (
     <div className="scene">
-      <SceneBoard s={s} time={time} />
+      <SceneBoard s={s} time={time}>
+        {over && (
+          <div className="board-end">
+            <button className="end-btn" onClick={onReplay} aria-label="Znovu">
+              <span className="end-ico">
+                <Icon name="replay" size={34} />
+              </span>
+              <span className="end-label">Znovu</span>
+            </button>
+            {next && (
+              <button className="end-btn end-next" onClick={next.go} aria-label={`Další: ${next.title}`}>
+                <span className="end-ico">
+                  <Icon name="next" size={40} />
+                </span>
+                <span className="end-label">Další</span>
+              </button>
+            )}
+          </div>
+        )}
+      </SceneBoard>
       <h2 className="scene-title">{s.title}</h2>
       {compare}
       <Say text={note ?? beat?.text} spoken={note ?? beat?.say} />
@@ -186,8 +216,8 @@ function Play({ s, compare, delay, children, onEnded, onNext }) {
   );
 }
 
-/* Tabule se scénou v čase time — čisté vykreslení, bez hodin (používá i Kvíz). */
-export function SceneBoard({ s, time }) {
+/* Tabule se scénou v čase time — čisté vykreslení, bez hodin (používá i Kvíz). children = vrstva přes tabuli. */
+export function SceneBoard({ s, time, children }) {
   const byId = Object.fromEntries((s.players || []).map((p) => [p.id, p]));
   const pos = (id, t) => at(byId[id]?.path, t);
   const fwd = (id) => (byId[id]?.team === "them" ? -1 : 1);
@@ -216,6 +246,7 @@ export function SceneBoard({ s, time }) {
         {ball && <Ball x={ball.x} y={ball.y} />}
         {marks.filter((m) => isTop(m) || (m.kind === "zone" && m.text)).map(draw("over"))}
       </Pitch>
+      {children}
     </div>
   );
 }

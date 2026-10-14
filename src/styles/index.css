@@ -412,6 +412,85 @@ button.footer-link {
   width: 100%;
   height: auto;
 }
+.board {
+  position: relative;
+}
+
+/* Konec scény jako u videa: tabule ztmavne, přes ni „Znovu“ a „Další“ */
+.board-end {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-auto-flow: column;
+  place-content: center;
+  align-items: end; /* popisky na jedné čáře, i když je „Další“ větší */
+  gap: clamp(10px, 8cqw, 36px);
+  container-type: size; /* tlačítka rostou s tabulí (na malém telefonu má jen ~120 px) */
+  background: rgba(23, 35, 59, 0.55);
+  animation: end-in 0.35s ease-out 0.4s both;
+}
+.end-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(14px, 6.5cqw, 20px);
+  color: #fff;
+  text-shadow: 0 2px 0 var(--ink);
+}
+.end-ico {
+  display: grid;
+  place-items: center;
+  width: clamp(32px, 22cqw, 64px);
+  height: clamp(32px, 22cqw, 64px);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--press);
+}
+.end-ico svg {
+  width: 55%;
+  height: 55%;
+}
+.end-next .end-ico {
+  width: clamp(40px, 29cqw, 84px);
+  height: clamp(40px, 29cqw, 84px);
+  background: var(--us);
+}
+.end-next svg {
+  animation: nudge 1.6s ease-in-out 1.2s infinite; /* šipka ťukne dopředu: tudy dál */
+}
+.end-btn:active .end-ico {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+@container (max-width: 160px) {
+  .end-label {
+    display: none; /* tabule na malém telefonu: stačí ikony */
+  }
+}
+@keyframes end-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes nudge {
+  0%,
+  70%,
+  100% {
+    transform: none;
+  }
+  80% {
+    transform: translateX(5px);
+  }
+  90% {
+    transform: translateX(-2px);
+  }
+}
 .scene > .board {
   width: var(--board-w);
   justify-self: center;

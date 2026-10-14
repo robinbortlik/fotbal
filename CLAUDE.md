@@ -68,7 +68,11 @@ selected situation, „Takhle ano / ne“ or (home) „Máme / Nemáme míč“ 
 On mobile the situation list is a horizontal strip — the selected one scrolls to its middle. When „Takhle ano“ ends
 and Kopík has finished, 1.5 s pause, Kopík says `PHRASES.bad` and „Takhle ne“ plays by itself (`onNext`, only from the
 opening state; replay, toggle or leaving cancels it). `say`'s `onEnd` also fires when speech is cut off (🔊, voice off),
-otherwise a scene waiting for Kopík would freeze.
+otherwise a scene waiting for Kopík would freeze. When the situation has really played to the end (not right after the
+chain hands over to „Takhle ne“, not the still frame of reduced motion), an end screen like on YouTube dims the board:
+„Znovu“ (whole situation again, at once) and „Další“ (`next` from `TopicPage`: next situation, after the last one the next
+topic from `NAV`) — on mobile kids don't know the situation strip scrolls sideways. Its buttons scale with the board
+(container query), labels hide on a board under 160 px.
 
 ### Book (PDF to print)
 `book.html` + `src/book/Book.jsx` lay the whole site out as A4-landscape pages (cover, Kopík + how to read the board, contents,
