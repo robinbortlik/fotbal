@@ -352,18 +352,17 @@ button.footer-link {
 }
 
 /* Scéna: tabule vlevo, vše ostatní vpravo. Vlastní interaktivní situace používají
-   stejné třídy (.board, .scene-title, .say, .controls, .scene-extra, .next). */
+   stejné třídy (.board, .scene-title, .say, .scene-extra, .next). */
 .scene {
   /* šířka tabule: podle výšky okna, ale nikdy víc než 40 % šířky (poměr stran hřiště 34,8 : 49,8) */
   --board-w: min(calc((100vh - 200px) * 0.699), 503px, 40vw);
   display: grid;
   grid-template-columns: var(--board-w) minmax(220px, 520px);
-  grid-template-rows: repeat(8, auto) 1fr;
+  grid-template-rows: repeat(7, auto) 1fr;
   grid-template-areas:
     "board title"
     "board compare"
     "board say"
-    "board controls"
     "board extra"
     "board why"
     "board video"
@@ -385,9 +384,6 @@ button.footer-link {
 }
 .scene > .say {
   grid-area: say;
-}
-.scene > .controls {
-  grid-area: controls;
 }
 .scene > .scene-extra {
   grid-area: extra;
@@ -416,16 +412,69 @@ button.footer-link {
   position: relative;
 }
 
-/* Konec scény jako u videa: tabule ztmavne, přes ni „Znovu“ a „Další“ */
+/* Ovládání jako u videa, přímo na tabuli: ťuknutí zastaví, při pauze velké „Pustit“,
+   průběh po krocích jako tenká čárka nahoře. */
+.board-tap,
+.board-play,
 .board-end {
   position: absolute;
   inset: 0;
+  container-type: size; /* tlačítka rostou s tabulí (na malém telefonu má jen ~120 px) */
+}
+.board-tap,
+.board-play {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.board-tap:focus-visible,
+.board-play:focus-visible {
+  outline-offset: -6px; /* tabule má overflow: hidden → rámeček dovnitř */
+}
+.board-play {
+  display: grid;
+  place-items: center;
+  background: rgba(23, 35, 59, 0.35);
+  animation: end-in 0.2s ease-out both;
+}
+.board-play .end-ico {
+  width: clamp(48px, 30cqw, 96px);
+  height: clamp(48px, 30cqw, 96px);
+  background: var(--us);
+}
+.board-play .end-ico svg {
+  margin-left: 6%; /* trojúhelník opticky doprostřed */
+}
+.board-play:active .end-ico {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+.board-progress {
+  position: absolute;
+  z-index: 1;
+  top: 4px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  gap: 4px;
+  height: 4px;
+  pointer-events: none;
+}
+.board-progress span {
+  flex: 1;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fff calc(var(--fill) * 100%), rgba(255, 255, 255, 0.3) 0);
+}
+
+/* Konec scény jako u videa: tabule ztmavne, přes ni „Znovu“ a „Další“ */
+.board-end {
   display: grid;
   grid-auto-flow: column;
   place-content: center;
   align-items: end; /* popisky na jedné čáře, i když je „Další“ větší */
   gap: clamp(10px, 8cqw, 36px);
-  container-type: size; /* tlačítka rostou s tabulí (na malém telefonu má jen ~120 px) */
   background: rgba(23, 35, 59, 0.55);
   animation: end-in 0.35s ease-out 0.4s both;
 }
@@ -542,40 +591,6 @@ button.footer-link {
     transform: scale(0.94);
     opacity: 0.4;
   }
-}
-
-/* Ovládání animace */
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.play {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  background: var(--us);
-  border: 3px solid var(--ink);
-  box-shadow: var(--press);
-}
-.play:active {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 var(--ink);
-}
-.beats {
-  flex: 1;
-  display: flex;
-  gap: 8px;
-}
-.beat {
-  flex: 1;
-  height: 22px;
-  border-radius: 999px;
-  border: 3px solid var(--ink);
-  background: linear-gradient(90deg, var(--ink) calc(var(--fill) * 100%), var(--paper) 0);
 }
 
 /* Takhle ano / takhle ne */
@@ -1282,10 +1297,10 @@ button.footer-link {
 }
 @media (max-width: 860px) {
   .scene {
-    --board-w: min(100%, calc((100svh - 400px) * 0.699), 520px);
+    --board-w: min(100%, calc((100svh - 320px) * 0.699), 520px); /* pod tabulí už není ovládání → větší */
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: none;
-    grid-template-areas: "title" "say" "board" "controls" "extra" "compare" "why" "video" "next";
+    grid-template-areas: "title" "say" "board" "extra" "compare" "why" "video" "next";
     row-gap: 14px;
   }
   .quiz .scene {
