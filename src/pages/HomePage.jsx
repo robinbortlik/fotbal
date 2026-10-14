@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Link } from "react-router-dom";
 import { Pitch, Player, Ball, Mark } from "../components/Board.jsx";
@@ -30,14 +30,15 @@ function Hero() {
   const [phase, setPhase] = useState("attack");
   const [prev, setPrev] = useState(null);
   const [snap, setSnap] = useState(false); // hráči přeskočí bez přechodu
+  const now = useRef(phase); // aktuální postavení i pro časovače ukázky (stav v nich je starý)
   const shape = SHAPES[phase];
   const m = (pt) => ({ x: pt[0] * W, y: pt[1] * L });
   const holder = m(shape[shape.ball.team][shape.ball.i]);
   const ball = { x: holder.x, y: holder.y + (shape.ball.team === "us" ? 1.5 : -1.5) };
-  const choose = (p) => {
-    const from = p !== phase ? phase : p === "attack" ? "defend" : "attack";
-    if (p === phase) {
-      // Znovu stejné tlačítko: hráči skočí do druhého postavení a přeběhnou znovu.
+  const move = (p) => {
+    const from = p !== now.current ? now.current : p === "attack" ? "defend" : "attack";
+    if (p === now.current) {
+      // Znovu stejné postavení: hráči skočí do druhého a přeběhnou znovu.
       flushSync(() => {
         setSnap(true);
         setPhase(from);
@@ -45,8 +46,36 @@ function Hero() {
       void document.body.offsetWidth; // prohlížeč si skok zapíše, jinak by přechod nezačal
       setSnap(false);
     }
+    now.current = p;
     setPrev(from);
     setPhase(p);
+  };
+
+  // Kdo přijde poprvé, neví, co dělat: přes tabuli velké „Pustit“. Ukázka: Máme míč → Kopík dořekne →
+  // Nemáme míč → „Znovu“. Přepínač ji kdykoli přeruší a tabuli odkryje.
+  const [demo, setDemo] = useState("start"); // start | run | end | off (dítě přepíná samo)
+  const show = useRef(0); // číslo běžící ukázky; po přerušení se zvýší a staré časovače nic neudělají
+  const wait = useRef();
+  const quit = () => {
+    show.current++;
+    clearTimeout(wait.current);
+  };
+  useEffect(() => quit, []);
+  const play = () => {
+    quit();
+    const id = show.current;
+    setDemo("run");
+    const step = (p, then, pause) => {
+      move(p);
+      const go = () => id === show.current && (wait.current = setTimeout(then, pause));
+      say(SHAPES[p].text, { onEnd: go }) || (wait.current = setTimeout(then, 3000)); // bez hlasu: chvíli na přečtení
+    };
+    step("attack", () => step("defend", () => setDemo("end"), 0), 1200);
+  };
+  const choose = (p) => {
+    quit();
+    setDemo("off");
+    move(p);
     say(SHAPES[p].text);
   };
 
@@ -88,6 +117,23 @@ function Hero() {
             <Ball {...ball} />
           </g>
         </Pitch>
+        {demo === "start" && (
+          <button className="board-play" onClick={play} aria-label="Pustit ukázku">
+            <span className="end-ico">
+              <Icon name="play" size={44} />
+            </span>
+          </button>
+        )}
+        {demo === "end" && (
+          <div className="board-end">
+            <button className="end-btn" onClick={play} aria-label="Znovu">
+              <span className="end-ico">
+                <Icon name="replay" size={34} />
+              </span>
+              <span className="end-label">Znovu</span>
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
