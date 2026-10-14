@@ -54,6 +54,8 @@ canonical, og:*, plus a `.seo` text + links in `#root` for crawlers without JS �
 - `src/scenes/videos.js` — YouTube videos per topic (`scene` = id of the situation it belongs to).
   `src/components/Video.jsx` loads nothing from YouTube until clicked (youtube-nocookie).
 - `src/components/keeper/` — custom goalkeeper scenes (stance figure, interactive positioning, hands).
+  Custom scenes get `next` / `onReplay` from TopicPage: they show `<BoardEnd>` (Znovu / Další) once Kopík finished
+  (`useSpeak` returns done), and „Takhle ano“ chains to „Takhle ne“ with `useChain` (Scene.jsx) like a normal scene.
   Every custom component must list its spoken sentences in `Component.TEXTS` (for voice generation) and its pictures for
   the book in `Component.PRINT` (`{ frames: [{ art, text, tone? }], why }`).
 

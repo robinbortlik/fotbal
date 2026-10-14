@@ -103,7 +103,9 @@ export function TopicPage({ topic }) {
         </nav>
         <section className="scene-main" id="situace" aria-label={scene.title}>
           {Custom ? (
-            <Custom key={topic.id + scene.id + run}>{nextBtn}</Custom>
+            <Custom key={topic.id + scene.id + run} next={onward} onReplay={() => pick(scene)}>
+              {nextBtn}
+            </Custom>
           ) : (
             <Scene
               key={topic.id + scene.id + run + age}

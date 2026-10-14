@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Pitch, Player, Ball, Mark } from "../Board.jsx";
-import { Say } from "../Scene.jsx";
+import { BoardEnd, Say, useChain } from "../Scene.jsx";
 import { W, L, GOAL_W, PAD, sy } from "../../lib/pitch.js";
 import { Choice, GOOD_BAD, useSpeak } from "./parts.jsx";
 
@@ -71,15 +71,22 @@ function place(p) {
   return { x, y };
 }
 
-export function KeeperAngle({ children }) {
+export function KeeperAngle({ children, onReplay, next }) {
   const [ball, setBall] = useState({ x: 23.5, y: 10 });
   const [mode, setMode] = useState("good");
+  const [opening, setOpening] = useState(true); // jen první „Takhle ano“ pokračuje samo na „Takhle ne“
   const [moved, setMoved] = useState(false);
   const drag = useRef(false);
   const ballRef = useRef(null);
   const bad = mode === "bad";
   const line = bad ? BAD : moved ? GOOD : HINT;
-  useSpeak(line.say);
+  const done = useSpeak(line.say) && line !== HINT; // nápověda nekončí: dítě má posunout míč
+  const chain = done && opening && !bad;
+  const note = useChain(chain, () => setMode("bad"));
+  const pick = (m) => {
+    setOpening(false);
+    setMode(m);
+  };
 
   // iOS Safari nemusí respektovat touch-action na prvku SVG → tah za míč nesmí posouvat stránku.
   useEffect(() => {
@@ -139,10 +146,11 @@ export function KeeperAngle({ children }) {
             </g>
           }
         />
+        {done && !chain && <BoardEnd onReplay={onReplay} next={next} />}
       </div>
       <h2 className="scene-title">Kde stát</h2>
-      <Choice label="Porovnej" value={mode} onChange={setMode} options={GOOD_BAD} />
-      <Say text={line.text} spoken={line.say} />
+      <Choice label="Porovnej" value={mode} onChange={pick} options={GOOD_BAD} />
+      <Say text={note ?? line.text} spoken={note ?? line.say} />
       <details className="why">
         <summary>Pro rodiče a trenéry</summary>
         <p>{WHY}</p>
