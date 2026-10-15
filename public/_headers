@@ -1,3 +1,7 @@
 # Cloudflare: hlavičky statických souborů. llms.txt je česky → bez charset by ho některé nástroje četly jako Latin-1.
 /llms.txt
   Content-Type: text/plain; charset=utf-8
+
+# Soubory z Vite mají v názvu otisk obsahu → prohlížeč si je smí nechat rok (výchozí max-age=0 je pro HTML).
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

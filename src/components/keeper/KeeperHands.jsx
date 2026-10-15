@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BoardEnd, Say } from "../Scene.jsx";
+import { BoardEnd, Say, SceneTitle, Why } from "../Scene.jsx";
 import { Art, Choice, Label, Photo, useSpeak } from "./parts.jsx";
 import high from "../../assets/brankar/ruce-w.webp";
 import low from "../../assets/brankar/kosicek.webp";
@@ -27,6 +27,7 @@ const W_PATH = "M14.0 10.8L14.8 15.6L17.2 14.6L19.6 15.6L20.0 10.8";
 
 const WHY =
   "Míč nad pasem se chytá do „W“: dlaně za míčem, prsty roztažené, palce u sebe (nepřekrývají se), lokty před tělem tlumí náraz. Nízký nebo kutálející se míč se sbírá do „košíčku“: tělo a nohy za míčem, dlaně pod míčem, malíčky u sebe, pak míč přitáhnout k hrudi.";
+const STORY = [["Kopík říká", `${HIGH.say} ${LOW.say}`]];
 
 function HandsArt({ isHigh }) {
   return (
@@ -62,13 +63,10 @@ export function KeeperHands({ children, onReplay, next }) {
         <HandsArt isHigh={isHigh} />
         {done && <BoardEnd onReplay={onReplay} next={next} />}
       </div>
-      <h2 className="scene-title">Jak chytat</h2>
+      <SceneTitle>Jak chytat</SceneTitle>
       <Choice label="Jaký míč letí" value={mode} onChange={setMode} options={MODES} />
       <Say text={line.text} spoken={line.say} />
-      <details className="why">
-        <summary>Pro rodiče a trenéry</summary>
-        <p>{WHY}</p>
-      </details>
+      <Why why={WHY} story={STORY} />
       {children}
     </div>
   );

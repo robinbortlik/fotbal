@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Scene, reducedMotion } from "../components/Scene.jsx";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { OwnPage, Scene, reducedMotion } from "../components/Scene.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { Video } from "../components/Video.jsx";
 import { VIDEOS } from "../scenes/videos.js";
@@ -49,6 +49,17 @@ export function TopicPage({ topic }) {
     else navigate(`/${topic.id}/${s.id}`, { replace: true });
     if (scroll) document.getElementById("situace")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  // Seznam situací jsou odkazy (vyhledávače po nich přejdou na další situace), klik ale dělá totéž co pick.
+  const linkTo = (s) => ({
+    to: `/${topic.id}/${s.id}`,
+    onClick: (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return; // nová karta nebo okno
+      e.preventDefault();
+      pick(s);
+    },
+  });
+  const own = found >= 0; // situace na vlastní adrese → její název je H1 (OwnPage), název tématu jen nad ním
+  const Head = own ? "p" : "h1";
   // Na mobilu je seznam situací vodorovný pás: vybraná jede doprostřed, ať je vidět, že jsou i další.
   const list = useRef();
   useEffect(() => {
@@ -86,36 +97,38 @@ export function TopicPage({ topic }) {
   return (
     <div className={"page topic topic-" + topic.id}>
       <header className="topic-head">
-        <h1>{topic.title}</h1>
+        <Head className="topic-title">{topic.title}</Head>
         {topic.lead && <p className="lead">{topic.lead}</p>}
       </header>
       <div className="topic-body">
         <nav className="scene-list" aria-label="Situace" ref={list}>
           {scenes.map((s) => (
-            <button key={s.id} className="scene-pick" aria-current={s === scene} onClick={() => pick(s)}>
+            <Link key={s.id} className="scene-pick" aria-current={s === scene} {...linkTo(s)}>
               <span className="scene-ico" aria-hidden="true">
                 {s.icon}
               </span>
               {s.title}
               {seen.has(topic.id + "/" + s.id) && <Icon name="check" size={22} className="seen" />}
-            </button>
+            </Link>
           ))}
         </nav>
         <section className="scene-main" id="situace" aria-label={scene.title}>
-          {Custom ? (
-            <Custom key={topic.id + scene.id + run} next={onward} onReplay={() => pick(scene)}>
-              {nextBtn}
-            </Custom>
-          ) : (
-            <Scene
-              key={topic.id + scene.id + run + age}
-              scene={scene}
-              next={onward}
-              onEnded={() => markSeen(topic.id + "/" + scene.id)}
-            >
-              {nextBtn}
-            </Scene>
-          )}
+          <OwnPage.Provider value={own}>
+            {Custom ? (
+              <Custom key={topic.id + scene.id + run} next={onward} onReplay={() => pick(scene)}>
+                {nextBtn}
+              </Custom>
+            ) : (
+              <Scene
+                key={topic.id + scene.id + run + age}
+                scene={scene}
+                next={onward}
+                onEnded={() => markSeen(topic.id + "/" + scene.id)}
+              >
+                {nextBtn}
+              </Scene>
+            )}
+          </OwnPage.Provider>
         </section>
       </div>
       {videos.length > 0 && (

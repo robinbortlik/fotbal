@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Pitch, Player, Ball, Mark } from "../Board.jsx";
-import { BoardEnd, Say, useChain } from "../Scene.jsx";
+import { BoardEnd, Say, SceneTitle, useChain, Why } from "../Scene.jsx";
 import { W, L, GOAL_W, PAD, sy } from "../../lib/pitch.js";
 import { Choice, GOOD_BAD, useSpeak } from "./parts.jsx";
 
@@ -23,6 +23,7 @@ const BAD = {
 
 const WHY =
   "Brankář se staví na pomyslnou spojnici míče a středu branky, kousek před brankovou čarou: z pohledu střelce tak zakryje bránu rovnoměrně na obě strany a zmenší úhel ke střele. Kdo zůstane uprostřed na čáře, nechá při míči ze strany volnou bližší tyč.";
+const STORY = [["Takhle ano", GOOD.say], ["Takhle ne", BAD.say]];
 
 const R = 1.3; // poloměr hráče na tabuli (Board.jsx)
 const GX = W / 2; // střed brány (na brankové čáře y = 0)
@@ -148,13 +149,10 @@ export function KeeperAngle({ children, onReplay, next }) {
         />
         {done && !chain && <BoardEnd onReplay={onReplay} next={next} />}
       </div>
-      <h2 className="scene-title">Kde stát</h2>
+      <SceneTitle>Kde stát</SceneTitle>
       <Choice label="Porovnej" value={mode} onChange={pick} options={GOOD_BAD} />
       <Say text={note ?? line.text} spoken={note ?? line.say} />
-      <details className="why">
-        <summary>Pro rodiče a trenéry</summary>
-        <p>{WHY}</p>
-      </details>
+      <Why why={WHY} story={STORY} />
       {children}
     </div>
   );

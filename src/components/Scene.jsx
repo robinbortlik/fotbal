@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useReducer, useRef, useState } from "react";
 import { Pitch, Player, Ball, Mark } from "./Board.jsx";
 import { Kopik } from "./Kopik.jsx";
 import { Icon } from "./Icons.jsx";
@@ -7,6 +7,36 @@ import { useTimeline } from "../hooks/useTimeline.js";
 import { PHRASES, say, stop, useSpeech, useVoice } from "../lib/voice.js";
 
 export const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+/* Situace na vlastní adrese (/utok/roztahni-se, nastavuje TopicPage): její název je H1 stránky a „Pro rodiče
+   a trenéry“ obsahuje celý její text — vyhledávače čtou stránku až po vykreslení aplikace. Na adrese tématu
+   (/utok) zůstává H1 název tématu. */
+export const OwnPage = createContext(false);
+
+export function SceneTitle({ children }) {
+  const H = useContext(OwnPage) ? "h1" : "h2";
+  return <H className="scene-title">{children}</H>;
+}
+
+/* Rozbalovací „Pro rodiče a trenéry“: proč se to tak hraje, na vlastní adrese situace i co v ní Kopík říká.
+   story = [[„Takhle ano“, text], …] */
+export function Why({ why, story = [] }) {
+  const lines = useContext(OwnPage) ? story : [];
+  if (!why && !lines.length) return null;
+  return (
+    <details className="why">
+      <summary>Pro rodiče a trenéry</summary>
+      {why && <p>{why}</p>}
+      {lines.map(([label, text]) => (
+        <p key={label}>
+          <b>{label}:</b> {text}
+        </p>
+      ))}
+    </details>
+  );
+}
+
+const said = (beats = []) => beats.map((b) => b.say ?? b.text).join(" ");
 
 /* Scéna = data → animace na tabuli + Kopíkův komentář.
    {
@@ -34,6 +64,10 @@ export function Scene({ scene, children, onEnded, next }) {
     setRun((r) => r + 1); // i klik na už vybranou variantu ji pustí znovu
   };
   const s = bad && scene.bad ? { ...scene, ...scene.bad } : scene;
+  const story = [
+    [scene.bad ? "Takhle ano" : "Kopík říká", said(scene.beats)],
+    scene.bad?.beats && ["Takhle ne", said(scene.bad.beats)],
+  ].filter(Boolean);
   const compare = scene.bad && (
     <div className="compare" role="group" aria-label="Porovnej">
       <button className="cmp cmp-good" aria-pressed={!bad} onClick={() => show(false)}>
@@ -48,6 +82,7 @@ export function Scene({ scene, children, onEnded, next }) {
     <Play
       key={run}
       s={s}
+      story={story}
       compare={compare}
       delay={run ? 0 : 1200} // po otevření se dítě chvilku rozkouká, po kliknutí hned
       onEnded={bad ? null : onEnded}
@@ -90,7 +125,7 @@ export function beatAt(s, t) {
   return bi;
 }
 
-function Play({ s, compare, delay, children, onEnded, onNext, onReplay, next }) {
+function Play({ s, story, compare, delay, children, onEnded, onNext, onReplay, next }) {
   const still = reducedMotion();
   const { time, setTime, playing, setPlaying } = useTimeline(s.dur, false, false);
   // Pustí se sama: po otevření scény za 1,2 s (dítě se rozkouká), po přepnutí Ano/Ne hned.
@@ -202,15 +237,10 @@ function Play({ s, compare, delay, children, onEnded, onNext, onReplay, next }) 
         </div>
         {over && <BoardEnd onReplay={onReplay} next={next} />}
       </SceneBoard>
-      <h2 className="scene-title">{s.title}</h2>
+      <SceneTitle>{s.title}</SceneTitle>
       {compare}
       <Say text={note ?? beat?.text} spoken={note ?? beat?.say} />
-      {s.why && (
-        <details className="why">
-          <summary>Pro rodiče a trenéry</summary>
-          <p>{s.why}</p>
-        </details>
-      )}
+      <Why why={s.why} story={story} />
       {children}
     </div>
   );

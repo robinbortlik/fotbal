@@ -2,6 +2,8 @@
    1) dist/<adresa>.html pro každou stránku a situaci (Cloudflare podá /utok/roztahni-se ze souboru utok/roztahni-se.html):
       vlastní titulek, popis, canonical a náhled pro sdílení + krátký text a odkazy v #root pro roboty bez JavaScriptu
       (aplikace ho po načtení nahradí; lidem ho schová CSS .seo). Úvod se zapíše do dist/index.html.
+      Témata a situace dostanou drobečkovou navigaci pro Google (BreadcrumbList), neznámé adresy dist/404.html (noindex;
+      Cloudflare ji podá se stavem 404, viz wrangler.jsonc).
    2) dist/sitemap.xml se všemi adresami.
    3) dist/llms.txt — obsah webu jako text pro jazykové modely (https://llmstxt.org).
    Skončí chybou, když se index.html změní tak, že v něm chybí co přepsat. */
@@ -12,6 +14,12 @@ import { createServer } from "vite";
 const SITE = "https://fotbalove-abc.cz";
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 const cut = (s, n = 155) => (s.length <= n ? s : s.slice(0, s.lastIndexOf(" ", n - 1)) + "…");
+const breadcrumbs = (crumbs) =>
+  JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [["Úvod", "/"], ...crumbs].map(([name, url], i) => ({ "@type": "ListItem", position: i + 1, name, item: SITE + url })),
+  }).replace(/</g, "\\u003c");
 const vite = await createServer({ server: { middlewareMode: true }, appType: "custom", logLevel: "error" });
 const load = (p) => vite.ssrLoadModule(p);
 try {
@@ -37,7 +45,8 @@ try {
     if (!t) continue; // Kvíz je v PAGES
     const list = [...t.scenes.map((s) => [`/${t.id}/${s.id}`, s.title]), ...menu];
     const lead = `${t.lead} V animacích: ${t.scenes.map((s) => s.title).join(", ")}.`;
-    pages.push({ url: n.path, title: pageTitle(t.title), description: cut(lead), h1: t.title, text: [lead], links: list });
+    const crumbs = [[t.title, n.path]];
+    pages.push({ url: n.path, title: pageTitle(t.title), description: cut(lead), h1: t.title, text: [lead], links: list, crumbs });
     for (const s of t.scenes) {
       const text = [
         spoken(s),
@@ -45,9 +54,11 @@ try {
         s.why && `Pro rodiče a trenéry: ${s.why}`,
         s.younger?.why && `Mladší přípravka (U8–U9): ${s.younger.why}`,
       ];
-      pages.push({ url: `/${t.id}/${s.id}`, title: pageTitle(s.title, t.title), description: cut(spoken(s)), h1: s.title, text: text.filter(Boolean), links: list });
+      const url = `/${t.id}/${s.id}`;
+      pages.push({ url, title: pageTitle(s.title, t.title), description: cut(spoken(s)), h1: s.title, text: text.filter(Boolean), links: list, crumbs: [...crumbs, [s.title, url]] });
     }
   }
+  pages.push({ url: "/404", title: pageTitle("Stránka nenalezena"), description: "Tahle stránka tu není.", h1: "Stránka nenalezena", text: ["Tahle stránka tu není. Vyberte si z menu."], links: menu, noindex: true });
 
   const template = await fs.readFile("dist/index.html", "utf8");
   const set = (html, re, value) => {
@@ -63,6 +74,8 @@ try {
     html = set(html, /(<meta property="og:description" content=")[^"]*(")/, esc(p.description));
     html = set(html, /(<link rel="canonical" href=")[^"]*(")/, url);
     html = set(html, /(<meta property="og:url" content=")[^"]*(")/, url);
+    if (p.crumbs) html = set(html, /()(<\/head>)/, `<script type="application/ld+json">${breadcrumbs(p.crumbs)}</script>\n`);
+    if (p.noindex) html = set(html, /()(<\/head>)/, `<meta name="robots" content="noindex" />\n`);
     const body = [`<h1>${esc(p.h1)}</h1>`, ...p.text.map((t) => `<p>${esc(t)}</p>`), "<ul>", ...p.links.map(([u, t]) => `<li><a href="${u}">${esc(t)}</a></li>`), "</ul>"];
     html = set(html, /(<div id="root">)(<\/div>)/, `<main class="seo">${body.join("")}</main>`);
     const file = p.url === "/" ? "dist/index.html" : `dist${p.url}.html`;
@@ -70,7 +83,7 @@ try {
     await fs.writeFile(file, html);
   }
 
-  const urls = pages.map((p) => `  <url><loc>${SITE}${p.url}</loc></url>`);
+  const urls = pages.filter((p) => !p.noindex).map((p) => `  <url><loc>${SITE}${p.url}</loc></url>`);
   await fs.writeFile("dist/sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`);
 
   const out = [
