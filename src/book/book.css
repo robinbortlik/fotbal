@@ -675,7 +675,7 @@ body {
 }
 .slogans-page .slogan-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: 1.3fr 1.25fr 1fr 1fr 1fr; /* útok a obrana mají nejvíc hesel */
   gap: 4mm;
 }
 .slogans-page .slogan-card {
@@ -694,9 +694,9 @@ body {
   padding-left: 4mm;
   display: flex;
   flex-direction: column;
-  gap: 1.5mm;
+  gap: 1mm;
   font-weight: 700;
-  font-size: 10.5pt;
+  font-size: 10pt;
   line-height: 1.2;
 }
 .sources h3 {

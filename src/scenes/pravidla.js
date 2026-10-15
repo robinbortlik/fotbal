@@ -167,6 +167,84 @@ const throwIn = {
   },
 };
 
+/* Hraj, dokud nepískne: míč na čáře ještě není v autu a o autu rozhoduje rozhodčí.
+   Stejný začátek obou variant — modrý vede míč podél pravé čáry, míč mu uteče po čáře. */
+const playOnStart = [
+  { t: 0, text: "Soupeř vede míč podél čáry.", say: "Soupeř vede míč podél postranní čáry. Ty běžíš za ním a chceš mu ho vzít." },
+  { t: 2.6, text: "Míč je na čáře. Je to aut?", say: "Míč se kutálí po čáře. Je to aut? Ještě není, celý míč za čarou není." },
+];
+const playOnTeam = [
+  { id: "g", team: "us", gk: true, n: 1, path: [[0, 15, 2.5]] },
+  { id: "a", team: "us", n: 2, path: [[0, 8, 10]] },
+  { id: "c", team: "us", n: 4, path: [[0, 17, 17]] },
+  { id: "t2", team: "them", dim: true, path: [[0, 14, 30]] },
+];
+const playOnMarks = [
+  { kind: "dribble", team: "them", from: [27, 24.5], to: [28.3, 19.8], t: [0.4, 2.6] },
+  { kind: "label", at: [24.5, 10.2], text: "Na čáře", t: [2.6, 5.2] },
+];
+// míč modrému uteče a kutálí se po postranní čáře (x = 29,9: na čáře, ne za ní)
+const playOnBall = [[0, "t1"], [2.4, "t1"], [5.0, 29.9, 13.4]];
+
+const playOn = {
+  id: "hraj-dokud-nepiskne",
+  title: "Hraj, dokud nepískne",
+  icon: "📣",
+  dur: 12.6,
+  beats: [
+    ...playOnStart,
+    { t: 5.2, text: "Rozhodčí nepískl. Hraj dál!", say: "Rozhodčí nepískl, tak hraj dál. Jestli je aut, rozhoduje rozhodčí, ne hráči." },
+    { t: 7.8, text: "Hrál jsi dál, a tak máš míč ty!", say: "Hrál jsi dál, a proto jsi u míče první. Teď útočíme my!" },
+    { t: 10.4, text: "Pamatuj: hraj, dokud nepískne!", say: "Pamatuj si: hraj, dokud rozhodčí nepískne. Teprve pak se zastav." },
+  ],
+  players: [
+    ...playOnTeam,
+    { id: "b", team: "us", n: 3, tag: "Ty", hl: true, path: [[0, 22, 21], [0.4, 22, 21], [2.6, 24.8, 17.8], [5.2, 27.6, 13.6], [7.4, 28.5, 11.5]] },
+    { id: "t1", team: "them", path: [[0, 27, 26], [0.4, 27, 26], [2.4, 28.3, 21], [5.2, 27.8, 17.6], [7.8, 27.3, 15.5]] },
+  ],
+  // trojka doběhne míč na čáře dřív než modrý a přihraje čtyřce
+  ball: [...playOnBall, [7.4, 29.9, 13.2], [7.8, "b"], [8.8, "b"], [9.8, "c"], [12.6, "c"]],
+  marks: [
+    ...playOnMarks,
+    { kind: "zone", rect: [29.6, 9, 0.8, 13], tone: "us", t: [2.6, 7.8] },
+    { kind: "label", at: [21.5, 12.6], text: "Hraj dál!", tone: "good", t: [5.2, 7.8] },
+    { kind: "check", at: [24, 9], t: [7.9] },
+    { kind: "pass", from: [28.5, 13], to: [18.3, 16.6], t: [8.8] },
+  ],
+  why: "Míč je ve hře, dokud celý nepřejde postranní nebo brankovou čáru, nebo dokud rozhodčí nepřeruší hru. O autu, rohu i faulu rozhoduje rozhodčí – hráči hrají, dokud nezazní píšťalka, i když si myslí, že byl aut nebo ruka.",
+  quiz: {
+    at: 4.0,
+    ask: "Míč je na čáře. Co uděláš?",
+    options: [
+      { text: "Hraju dál, rozhodčí nepískl", ok: true },
+      { text: "Zastavím se, je to aut", ok: false },
+    ],
+  },
+  bad: {
+    dur: 12.6,
+    beats: [
+      ...playOnStart,
+      { t: 5.2, text: "Ty ale křičíš aut a zastavíš se.", say: "Ty ale zvedneš ruku, křičíš aut a zastavíš se. Rozhodčí přitom nepískl." },
+      { t: 7.8, text: "Soupeř hraje dál – a dá gól.", say: "Soupeř hraje dál, protože rozhodčí nepískl. Běží sám na naši bránu a dá gól." },
+      { t: 10.4, text: "Nezastavuj se. Hraj, dokud nepískne!", say: "Kdo se zastaví sám, nechá soupeře utéct. Příště hraj dál, dokud rozhodčí nepískne." },
+    ],
+    players: [
+      ...playOnTeam.map((p) => (p.id === "g" ? { ...p, path: [[0, 15, 2.5], [8.2, 15, 2.5], [9.0, 16.4, 2.8]] } : p)),
+      { id: "b", team: "us", n: 3, tag: "Ty", hl: true, path: [[0, 22, 21], [0.4, 22, 21], [2.6, 24.8, 17.8], [4.6, 25.8, 15.4]] },
+      { id: "t1", team: "them", path: [[0, 27, 26], [0.4, 27, 26], [2.4, 28.3, 21], [5.6, 29, 15.2], [7.0, 26.5, 10.5], [8.6, 17.5, 6.5]] },
+    ],
+    // modrý si pro míč na čáře doběhne a jde sám na bránu
+    ball: [...playOnBall, [5.8, "t1"], [8.6, "t1"], [9.3, 12.9, -0.8]],
+    marks: [
+      ...playOnMarks,
+      { kind: "zone", rect: [29.6, 9, 0.8, 13], tone: "us", t: [2.6, 5.8] },
+      { kind: "label", at: [21.6, 15.6], text: "Aut!", tone: "bad", t: [5.2, 7.6] },
+      { kind: "dribble", team: "them", from: [28.8, 13.7], to: [17.5, 5], t: [5.9] },
+      { kind: "shot", from: [17.5, 5], to: [12.9, -0.8], t: [8.6] },
+    ],
+  },
+};
+
 const corner = {
   id: "roh",
   title: "Roh",
@@ -561,5 +639,5 @@ export const RULES = {
   id: "pravidla",
   title: "Pravidla",
   lead: "Co se smí a co ne.",
-  scenes: [goal, kickoff, throwIn, corner, goalKick, foul, penalty, hand, offside, subs, fairPlay, handshake],
+  scenes: [goal, kickoff, throwIn, playOn, corner, goalKick, foul, penalty, hand, offside, subs, fairPlay, handshake],
 };
