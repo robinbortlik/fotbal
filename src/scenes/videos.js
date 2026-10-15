@@ -29,8 +29,12 @@ export const VIDEOS = {
   brankar: [
     { id: "ilWJKcRvl4I", scene: "postoj", title: "Postoj a chytání do W", channel: "Lukáš Kocourek", lang: "CZ" },
     { id: "hJXPuADMOyE", scene: "ruce", title: "Chytání do košíčku", channel: "Lukáš Kocourek", lang: "CZ" },
+    { id: "yA--dPJ_jVA", scene: "padej-na-bok", title: "Chytání v pádu: chyby a správně", channel: "Just4keepers CZ", lang: "CZ", vertical: true },
+    { id: "5jhBc_QLndI", scene: "vyraz-do-strany", title: "Vyraž do strany, ne před bránu", channel: "OP1GK", lang: "", vertical: true },
     { id: "-y3dl7PqLxI", scene: "vybehni", title: "Neuer v souboji 1 na 1 (rozbor s popisky)", channel: "Lukáš Kocourek", lang: "CZ" },
+    { id: "WubDA5GCVSM", scene: "brankar-pri-rohu", title: "Joe Hart: kde stát při rohu", channel: "FourFourTwo", lang: "EN", start: 18 },
     { id: "fqGqBH3sIR8", scene: "rozehravka", title: "Jak rozehrát rukou", channel: "SIKANA", lang: "EN" },
+    { id: "4dOtIWDekP8", scene: "vykop-z-ruky", title: "Jak správně vykopnout z ruky", channel: "Honza Weber", lang: "CZ", vertical: true },
     { id: "Yq3Luk-gkKw", title: "Trénink malého brankáře", channel: "Just4keepers CZ", lang: "CZ" },
   ],
   rodice: [
