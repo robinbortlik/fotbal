@@ -40,7 +40,7 @@ export const SLOGANS = [
   ["Útok (máme míč)", ["Máme míč? Roztáhni se!", "Ukaž se, ať ti přihrají!", "Přihraj a běž!", "Než míč přijde, koukni přes rameno.", "Veď míč tam, kde nikdo není.", "Soupeř blízko? Schovej míč tělem.", "Klička – a zrychli!", "Plno? Přenes hru na druhou stranu.", "Před střelou koukni na bránu.", "Po střele dobíhej!", "Náš aut? Přiběhni blíž a ukaž se."]],
   ["Obrana (nemáme míč)", ["Nemáme míč? Bráníme všichni!", "Nemáme míč? Stáhněte se k sobě.", "Mezi soupeře a naši bránu!", "Nejbližší jde na míč.", "Kamarád jde na míč? Jisti ho zezadu.", "Bokem – vytlač ho ke straně.", "Míč vezmi, ne jen odkopni.", "Soupeř vystřelil? Běž k bráně!", "Aut nebo roh soupeře? Hlídej svého hráče."]],
   ["Přepnutí", ["Ztráta? Hned zpátky pro míč!", "Získali jsme míč? Hned na bránu!", "Nejde to dopředu? Podrž míč.", "Náš roh? Někdo zůstane vzadu."]],
-  ["Brankář", ["Stůj mezi míčem a středem brány.", "Ruce do W!", "Nízký míč? Košíček!", "Křič včas a nahlas!", "I brankář hraje nohama."]],
+  ["Brankář", ["Stůj mezi míčem a středem brány.", "Ruce do W!", "Nízký míč? Košíček!", "Padej na bok, ne na břicho.", "Nechytíš? Vyraž do strany!", "Křič včas a nahlas!", "Při rohu stůj uprostřed brány.", "Výkop z ruky jen na naši půlku.", "I brankář hraje nohama."]],
   ["Fair play", ["Hraj, dokud rozhodčí nepískne.", "Po zápase podej ruku.", "Chyba? Nevadí, hraj dál!", "Rodiče fandí, ale nekoučují."]],
 ];
 

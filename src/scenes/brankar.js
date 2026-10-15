@@ -1,18 +1,165 @@
 /* Brankář — data scén (formát viz src/components/Scene.jsx). Souřadnice v metrech:
    x 0..W zleva, y 0..L od NAŠÍ branky (dole). Brankář (žlutý tým, oranžový dres, č. 1)
-   je ve všech situacích „Ty“. První tři situace jsou vlastní komponenty (src/components/keeper).
+   je ve všech situacích „Ty“. První tři situace a „Padej na bok“ jsou vlastní komponenty (src/components/keeper).
    Titulky krátké, Kopík nahlas (say) dovysvětlí proč. */
 import { KeeperStance } from "../components/keeper/KeeperStance.jsx";
 import { KeeperAngle } from "../components/keeper/KeeperAngle.jsx";
 import { KeeperHands } from "../components/keeper/KeeperHands.jsx";
+import { KeeperFall } from "../components/keeper/KeeperFall.jsx";
 
 const stance = { id: "postoj", title: "Připravený postoj", icon: "🧍", Component: KeeperStance };
 const angle = { id: "kde-stat", title: "Kde stát", icon: "📐", Component: KeeperAngle };
 const hands = { id: "ruce", title: "Jak chytat", icon: "🧤", Component: KeeperHands };
+const fall = { id: "padej-na-bok", title: "Padej na bok", icon: "🤸", Component: KeeperFall };
 
 // Tyče naší branky (na brankové čáře y = 0).
 const POST_L = [12.5, 0];
 const POST_R = [17.5, 0];
+
+/* Vyraž do strany: prudkou střelu k tyči nechytíš → vyrazíš ji ven za tyč, dorážející útočník nemá co dorazit.
+   Takhle ne: vyrazíš ji doprostřed před bránu a útočník dorazí do prázdné brány. */
+const parryStart = [
+  { t: 0, text: "Soupeř jde s míčem na bránu.", say: "Soupeř běží s míčem na naši bránu. Připrav se, za chvíli vystřelí." },
+  { t: 2.6, text: "Prudká střela! Do rukou ji nechytíš.", say: "Soupeř vystřelí prudce a nízko k tyči. Takovou střelu do rukou bezpečně nechytíš." },
+];
+const parryTeam = [
+  { id: "lo", team: "us", n: 2, path: [[0, 5.5, 11], [5.6, 8.4, 6.8]] },
+  { id: "po", team: "us", n: 3, path: [[0, 23.5, 10], [5.6, 21.8, 5.8]] },
+  { id: "st", team: "us", n: 4, path: [[0, 16.5, 23], [4.0, 16.4, 16.2]] },
+  { id: "t3", team: "them", path: [[0, 13, 21], [3.6, 14, 13.6]] },
+];
+const parryMarks = [
+  { kind: "dribble", team: "them", from: [13, 19.5], to: [14, 12.1], t: [0, 3.6] },
+  { kind: "run", team: "them", from: [9.5, 13.5], to: [12.4, 7.6], t: [2.6, 5.6] },
+  { kind: "shot", team: "them", from: [14, 12.1], to: [16.45, 2.2], t: [4.0, 5.5] },
+];
+const parryKeeper = [[0, 15, 2.5], [4.0, 14.8, 2.5], [4.9, 14.8, 2.5], [5.5, 15.4, 2.3], [7.8, 15.4, 2.3], [8.8, 15, 2.5]];
+const parry = {
+  id: "vyraz-do-strany",
+  title: "Vyraž do strany",
+  icon: "👊",
+  dur: 13,
+  beats: [
+    ...parryStart,
+    { t: 5.2, text: "Vyraž míč do strany, ven za tyč!", say: "Skoč a vyraž míč rukama do strany, ven za tyč. Tam ho útočník nedostane." },
+    { t: 7.8, text: "Míč je venku. Útočník nemá co dorazit.", say: "Míč je venku za brankovou čárou. Útočník doběhl k bráně, ale nemá co dorazit." },
+    { t: 10.4, text: "Nechytíš to? Vyraž do strany!", say: "Pamatuj si: když míč nechytíš, vyraž ho do strany. Nikdy ne doprostřed před bránu." },
+  ],
+  players: [
+    { id: "g", team: "us", gk: true, n: 1, tag: "Ty", hl: true, path: parryKeeper },
+    ...parryTeam,
+    { id: "t4", team: "them", path: [[0, 8.5, 17], [2.6, 9.5, 13.5], [5.6, 12.4, 7.6]] },
+  ],
+  ball: [[0, "t3"], [4.0, "t3"], [5.5, 16.45, 2.2], [6.3, 20.4, -1.4]],
+  marks: [
+    ...parryMarks,
+    { kind: "shot", from: [16.45, 2.2], to: [20.4, -1.4], t: [5.5, 7.8] },
+    { kind: "check", at: [24.4, 2.4], t: [6.6] },
+  ],
+  why: "Prudkou střelu, kterou brankář bezpečně nechytí, vyrazí dlaněmi (nebo pěstí) do strany – za tyč, ven z hřiště, pryč od útočníků. Raději roh pro soupeře než odražený míč před brankou: ten je pro dobíhajícího útočníka nejsnazší gól.",
+  quiz: {
+    at: 4.6,
+    ask: "Střelu nechytíš. Kam míč vyrazíš?",
+    options: [
+      { text: "Do strany, za tyč", ok: true },
+      { text: "Doprostřed před bránu", ok: false },
+    ],
+  },
+  bad: {
+    dur: 13,
+    beats: [
+      ...parryStart,
+      { t: 5.2, text: "Ty ale vyrazíš míč doprostřed.", say: "Ty ale vyrazíš míč dopředu, doprostřed před bránu. Přesně tam, kam běží útočník." },
+      { t: 7.8, text: "Útočník míč dorazí do brány. Gól.", say: "Útočník je u odraženého míče první a dorazí ho do brány. Je gól." },
+      { t: 10.4, text: "Příště vyraž do strany, ne doprostřed!", say: "Odražený míč před bránou je pro útočníka dárek. Příště vyraž míč do strany, ven za tyč." },
+    ],
+    players: [
+      { id: "g", team: "us", gk: true, n: 1, tag: "Ty", hl: true, path: parryKeeper },
+      ...parryTeam,
+      { id: "t4", team: "them", path: [[0, 8.5, 17], [2.6, 9.5, 13.5], [5.6, 12.4, 8.6], [6.5, 12.8, 7.4]] },
+    ],
+    ball: [[0, "t3"], [4.0, "t3"], [5.5, 16.45, 2.2], [6.3, 13.2, 5.8], [6.5, "t4"], [7.8, "t4"], [8.4, 13, -0.8]],
+    marks: [
+      ...parryMarks,
+      { kind: "shot", from: [16.45, 2.2], to: [13.2, 5.8], t: [5.5, 7.8] },
+      { kind: "shot", team: "them", from: "ball", to: [13, -0.8], t: [7.8] },
+      { kind: "x", at: [9.4, 2.6], t: [8.6] },
+    ],
+  },
+};
+
+/* Brankář při rohu: stůj uprostřed brány, na centr vyběhni, křič MOJE a chyť.
+   Takhle ne: stojíš u bližší tyče, centr letí za tebe a útočník střílí do díry u vzdálenější tyče. */
+const cornerStart = { t: 0, text: "Roh pro soupeře. Kde budeš stát?", say: "Soupeř kope roh. Než ho kopne, postav se do brány na správné místo." };
+const cornerTeam = [
+  { id: "lo", team: "us", n: 2, path: [[0, 8.6, 6.4]] },
+  { id: "po", team: "us", n: 3, path: [[0, 20.6, 6.8]] },
+  { id: "st", team: "us", n: 4, path: [[0, 15.8, 8.6]] },
+  { id: "lu", team: "us", n: 5, dim: true, path: [[0, 8.5, 13]] },
+  { id: "pu", team: "us", n: 6, path: [[0, 26, 5.5]] },
+  { id: "t1", team: "them", dim: true, path: [[0, 9, 16]] },
+  { id: "t2", team: "them", path: [[0, 31, -1]] },
+  { id: "t3", team: "them", path: [[0, 21.8, 9.6]] },
+  { id: "t5", team: "them", path: [[0, 16.4, 11.2]] },
+];
+const cornerKick = { kind: "pass", team: "them", from: [29.5, 0.5], to: [13.4, 4.0], t: [5.4, 7.8] };
+const cornerGk = {
+  id: "brankar-pri-rohu",
+  title: "Brankář při rohu",
+  icon: "🚩",
+  dur: 13,
+  beats: [
+    cornerStart,
+    { t: 2.6, text: "Stůj uprostřed brány, kousek od čáry.", say: "Stůj uprostřed brány, kousek před čárou. Odtud doběhneš k oběma tyčím i dopředu pro míč." },
+    { t: 5.2, text: "Míč letí před bránu. Křič MOJE!", say: "Soupeř kopne míč vysoko před bránu. Vyběhni si pro něj a křič nahlas: Moje!" },
+    { t: 7.8, text: "Míč máš v rukou dřív než útočník.", say: "Míč máš v rukou dřív, než k němu útočník doběhne. Teď ho v klidu rozehraj do strany." },
+    { t: 10.4, text: "Při rohu stůj uprostřed brány.", say: "Pamatuj si: při rohu stůj uprostřed brány. U tyče by na druhé straně zůstala díra." },
+  ],
+  players: [
+    { id: "g", team: "us", gk: true, n: 1, tag: "Ty", hl: true, path: [[0, 16.6, 2.4], [2.6, 16.6, 2.4], [4.4, 14.6, 1.4], [5.4, 14.6, 1.4], [6.5, 13.6, 3.2]] },
+    ...cornerTeam,
+    { id: "t4", team: "them", path: [[0, 11.2, 9.5], [5.4, 11.2, 9.5], [6.5, 12.2, 6.6]] },
+  ],
+  ball: [[0, 29.5, 0.5], [5.4, 29.5, 0.5], [6.5, 13.4, 4.0], [6.6, "g", 0], [13, "g", 0]],
+  marks: [
+    { kind: "run", from: [16.6, 2.4], to: [14.6, 1.4], t: [2.6, 4.6] },
+    cornerKick,
+    { kind: "label", at: [8.8, 2.2], text: "MOJE!", tone: "us", t: [5.2, 7.8] },
+    { kind: "check", at: [19.6, 3.0], t: [7.0] },
+  ],
+  why: "Při rohu stojí brankář zhruba uprostřed branky, kousek před brankovou čárou, tělem natočený k míči. Odtud dosáhne k oběma tyčím a může vyběhnout na míč letící před branku – a zavolá „Moje!“. U bližší tyče by nechal otevřenou druhou polovinu branky. Spoluhráči hlídají soupeře, jeden stojí 5 m od míče.",
+  quiz: {
+    at: 2.4,
+    ask: "Roh pro soupeře. Kde budeš stát?",
+    options: [
+      { text: "Uprostřed brány", ok: true },
+      { text: "U bližší tyče", ok: false },
+      { text: "Na kraji vápna", ok: false },
+    ],
+  },
+  bad: {
+    dur: 13,
+    beats: [
+      cornerStart,
+      { t: 2.6, text: "Ty ale stojíš u bližší tyče.", say: "Ty ale stojíš u bližší tyče. Na druhé straně brány tak zůstala velká díra." },
+      { t: 5.2, text: "Míč letí za tebe, k druhé tyči.", say: "Soupeř kopne míč vysoko za tebe, k druhé tyči. Tam už nedoběhneš." },
+      { t: 7.8, text: "Útočník je u míče první. Gól!", say: "Útočník je u míče první a střílí do díry. Je gól." },
+      { t: 10.4, text: "Příště stůj při rohu uprostřed brány!", say: "Od tyče nedoběhneš na druhou stranu brány. Příště stůj při rohu uprostřed." },
+    ],
+    players: [
+      { id: "g", team: "us", gk: true, n: 1, tag: "Ty", hl: true, path: [[0, 16.6, 2.4], [2.6, 16.6, 2.4], [4.4, 17, 1.4], [7.8, 17, 1.4], [8.6, 15.8, 1.6]] },
+      ...cornerTeam,
+      { id: "t4", team: "them", path: [[0, 11.2, 9.5], [5.4, 11.2, 9.5], [6.5, 12, 5.4]] },
+    ],
+    ball: [[0, 29.5, 0.5], [5.4, 29.5, 0.5], [6.5, 13.4, 4.0], [6.7, "t4"], [7.8, "t4"], [8.3, 13, -0.8]],
+    marks: [
+      { kind: "zone", rect: [12.6, 0.2, 3.0, 2.4], tone: "bad", at: [8.8, 1.6], text: "Díra!", t: [2.6, 7.8] },
+      cornerKick,
+      { kind: "shot", team: "them", from: "ball", to: [13, -0.8], t: [7.8] },
+      { kind: "x", at: [20.4, 3.4], t: [8.6] },
+    ],
+  },
+};
 
 /* 1 na 1: útočník jde sám na bránu. Brankář u brány mu nechá u bližší tyče díru (tečkované
    čáry k tyčím = „okno“, jdou s míčem), vyběhne po spojnici míč – střed brány, okno zmenší,
@@ -212,6 +359,82 @@ const throwOut = {
   },
 };
 
+/* Výkop z ruky: míč kopnutý z ruky nesmí přeletět půlicí čáru vzduchem → kopni ho ke kamarádovi na naší polovině.
+   Takhle ne: výkop přes půlku → nepřímý volný kop pro soupeře z půlicí čáry. */
+const puntStart = [
+  { t: 0, text: "Máš míč v rukou. Kopneš ho z ruky.", say: "Máš míč v rukou a chceš ho vykopnout z ruky. Pozor, výkop má jedno důležité pravidlo." },
+  { t: 2.6, text: "Výkop nesmí přeletět půlku vzduchem.", say: "Míč kopnutý z ruky nesmí přeletět půlicí čáru vzduchem. Musí dopadnout na naší polovině." },
+];
+const puntTeam = [
+  { id: "g", team: "us", gk: true, n: 1, tag: "Ty", hl: true, path: [[0, 15, 2.6], [2.4, 15, 3.2]] },
+  { id: "a", team: "us", n: 2, path: [[0, 4, 10]] },
+  { id: "b", team: "us", n: 3, path: [[0, 25.5, 9]] },
+  { id: "c", team: "us", n: 4, path: [[0, 15, 14]] },
+  { id: "e", team: "us", n: 6, path: [[0, 23.5, 28]] },
+  { id: "t1", team: "them", path: [[0, 12, 10]] },
+  { id: "t2", team: "them", path: [[0, 19.5, 12]] },
+  { id: "t3", team: "them", path: [[0, 24, 16]] },
+  { id: "G", team: "them", gk: true, dim: true, path: [[0, 15, 42.5]] },
+];
+const halfway = { kind: "zone", rect: [0, 22.1, 30, 0.8], tone: "bad", at: [15, 25.2], text: "Přes půlku ne!", t: [2.6, 5.4] };
+const punt = {
+  id: "vykop-z-ruky",
+  title: "Výkop z ruky",
+  icon: "🦵",
+  dur: 13,
+  beats: [
+    ...puntStart,
+    { t: 5.2, text: "Kopni míč ke kamarádovi na naší půlce.", say: "Kopni míč tak, aby dopadl na naší polovině, blízko volného kamaráda." },
+    { t: 7.8, text: "Kamarád míč zpracuje a útočíme.", say: "Míč dopadl na naší polovině. Kamarád ho zpracuje a vede dopředu. Útočíme!" },
+    { t: 10.4, text: "Výkop z ruky jen na naši polovinu!", say: "Pamatuj si: výkop z ruky jen na naši polovinu. Rukou ale smíš hodit míč kamkoli." },
+  ],
+  players: [
+    ...puntTeam,
+    { id: "d", team: "us", n: 5, path: [[0, 8, 24], [5.4, 6.5, 20.5], [7.2, 6.6, 19.6], [7.8, 6.6, 19.6], [10.4, 7.2, 27]] },
+    { id: "t4", team: "them", path: [[0, 12.5, 19.5], [6.6, 9.6, 20.2]] },
+    { id: "t5", team: "them", dim: true, path: [[0, 18, 33.5]] },
+  ],
+  ball: [[0, "g", 0], [5.4, "g", 0], [6.6, 6.6, 17.6], [7.2, "d"], [13, "d"]],
+  marks: [
+    halfway,
+    { kind: "pass", from: [15, 3.2], to: [6.6, 17.6], t: [5.4, 7.8] },
+    { kind: "check", at: [11.2, 16.4], t: [7.0] },
+    { kind: "dribble", from: [6.6, 21.1], to: [7.2, 28.5], t: [7.8] },
+  ],
+  why: "Míč kopnutý z pokutového území – kop od branky i výkop z ruky – nesmí v 5 + 1 přeletět půlicí čáru bez dotyku země nebo hráče. Jinak sudí nařídí nepřímý volný kop pro soupeře z půlicí čáry. Rukou smí brankář rozehrát kamkoli, i přes půlku. Krátký výkop ke spoluhráči je navíc přesnější než dlouhý kop naslepo.",
+  quiz: {
+    at: 2.4,
+    ask: "Výkop z ruky. Kam smí míč dopadnout?",
+    options: [
+      { text: "Na naši polovinu", ok: true },
+      { text: "Kamkoli, i přes půlku", ok: false },
+    ],
+  },
+  bad: {
+    dur: 13,
+    beats: [
+      ...puntStart,
+      { t: 5.2, text: "Ty ale kopneš míč přes půlku.", say: "Ty ale kopneš míč z ruky moc daleko. Přeletí půlicí čáru a dopadne až na polovině soupeře." },
+      { t: 7.8, text: "Písk! Volný kop pro soupeře na půlce.", say: "Sudí pískne. Soupeř dostane nepřímý volný kop z půlicí čáry a míč je jeho." },
+      { t: 10.4, text: "Kopej jen na naši polovinu!", say: "Výkopem přes půlku jen daruješ míč soupeři. Příště kopni míč na naši polovinu, ke kamarádovi." },
+    ],
+    players: [
+      ...puntTeam,
+      { id: "d", team: "us", n: 5, path: [[0, 8, 24], [5.4, 6.5, 20.5]] },
+      { id: "t4", team: "them", path: [[0, 12.5, 19.5], [6.6, 10, 20.6]] },
+      // soupeř si míč doběhne a donese ho na půlicí čáru
+      { id: "t5", team: "them", path: [[0, 18, 33.5], [6.8, 17.4, 32.8], [7.4, 17, 32.6], [8.8, 16, 24]] },
+    ],
+    ball: [[0, "g", 0], [5.4, "g", 0], [6.8, 16.5, 31], [7.0, "t5"], [8.8, "t5"]],
+    marks: [
+      halfway,
+      { kind: "pass", from: [15, 3.2], to: [16.5, 31], t: [5.4, 7.8] },
+      { kind: "x", at: [16, 22.5], t: [6.4, 7.8] },
+      { kind: "label", at: [22.5, 19.6], text: "Volný kop", tone: "bad", t: [7.8] },
+    ],
+  },
+};
+
 /* Malá domů: obránce v tísni přihraje nohou zpátky. Brankář se nabídne vedle branky, míč
    NEchytá rukama, zpracuje ho nohou a vrátí ho kamarádovi, který se mezitím uvolnil.
    Takhle ne: brankář míč chytí do rukou → nepřímý volný kop pro soupeře před naší bránou. */
@@ -380,5 +603,5 @@ export const KEEPER = {
   id: "brankar",
   title: "Brankář",
   lead: "Chytá, brání a rozehrává.",
-  scenes: [stance, angle, hands, oneOnOne, call, throwOut, backPass, feet],
+  scenes: [stance, angle, hands, fall, parry, oneOnOne, call, cornerGk, throwOut, punt, backPass, feet],
 };
