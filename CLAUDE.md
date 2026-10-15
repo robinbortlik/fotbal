@@ -96,7 +96,7 @@ per topic an opener with an illustration, then one page per situation, quiz with
 A situation page is a comic: `SceneBoard` at the end of each beat (`shot` — before a mark that started in that beat disappears),
 „Takhle ne“ underneath without the beats it shares with „Takhle ano“, and `why`; page numbers are computed up front for the contents.
 `scripts/book.mjs` builds it with Vite (no PWA, no `public/`) and prints it with headless Chrome into `public/fotbalove-abc.pdf`
-(committed, ~8 MB, linked as `BOOK` from `nav.js` on the home page, Pro rodiče and footer; not precached). Keep the PDF small: Chrome
+(committed, ~9 MB, linked as `BOOK` from `nav.js` on the home page, Pro rodiče and footer; not precached). Keep the PDF small: Chrome
 embeds webp losslessly, so the book aliases the keeper photos to JPEG copies `src/book/img/brankar-*.jpg`, and `book.css` replaces
 SVG patterns (goal net, red hatch) with flat fills. Illustrations `src/book/img/*.jpg` were made with Gemini in the user's Chrome.
 
