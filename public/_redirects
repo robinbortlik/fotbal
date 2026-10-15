@@ -1,0 +1,5 @@
+# Cloudflare: staré adresy z předchozí verze webu. Router (src/router.jsx) je přesměruje taky, ale vyhledávače potřebují 301.
+/strategie /utok 301
+/pohyb /utok 301
+/zony /obrana 301
+/pozice /hriste 301

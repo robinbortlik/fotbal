@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BoardEnd, Say, useChain } from "../Scene.jsx";
+import { BoardEnd, Say, SceneTitle, useChain, Why } from "../Scene.jsx";
 import { Art, Choice, GOOD_BAD, Label, Photo, useSpeak } from "./parts.jsx";
 import ready from "../../assets/brankar/postoj-ano.webp";
 import sloppy from "../../assets/brankar/postoj-ne.webp";
@@ -16,6 +16,7 @@ const BAD = {
 };
 const WHY =
   "Základní postoj brankáře: chodidla zhruba na šíři ramen, váha na přední části chodidel, kolena lehce pokrčená, ruce před tělem s otevřenými dlaněmi a oči na míči. Z tohoto postoje se nejrychleji vyrazí na kteroukoli stranu a ruce jsou hned u míče. (Fotografie jsou ilustrační, vytvořené pomocí AI.)";
+const STORY = [["Takhle ano", GOOD.say], ["Takhle ne", BAD.say]];
 
 function StanceArt({ bad }) {
   return (
@@ -58,13 +59,10 @@ export function KeeperStance({ children, onReplay, next }) {
         <StanceArt bad={bad} />
         {done && !chain && <BoardEnd onReplay={onReplay} next={next} />}
       </div>
-      <h2 className="scene-title">Připravený postoj</h2>
+      <SceneTitle>Připravený postoj</SceneTitle>
       <Choice label="Porovnej" value={mode} onChange={pick} options={GOOD_BAD} />
       <Say text={note ?? line.text} spoken={note ?? line.say} />
-      <details className="why">
-        <summary>Pro rodiče a trenéry</summary>
-        <p>{WHY}</p>
-      </details>
+      <Why why={WHY} story={STORY} />
       {children}
     </div>
   );

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BoardEnd, Say, useChain } from "../Scene.jsx";
+import { BoardEnd, Say, SceneTitle, useChain, Why } from "../Scene.jsx";
 import { Art, Choice, GOOD_BAD, Label, Photo, useSpeak } from "./parts.jsx";
 import side from "../../assets/brankar/pad-ano.webp";
 import belly from "../../assets/brankar/pad-ne.webp";
@@ -15,6 +15,7 @@ const BAD = {
 };
 const WHY =
   "Při nízkém míči do strany brankář padá na bok (stehno, bok, rameno), ne na břicho. Míč drží oběma rukama — spodní ruka za míčem, horní na něm — a hned si ho přitáhne k tělu. Pád na břicho nebo na lokty bolí a míč z rukou snadno vyskočí útočníkovi k noze. Pád se trénuje nejdřív z kleku na měkké trávě. (Fotografie jsou ilustrační, vytvořené pomocí AI.)";
+const STORY = [["Takhle ano", GOOD.say], ["Takhle ne", BAD.say]];
 
 function FallArt({ bad }) {
   return (
@@ -56,13 +57,10 @@ export function KeeperFall({ children, onReplay, next }) {
         <FallArt bad={bad} />
         {done && !chain && <BoardEnd onReplay={onReplay} next={next} />}
       </div>
-      <h2 className="scene-title">Padej na bok</h2>
+      <SceneTitle>Padej na bok</SceneTitle>
       <Choice label="Porovnej" value={mode} onChange={pick} options={GOOD_BAD} />
       <Say text={note ?? line.text} spoken={note ?? line.say} />
-      <details className="why">
-        <summary>Pro rodiče a trenéry</summary>
-        <p>{WHY}</p>
-      </details>
+      <Why why={WHY} story={STORY} />
       {children}
     </div>
   );

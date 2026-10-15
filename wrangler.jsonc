@@ -5,14 +5,14 @@
   "compatibility_date": "2026-10-12",
   "assets": {
     "directory": "./dist",
-    // /utok/roztahni-se → utok/roztahni-se.html (scripts/seo.mjs); adresa bez souboru → index.html, aplikace si ji zobrazí sama.
-    "not_found_handling": "single-page-application"
+    // /utok/roztahni-se → utok/roztahni-se.html (scripts/seo.mjs); adresa bez souboru → 404.html se stavem 404
+    // (pro vyhledávače; aplikace pak ukáže úvod). Staré adresy přesměrovává public/_redirects.
+    "not_found_handling": "404-page"
   },
   // Vlastní doména (zóna fotbalove-abc.cz je v Cloudflare); DNS záznamy a certifikát zařídí wrangler sám.
   // S routes by se *.workers.dev vypnula – necháváme ji jako záložní adresu.
+  // www.fotbalove-abc.cz tu schválně není: přesměrovává ho Redirect Rule v Cloudflare (301 na adresu bez www,
+  // nad proxied DNS záznamem AAAA www → 100::). Na Worker napojené www by pravidlo obešlo.
   "workers_dev": true,
-  "routes": [
-    { "pattern": "fotbalove-abc.cz", "custom_domain": true },
-    { "pattern": "www.fotbalove-abc.cz", "custom_domain": true }
-  ]
+  "routes": [{ "pattern": "fotbalove-abc.cz", "custom_domain": true }]
 }

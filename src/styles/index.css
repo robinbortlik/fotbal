@@ -50,7 +50,8 @@ body {
 }
 h1,
 h2,
-h3 {
+h3,
+.topic-title {
   font-family: var(--display);
   font-weight: 900;
   line-height: 1.02;
@@ -297,7 +298,7 @@ button.footer-link {
   gap: 4px 20px;
   margin-bottom: 18px;
 }
-.topic-head h1 {
+.topic-title {
   font-size: clamp(36px, 4.4vw, 52px);
 }
 .topic-head .lead {
@@ -329,6 +330,7 @@ button.footer-link {
   font-size: 19px;
   line-height: 1.1;
   text-align: left;
+  text-decoration: none;
 }
 .scene-pick:hover {
   background: var(--paper);
@@ -1449,9 +1451,8 @@ button.footer-link {
     border-width: 6px;
     border-radius: 20px;
   }
-  .scene-title {
-    display: none;
-  }
+  /* Nadpisy na mobilu jen pro čtečky a vyhledávače (tabule je pod nimi hned vidět) */
+  .scene-title,
   .topic-head {
     position: absolute;
     width: 1px;

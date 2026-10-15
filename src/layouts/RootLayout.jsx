@@ -17,7 +17,11 @@ export default function RootLayout() {
   const page = pathname.split("/")[1]; // /utok/roztahni-se → utok
   const [tweaks, setTweak] = useTweaks();
   const voice = useVoice();
-  const [consent, setConsent] = useState(() => statsChoice() == null); // ještě nevybral → lišta dole
+  const [consent, setConsent] = useState(false); // lišta dole, dokud nevybere
+  useEffect(() => {
+    // Až s načtenými písmy: dřív by po výměně písma narostla a posunula se (CLS ve výsledcích Googlu)
+    if (statsChoice() == null) document.fonts.ready.then(() => setConsent(true));
+  }, []);
   const canInstall = useCanInstall();
   const age = useAge();
 
