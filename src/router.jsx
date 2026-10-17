@@ -1,12 +1,14 @@
 /* Skutečné adresy (/utok/roztahni-se): každá situace je pro vyhledávače samostatná stránka. scripts/seo.mjs k nim
-   po buildu vyrobí HTML s titulkem a popisem; adresu bez souboru Cloudflare obslouží jako index.html (SPA). */
-import { createBrowserRouter, Navigate } from "react-router-dom";
+   po buildu vyrobí HTML s titulkem a popisem; adresu bez souboru Cloudflare obslouží jako 404.html se stavem 404
+   a aplikace na ní ukáže Stránka nenalezena (i u neznámé situace tématu). */
+import { createBrowserRouter, Navigate, useParams } from "react-router-dom";
 import RootLayout from "./layouts/RootLayout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import TopicPage from "./pages/TopicPage.jsx";
 import QuizPage from "./pages/QuizPage.jsx";
 import ParentsPage from "./pages/ParentsPage.jsx";
 import PrivacyPage from "./pages/PrivacyPage.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 import { fromHash } from "./lib/nav.js";
 import { ATTACK } from "./scenes/utok.js";
 import { DEFENSE } from "./scenes/obrana.js";
@@ -21,7 +23,11 @@ const moved = fromHash(location.hash);
 if (moved) history.replaceState(null, "", moved + location.search);
 
 const to = (path) => <Navigate to={path} replace />;
-const topic = (t) => ({ path: `${t.id}/:scene?`, element: <TopicPage topic={t} /> });
+function Topic({ t }) {
+  const { scene } = useParams();
+  return scene && !t.scenes.some((s) => s.id === scene) ? <NotFoundPage /> : <TopicPage topic={t} />;
+}
+const topic = (t) => ({ path: `${t.id}/:scene?`, element: <Topic t={t} /> });
 
 export const router = createBrowserRouter([
   {
@@ -44,7 +50,7 @@ export const router = createBrowserRouter([
       { path: "pohyb", element: to("/utok") },
       { path: "zony", element: to("/obrana") },
       { path: "pozice", element: to("/hriste") },
-      { path: "*", element: to("/") },
+      { path: "*", element: <NotFoundPage /> },
     ],
   },
 ]);

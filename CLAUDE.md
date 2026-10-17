@@ -154,5 +154,5 @@ Cloudflare dashboard (Redirect Rule over a proxied DNS record `AAAA www 100::`, 
 Worker, the rule would not run. `workers_dev: true` keeps
 `fotbalove-abc.robinbortlik.workers.dev` as a fallback. Cloudflare serves `/utok/roztahni-se` from `utok/roztahni-se.html`
 (`/utok/` and `/utok.html` redirect to `/utok`) and any unknown path as `404.html` with status 404 (`not_found_handling: "404-page"`;
-the app then shows the home page). `npx wrangler dev`
+the app shows `NotFoundPage` „Stránka nenalezena“ with the menu tiles, also for an unknown situation of a topic). `npx wrangler dev`
 serves `dist/` the same way locally (`vite preview` does not know the `.html` mapping).
