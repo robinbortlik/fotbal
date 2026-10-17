@@ -12,6 +12,7 @@ import { ATTACK } from "./scenes/utok.js";
 import { DEFENSE } from "./scenes/obrana.js";
 import { KEEPER } from "./scenes/brankar.js";
 import { RULES } from "./scenes/pravidla.js";
+import { KICKING } from "./scenes/kopani.js";
 import { PITCH } from "./scenes/hriste.js";
 
 // Starý odkaz za # → nová adresa, ještě než ji router přečte (bez nového načtení stránky).
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       topic(PITCH),
       topic(RULES),
+      topic(KICKING),
       topic(ATTACK),
       topic(DEFENSE),
       topic(KEEPER),

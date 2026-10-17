@@ -110,6 +110,11 @@ body {
 .opener-hriste {
   --c: var(--grass);
 }
+.sp-kopani,
+.opener-kopani {
+  --c: var(--kick);
+  --c-ink: var(--ink);
+}
 .sp-utok,
 .opener-utok {
   --c: var(--us);
@@ -366,6 +371,10 @@ body {
 .toc-rodice,
 .toc-diplom {
   --c: var(--paper);
+  --c-ink: var(--ink);
+}
+.toc-kopani {
+  --c: var(--kick);
   --c-ink: var(--ink);
 }
 .toc-utok {

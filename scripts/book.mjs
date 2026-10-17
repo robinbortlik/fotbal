@@ -20,7 +20,7 @@ await build({
   plugins: [react()],
   publicDir: false,
   // Chrome dává webp do PDF bezztrátově (fotky brankáře = 7 MB) → v knize jejich JPEG kopie ze src/book/img.
-  resolve: { alias: [{ find: /^.*\/assets\/brankar\/(.+)\.webp$/, replacement: path.resolve("src/book/img/brankar-$1.jpg") }] },
+  resolve: { alias: [{ find: /^.*\/assets\/(brankar|kopani)\/(.+)\.webp$/, replacement: path.resolve("src/book/img") + "/$1-$2.jpg" }] },
   build: { ...config.build, rollupOptions: { input: "book.html" } },
 });
 const server = await preview({ ...config, preview: { port: 5188 } });

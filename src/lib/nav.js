@@ -3,6 +3,7 @@
 export const NAV = [
   { id: "hriste", label: "Hřiště", path: "/hriste", icon: "pitch", hint: "Kde a kolik nás hraje" },
   { id: "pravidla", label: "Pravidla", path: "/pravidla", icon: "whistle", hint: "Co se smí a co ne" },
+  { id: "kopani", label: "Kopání", path: "/kopani", icon: "kick", hint: "Jak kopnout, aby míč letěl, kam chceš" },
   { id: "utok", label: "Útok", path: "/utok", icon: "attack", hint: "Máme míč. Jdeme na bránu!" },
   { id: "obrana", label: "Obrana", path: "/obrana", icon: "shield", hint: "Nemáme míč. Chráníme bránu!" },
   { id: "brankar", label: "Brankář", path: "/brankar", icon: "glove", hint: "Chytá, brání a rozehrává" },
@@ -20,11 +21,11 @@ export const pageTitle = (...parts) => [...parts, "Fotbalové ABC"].filter(Boole
 export const PAGES = {
   "/": {
     title: "Fotbalové ABC – fotbal pro přípravku",
-    description: "Fotbal pro děti z přípravky (5–10 let): pravidla 5 + 1, útok, obrana a brankář v animacích na trenérské tabuli. Pro děti, rodiče i trenéry.",
+    description: "Fotbal pro děti z přípravky (5–10 let): pravidla 5 + 1, jak správně kopat, útok, obrana a brankář v animacích na trenérské tabuli. Pro děti, rodiče i trenéry.",
   },
   "/kviz": {
     title: pageTitle("Kvíz"),
-    description: "Fotbalový kvíz pro děti z přípravky: co uděláš ty? Otázky z pravidel 5 + 1, útoku, obrany i brankáře.",
+    description: "Fotbalový kvíz pro děti z přípravky: co uděláš ty? Otázky z pravidel 5 + 1, kopání, útoku, obrany i brankáře.",
   },
   "/pro-rodice": {
     title: pageTitle("Pro rodiče a trenéry"),

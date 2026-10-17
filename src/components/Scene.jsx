@@ -36,6 +36,9 @@ export function Why({ why, story = [] }) {
   );
 }
 
+/* Otázka do Kvízu: scene.quiz (scéna na tabuli), nebo Component.QUIZ (fotková situace, photoScene). */
+export const quizOf = (s) => s.quiz ?? s.Component?.QUIZ;
+
 const said = (beats = []) => beats.map((b) => b.say ?? b.text).join(" ");
 
 /* Scéna = data → animace na tabuli + Kopíkův komentář.

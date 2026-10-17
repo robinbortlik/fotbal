@@ -1,6 +1,6 @@
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
-import { SceneBoard } from "../components/Scene.jsx";
+import { SceneBoard, quizOf } from "../components/Scene.jsx";
 import { Pitch, Player, Ball } from "../components/Board.jsx";
 import { Kopik } from "../components/Kopik.jsx";
 import { Icon } from "../components/Icons.jsx";
@@ -11,12 +11,14 @@ import { SHAPES, LEGEND } from "../pages/HomePage.jsx";
 import { RULES as RULE_LIST, YOUNGER, SLOGANS, SOURCES } from "../pages/ParentsPage.jsx";
 import { PITCH } from "../scenes/hriste.js";
 import { RULES } from "../scenes/pravidla.js";
+import { KICKING } from "../scenes/kopani.js";
 import { ATTACK } from "../scenes/utok.js";
 import { DEFENSE } from "../scenes/obrana.js";
 import { KEEPER } from "../scenes/brankar.js";
 import cover from "./img/cover.jpg";
 import hriste from "./img/hriste.jpg";
 import pravidla from "./img/pravidla.jpg";
+import kopani from "./img/kopani.jpg";
 import utok from "./img/utok.jpg";
 import obrana from "./img/obrana.jpg";
 import brankar from "./img/brankar.jpg";
@@ -29,10 +31,10 @@ import "./book.css";
    kroky animace jako komiks (tabule v čase kroku + titulek), pod tím „Takhle ne“ a vysvětlení
    pro rodiče a trenéry. PDF dělá `npm run book` (scripts/book.mjs). */
 const SITE = "fotbalove-abc.cz";
-const TOPICS = [PITCH, RULES, ATTACK, DEFENSE, KEEPER];
-const ART = { hriste, pravidla, utok, obrana, brankar };
+const TOPICS = [PITCH, RULES, KICKING, ATTACK, DEFENSE, KEEPER];
+const ART = { hriste, pravidla, kopani, utok, obrana, brankar };
 const ICON = Object.fromEntries(NAV.map((n) => [n.id, n.icon]));
-const QUIZ = TOPICS.flatMap((t) => t.scenes.filter((s) => s.quiz).map((s) => ({ t, s })));
+const QUIZ = TOPICS.flatMap((t) => t.scenes.filter(quizOf).map((s) => ({ t, s, q: quizOf(s) })));
 const PER_QUIZ_PAGE = 6;
 
 /* Kdy „vyfotit“ krok i: na konci kroku (je vidět, co se stalo), ale dřív, než zmizí šipka
@@ -377,15 +379,15 @@ function QuizPage({ page, items, first, last }) {
         </div>
       </header>
       <div className="quiz-grid">
-        {items.map(({ s, no }) => (
+        {items.map(({ s, q, no }) => (
           <div key={s.id} className="quiz-card">
-            <SceneBoard s={s} time={s.quiz.at} />
+            {q.art ? <div className="board">{q.art}</div> : <SceneBoard s={s} time={q.at} />}
             <div>
               <p className="q">
-                <b>{no}.</b> {s.quiz.ask}
+                <b>{no}.</b> {q.ask}
               </p>
               <ol className="opts">
-                {quizOptions(s.quiz, no).map((o, k) => (
+                {quizOptions(q, no).map((o, k) => (
                   <li key={o.text}>
                     <b>{LETTERS[k]}</b> {o.text}
                   </li>
@@ -398,7 +400,7 @@ function QuizPage({ page, items, first, last }) {
       {last && (
         <p className="answers">
           Správné odpovědi:{" "}
-          {QUIZ.map(({ s }, i) => `${i + 1} ${LETTERS[quizOptions(s.quiz, i + 1).findIndex((o) => o.ok)]}`).join(" · ")}
+          {QUIZ.map(({ q }, i) => `${i + 1} ${LETTERS[quizOptions(q, i + 1).findIndex((o) => o.ok)]}`).join(" · ")}
         </p>
       )}
     </Page>
@@ -476,7 +478,7 @@ function Slogans() {
           ))}
         </ul>
         <p className="note">
-          Ověřeno v říjnu 2026. Ilustrace a fotografie brankáře jsou vytvořené pomocí AI (Google Gemini). Celý obsah
+          Ověřeno v říjnu 2026. Ilustrace a fotografie brankáře a kopání jsou vytvořené pomocí AI (Google Gemini). Celý obsah
           zdarma na {SITE}.
         </p>
       </div>
@@ -494,7 +496,7 @@ function Diploma() {
         <p className="for">
           pro <span className="blank" />
         </p>
-        <p>Znáš hřiště i pravidla, umíš útočit, bránit i chytat. Hraješ fér a s radostí!</p>
+        <p>Znáš hřiště i pravidla, umíš kopat, útočit, bránit i chytat. Hraješ fér a s radostí!</p>
         <div className="signs">
           <span>
             <span className="blank" />

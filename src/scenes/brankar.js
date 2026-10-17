@@ -1,16 +1,74 @@
 /* Brankář — data scén (formát viz src/components/Scene.jsx). Souřadnice v metrech:
    x 0..W zleva, y 0..L od NAŠÍ branky (dole). Brankář (žlutý tým, oranžový dres, č. 1)
-   je ve všech situacích „Ty“. První tři situace a „Padej na bok“ jsou vlastní komponenty (src/components/keeper).
+   je ve všech situacích „Ty“. První čtyři situace jsou fotky se štítky (photoScene) nebo vlastní komponenty (src/components/keeper).
    Titulky krátké, Kopík nahlas (say) dovysvětlí proč. */
-import { KeeperStance } from "../components/keeper/KeeperStance.jsx";
 import { KeeperAngle } from "../components/keeper/KeeperAngle.jsx";
 import { KeeperHands } from "../components/keeper/KeeperHands.jsx";
-import { KeeperFall } from "../components/keeper/KeeperFall.jsx";
+import { photoScene } from "../components/keeper/parts.jsx";
+import ready from "../assets/brankar/postoj-ano.webp";
+import sloppy from "../assets/brankar/postoj-ne.webp";
+import side from "../assets/brankar/pad-ano.webp";
+import belly from "../assets/brankar/pad-ne.webp";
 
-const stance = { id: "postoj", title: "Připravený postoj", icon: "🧍", Component: KeeperStance };
+const stance = photoScene({
+  id: "postoj",
+  title: "Připravený postoj",
+  icon: "🧍",
+  good: {
+    text: "Pokrč kolena, ruce před sebe, koukej na míč.",
+    say: "Pokrč kolena, ruce před sebe a koukej na míč. Takhle skočíš rychle na obě strany a ruce máš hned u míče.",
+    src: ready,
+    alt: "Brankář v připraveném postoji kouká na míč",
+    labels: [
+      [25.2, 4.4, "Oči na míč", [20.4, 8.6]],
+      [24.6, 23.0, "Ruce před sebe", [23.4, 19.2]],
+      [26.0, 31.2, "Pokrč kolena", [19.4, 29.8]],
+      [11.4, 44.6, "Na špičky", [6.6, 40.0]],
+    ],
+  },
+  bad: {
+    text: "Rovné nohy a ruce dole? To nechytíš!",
+    say: "S rovnýma nohama a rukama dole to nechytíš. Než se odrazíš a zvedneš ruce, míč je v bráně.",
+    src: sloppy,
+    alt: "Brankář stojí rovně, ruce má dole a kouká jinam",
+    labels: [
+      [24.4, 3.2, "Kouká jinam", [17.4, 7.0]],
+      [5.2, 20.6, "Ruce dole", [11.6, 24.2]],
+      [24.6, 33.4, "Rovné nohy", [16.6, 31.4]],
+    ],
+  },
+  why: "Základní postoj brankáře: chodidla zhruba na šíři ramen, váha na přední části chodidel, kolena lehce pokrčená, ruce před tělem s otevřenými dlaněmi a oči na míči. Z tohoto postoje se nejrychleji vyrazí na kteroukoli stranu a ruce jsou hned u míče. (Fotografie jsou ilustrační, vytvořené pomocí AI.)",
+});
 const angle = { id: "kde-stat", title: "Kde stát", icon: "📐", Component: KeeperAngle };
 const hands = { id: "ruce", title: "Jak chytat", icon: "🧤", Component: KeeperHands };
-const fall = { id: "padej-na-bok", title: "Padej na bok", icon: "🤸", Component: KeeperFall };
+const fall = photoScene({
+  id: "padej-na-bok",
+  title: "Padej na bok",
+  icon: "🤸",
+  good: {
+    text: "Padni na bok, míč drž v obou rukou.",
+    say: "Padni na bok a míč drž pevně v obou rukou. Na boku se nebouchneš a míč ti nevyskočí.",
+    src: side,
+    alt: "Brankář leží na boku a drží míč v obou rukou",
+    labels: [
+      [7.2, 20.4, "Oči na míč", [9.0, 24.6]],
+      [25.0, 42.2, "Na bok", [20.4, 36.8]],
+      [11.6, 44.4, "Míč v obou rukou", [10.8, 38.6]],
+    ],
+  },
+  bad: {
+    text: "Na břicho? Bouchneš se a míč uteče.",
+    say: "Když padneš na břicho, bouchneš se do loktů a míč ti vyskočí z rukou. Útočník ho pak snadno dorazí.",
+    src: belly,
+    alt: "Brankář dopadl na břicho a míč mu utekl",
+    labels: [
+      [17.5, 45.8, "Lokty na zemi", [13.4, 37.6]],
+      [25.4, 42.0, "Na břicho", [19.0, 36.8]],
+      [5.0, 44.6, "Míč utekl", [5.4, 40.4]],
+    ],
+  },
+  why: "Při nízkém míči do strany brankář padá na bok (stehno, bok, rameno), ne na břicho. Míč drží oběma rukama — spodní ruka za míčem, horní na něm — a hned si ho přitáhne k tělu. Pád na břicho nebo na lokty bolí a míč z rukou snadno vyskočí útočníkovi k noze. Pád se trénuje nejdřív z kleku na měkké trávě. (Fotografie jsou ilustrační, vytvořené pomocí AI.)",
+});
 
 // Tyče naší branky (na brankové čáře y = 0).
 const POST_L = [12.5, 0];

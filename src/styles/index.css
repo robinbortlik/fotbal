@@ -22,6 +22,7 @@
   --them: #2d6bf0;
   --them-deep: #1c4bb8;
   --them-gk: #8a5cf5;
+  --kick: #17a8a3;
   --good: #148a4a;
   --bad: #e2403a;
   --line: rgba(23, 35, 59, 0.14);
@@ -838,6 +839,12 @@ button.footer-link {
 .tile-pravidla .tile-ico {
   background: var(--paper);
 }
+.tile-kopani .tile-ico {
+  background: var(--kick);
+}
+.tile-kviz {
+  grid-column: 1 / -1; /* 7 dlaždic: kvíz přes celou šířku */
+}
 
 /* ── Kvíz ────────────────────────────────────────────────────────────── */
 .quiz .scene {
@@ -1311,7 +1318,7 @@ button.footer-link {
 
 /* ── Tablet a mobil ──────────────────────────────────────────────────── */
 /* Šířky lišty změřené (menu, U10–U11, Čtu nahlas, Nainstalovat; s posuvníkem 15 px): pod nimi by přetekla. */
-@media (max-width: 1439px) {
+@media (max-width: 1519px) {
   .nav-link span {
     display: none;
   }
@@ -1344,7 +1351,7 @@ button.footer-link {
     --board-w: min(calc((100vh - 280px) * 0.699), 503px, 45vw);
   }
 }
-@media (max-width: 1549px) {
+@media (max-width: 1629px) {
   .install-app span {
     display: none;
   }
@@ -1362,6 +1369,9 @@ button.footer-link {
 @media (min-width: 761px) and (max-width: 1000px) {
   .topbar {
     gap: 12px;
+  }
+  .nav-link {
+    padding-inline: 11px;
   }
   .nav-link.active span {
     display: none; /* tablet na výšku: jen ikony, vybraná je žlutá */
@@ -1422,7 +1432,7 @@ button.footer-link {
     height: var(--tabbar);
     margin: 0;
     padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
-    gap: 2px;
+    gap: 0;
     background: var(--paper);
     border-top: 3px solid var(--ink);
     justify-content: space-around;
@@ -1432,9 +1442,13 @@ button.footer-link {
     flex: 1;
     flex-direction: column;
     gap: 2px;
-    padding: 4px 2px;
+    padding: 4px 0;
     border-radius: 14px;
-    font-size: 13px;
+    font-size: clamp(11px, 3.75vw, 13px);
+  }
+  /* Spodní lišta jen s tématy, 7 položek se nevešlo; Kvíz je na úvodu (dlaždice) a jako „Další“ po Brankáři */
+  .nav-link[href="/kviz"] {
+    display: none;
   }
   .nav-link span,
   .nav-link.active span {
