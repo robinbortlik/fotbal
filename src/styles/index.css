@@ -1444,7 +1444,11 @@ button.footer-link {
     gap: 2px;
     padding: 4px 0;
     border-radius: 14px;
-    font-size: clamp(11px, 3.75vw, 13px); /* 7 položek se vejde i do 300 px */
+    font-size: clamp(11px, 3.75vw, 13px);
+  }
+  /* Spodní lišta jen s tématy, 7 položek se nevešlo; Kvíz je na úvodu (dlaždice) a jako „Další“ po Brankáři */
+  .nav-link[href="/kviz"] {
+    display: none;
   }
   .nav-link span,
   .nav-link.active span {

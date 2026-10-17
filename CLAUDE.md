@@ -123,7 +123,7 @@ Install dialog = open source `<pwa-install>` (`@khmyznikov/pwa-install`, element
 `src/lib/install.js`): offered by itself once (`fotbal:install`) on the home page of a returning visitor, otherwise the
 install button next to the voice button in the top bar (and a footer link). The top bar is full (brand, 7 menu items, U10–U11
 select, install, voice): its label breakpoints in `index.css` were measured (with a 15 px scrollbar, install button forced, longer
-„Číst nahlas“) so nothing overflows at 300–1700 px, the mobile tab bar fits 300 px — re-measure after adding anything to it. Icons are rendered from the Kopík SVG; re-render them if Kopík changes.
+„Číst nahlas“) so nothing overflows at 300–1700 px; the mobile tab bar shows only the 6 topics (Kvíz hidden by CSS, it has a home tile and is „Další“ after Brankář) and fits 300 px — re-measure after adding anything to it. Icons are rendered from the Kopík SVG; re-render them if Kopík changes.
 Share preview: Open Graph / Twitter meta in `index.html` with absolute URLs, image `public/og.png` (1200×630, < 300 kB for
 WhatsApp) composed from the home-page board, Kopík and menu icons; per-page og:title/description/url come from `scripts/seo.mjs`.
 After changing it, re-scrape in the Facebook Sharing Debugger.
