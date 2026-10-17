@@ -23,6 +23,7 @@
   --them-deep: #1c4bb8;
   --them-gk: #8a5cf5;
   --kick: #17a8a3;
+  --dribble: #ee5d97;
   --good: #148a4a;
   --bad: #e2403a;
   --line: rgba(23, 35, 59, 0.14);
@@ -304,6 +305,30 @@ button.footer-link {
 }
 .topic-head .lead {
   margin: 0;
+}
+/* Technika: přepínač Kopání / Kličky (dvě témata pod jednou položkou menu, MENU v nav.js) */
+.topic-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.topic-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 6px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--paper);
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 19px;
+  text-decoration: none;
+}
+.topic-tab.active {
+  background: var(--us);
+  box-shadow: var(--press);
 }
 .topic-body {
   display: grid;
@@ -839,7 +864,7 @@ button.footer-link {
 .tile-pravidla .tile-ico {
   background: var(--paper);
 }
-.tile-kopani .tile-ico {
+.tile-technika .tile-ico {
   background: var(--kick);
 }
 .tile-kviz {
@@ -1318,7 +1343,7 @@ button.footer-link {
 
 /* ── Tablet a mobil ──────────────────────────────────────────────────── */
 /* Šířky lišty změřené (menu, U10–U11, Čtu nahlas, Nainstalovat; s posuvníkem 15 px): pod nimi by přetekla. */
-@media (max-width: 1519px) {
+@media (max-width: 1549px) {
   .nav-link span {
     display: none;
   }
@@ -1351,7 +1376,7 @@ button.footer-link {
     --board-w: min(calc((100vh - 280px) * 0.699), 503px, 45vw);
   }
 }
-@media (max-width: 1629px) {
+@media (max-width: 1659px) {
   .install-app span {
     display: none;
   }
@@ -1361,7 +1386,7 @@ button.footer-link {
     display: none;
   }
 }
-@media (min-width: 761px) and (max-width: 1139px) {
+@media (min-width: 761px) and (max-width: 1169px) {
   .brand > span {
     display: none;
   }
@@ -1476,6 +1501,15 @@ button.footer-link {
   }
   .topic-body {
     gap: 6px;
+  }
+  .topic-tabs {
+    margin-bottom: 10px;
+  }
+  .topic-tab {
+    flex: 1;
+    justify-content: center;
+    min-height: 44px;
+    font-size: 17px;
   }
   .say {
     gap: 8px;

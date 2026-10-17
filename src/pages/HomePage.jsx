@@ -6,7 +6,7 @@ import { Say } from "../components/Scene.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { W, L } from "../lib/pitch.js";
 import { say, PHRASES } from "../lib/voice.js";
-import { NAV, PAGES, BOOK } from "../lib/nav.js";
+import { MENU, PAGES, BOOK } from "../lib/nav.js";
 
 /* Úvod: přepínač „Máme míč / Nemáme míč“ — nejdůležitější otázka fotbalu.
    Pozice jsou v podílech hřiště (x · W, y · L), takže sedí pro jakýkoli rozměr. */
@@ -180,7 +180,7 @@ export function HomePage() {
       <section className="chapters" aria-labelledby="co-umet">
         <h2 id="co-umet">Co chceš umět?</h2>
         <div className="tiles">
-          {NAV.map((n) => (
+          {MENU.map((n) => (
             <Link key={n.id} to={n.path} className={"tile tile-" + n.id}>
               <span className="tile-ico">
                 <Icon name={n.icon} size={34} />

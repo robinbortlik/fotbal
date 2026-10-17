@@ -8,7 +8,7 @@ import { useTweaks } from "../hooks/useTweaks.jsx";
 import { stop, useVoice } from "../lib/voice.js";
 import { AGES, setAge, useAge } from "../lib/age.js";
 import { showInstall, useCanInstall } from "../lib/install.js";
-import { NAV, BOOK } from "../lib/nav.js";
+import { MENU, BOOK } from "../lib/nav.js";
 
 /* Společný rám: horní lišta (na mobilu menu dole), obsah, patička, panel Tweaks
    (protokol s hostitelským iframem — viz CLAUDE.md, neměnit). */
@@ -37,8 +37,12 @@ export default function RootLayout() {
           <span>Fotbalové ABC</span>
         </Link>
         <nav className="nav" aria-label="Hlavní menu">
-          {NAV.map((n) => (
-            <NavLink key={n.id} to={n.path} className="nav-link">
+          {MENU.map((n) => (
+            <NavLink
+              key={n.id}
+              to={n.path}
+              className={({ isActive }) => "nav-link" + (isActive || n.topics?.includes(page) ? " active" : "")}
+            >
               <Icon name={n.icon} size={26} />
               <span>{n.label}</span>
             </NavLink>

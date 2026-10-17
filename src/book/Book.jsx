@@ -12,6 +12,7 @@ import { RULES as RULE_LIST, YOUNGER, SLOGANS, SOURCES } from "../pages/ParentsP
 import { PITCH } from "../scenes/hriste.js";
 import { RULES } from "../scenes/pravidla.js";
 import { KICKING } from "../scenes/kopani.js";
+import { DRIBBLING } from "../scenes/klicky.js";
 import { ATTACK } from "../scenes/utok.js";
 import { DEFENSE } from "../scenes/obrana.js";
 import { KEEPER } from "../scenes/brankar.js";
@@ -19,6 +20,7 @@ import cover from "./img/cover.jpg";
 import hriste from "./img/hriste.jpg";
 import pravidla from "./img/pravidla.jpg";
 import kopani from "./img/kopani.jpg";
+import klicky from "./img/klicky.jpg";
 import utok from "./img/utok.jpg";
 import obrana from "./img/obrana.jpg";
 import brankar from "./img/brankar.jpg";
@@ -31,8 +33,8 @@ import "./book.css";
    kroky animace jako komiks (tabule v čase kroku + titulek), pod tím „Takhle ne“ a vysvětlení
    pro rodiče a trenéry. PDF dělá `npm run book` (scripts/book.mjs). */
 const SITE = "fotbalove-abc.cz";
-const TOPICS = [PITCH, RULES, KICKING, ATTACK, DEFENSE, KEEPER];
-const ART = { hriste, pravidla, kopani, utok, obrana, brankar };
+const TOPICS = [PITCH, RULES, KICKING, DRIBBLING, ATTACK, DEFENSE, KEEPER];
+const ART = { hriste, pravidla, kopani, klicky, utok, obrana, brankar };
 const ICON = Object.fromEntries(NAV.map((n) => [n.id, n.icon]));
 const QUIZ = TOPICS.flatMap((t) => t.scenes.filter(quizOf).map((s) => ({ t, s, q: quizOf(s) })));
 const PER_QUIZ_PAGE = 6;
@@ -496,7 +498,7 @@ function Diploma() {
         <p className="for">
           pro <span className="blank" />
         </p>
-        <p>Znáš hřiště i pravidla, umíš kopat, útočit, bránit i chytat. Hraješ fér a s radostí!</p>
+        <p>Znáš hřiště i pravidla, umíš kopat i kličkovat, útočit, bránit i chytat. Hraješ fér a s radostí!</p>
         <div className="signs">
           <span>
             <span className="blank" />

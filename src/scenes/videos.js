@@ -31,6 +31,13 @@ export const VIDEOS = {
     { id: "rtIIZ7DkAEQ", scene: "naklon-se", title: "Mírný předklon, jinak míč letí vysoko", channel: "Honza Weber", lang: "CZ", vertical: true },
     { id: "3rzqU51bzRY", scene: "obe-nohy", title: "Jak trénovat slabší nohu", channel: "Štěpán Šebrle", lang: "CZ", vertical: true },
   ],
+  klicky: [
+    { id: "-BzZgXh8kkU", scene: "klicka-telem", title: "Nakloň celé tělo na jednu stranu a vyveď míč na druhou", channel: "ABSOLUTE TEAMSPORT SPORTFOTBAL", lang: "CZ", start: 61, end: 95 },
+    { id: "wZFzIglIVpI", scene: "stahni-podrazkou", title: "Stáhni míč podrážkou a otoč se", channel: "FKB TV", lang: "" },
+    { id: "UBfEvzle2Uc", scene: "otocka-za-nohu", title: "Cruyffova otočka: naznač kop celým tělem a otoč se", channel: "Martin Hrabina", lang: "CZ", vertical: true },
+    { id: "VvdBtS86ySo", scene: "preslapovacka", title: "Přešlápni míč a vyveď ho vnější stranou nohy", channel: "ABSOLUTE TEAMSPORT SPORTFOTBAL", lang: "", start: 38, end: 71 },
+    { id: "7z0GQ0IC6u8", scene: "zastav-a-vyraz", title: "Soupeř běží vedle tebe: zastav míč a vyraž mu za záda", channel: "SoccerCoachTV", lang: "EN", start: 49, end: 83 },
+  ],
   utok: [
     { id: "tO37HwloKvo", scene: "roztahni-se", title: "Roztáhněte hru, na druhé straně bývá volno", channel: "FAČR", lang: "CZ", start: 952, end: 978 },
     { id: "W-hRUMmEUA4", scene: "ukaz-se", title: "Vystup ze stínu soupeře (3 na 1)", channel: "FIFA Training Centre", lang: "EN", vertical: true },

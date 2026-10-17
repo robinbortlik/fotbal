@@ -22,6 +22,13 @@ const P = {
       <path d="m12 13.2 2.6 1.9-1 3h-3.2l-1-3z" fill="currentColor" stroke="none" />
     </>
   ),
+  dribble: (
+    <>
+      <circle cx="6" cy="18" r="3" />
+      <path d="M10 15.5 14.5 13 10.5 9.5 17 5.5" />
+      <path d="M13.4 4.8 17 5.5l-.8 3.6" />
+    </>
+  ),
   kick: (
     <>
       <path d="M3 8.5h4.5l.6 3.6c3.6.2 6.4 1.3 7.2 3.4.3.8-.2 1.5-1 1.5H3z" />
