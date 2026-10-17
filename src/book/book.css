@@ -115,6 +115,11 @@ body {
   --c: var(--kick);
   --c-ink: var(--ink);
 }
+.sp-klicky,
+.opener-klicky {
+  --c: var(--dribble);
+  --c-ink: var(--ink);
+}
 .sp-utok,
 .opener-utok {
   --c: var(--us);
@@ -375,6 +380,10 @@ body {
 }
 .toc-kopani {
   --c: var(--kick);
+  --c-ink: var(--ink);
+}
+.toc-klicky {
+  --c: var(--dribble);
   --c-ink: var(--ink);
 }
 .toc-utok {
@@ -683,30 +692,32 @@ body {
   column-gap: 8mm;
 }
 .slogans-page .slogan-grid {
-  display: grid;
-  grid-template-columns: 1.3fr 1.25fr 1fr 1fr 1fr; /* útok a obrana mají nejvíc hesel */
-  gap: 4mm;
+  display: block;
+  columns: 4; /* 7 skupin různě dlouhých: sloupce poskládají karty pod sebe a vejdou se na stránku */
+  column-gap: 4mm;
 }
 .slogans-page .slogan-card {
-  padding: 3mm 4mm;
+  break-inside: avoid;
+  margin-bottom: 3mm;
+  padding: 2.5mm 3mm;
   border: 0.6mm solid var(--ink);
   border-radius: 3mm;
   box-shadow: none;
   background: var(--paper);
 }
 .slogans-page .slogan-card h3 {
-  font-size: 12pt;
-  margin-bottom: 2mm;
+  font-size: 11pt;
+  margin-bottom: 1.5mm;
 }
 .slogans-page .slogan-card ul {
   margin: 0;
-  padding-left: 4mm;
+  padding-left: 3.5mm;
   display: flex;
   flex-direction: column;
-  gap: 1mm;
+  gap: 0.6mm;
   font-weight: 700;
-  font-size: 10pt;
-  line-height: 1.2;
+  font-size: 9pt;
+  line-height: 1.15;
 }
 .sources h3 {
   font-size: 12pt;

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
 import { OwnPage, Scene, reducedMotion } from "../components/Scene.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { Video } from "../components/Video.jsx";
 import { VIDEOS } from "../scenes/videos.js";
-import { NAV, pageTitle } from "../lib/nav.js";
+import { MENU, NAV, pageTitle } from "../lib/nav.js";
 import { stop } from "../lib/voice.js";
 import { forAge, useAge } from "../lib/age.js";
 
@@ -81,6 +81,7 @@ export function TopicPage({ topic }) {
   // „Další“ přes tabuli na konci scény: další situace, za poslední situací další téma (za Brankářem Kvíz).
   const after = NAV[NAV.findIndex((n) => n.id === topic.id) + 1];
   const onward = next ? { title: next.title, go: () => pick(next) } : after && { title: after.label, go: () => navigate(after.path) };
+  const group = MENU.find((m) => m.topics?.includes(topic.id)); // Technika: přepínač Kopání / Kličky
   const videos = VIDEOS[topic.id] || [];
   const video = videos.find((v) => v.scene === scene.id);
   const nextBtn = (
@@ -96,6 +97,15 @@ export function TopicPage({ topic }) {
 
   return (
     <div className={"page topic topic-" + topic.id}>
+      {group && (
+        <nav className="topic-tabs" aria-label={group.label}>
+          {NAV.filter((n) => group.topics.includes(n.id)).map((n) => (
+            <NavLink key={n.id} to={n.path} className="topic-tab">
+              <Icon name={n.icon} size={22} /> {n.label}
+            </NavLink>
+          ))}
+        </nav>
+      )}
       <header className="topic-head">
         <Head className="topic-title">{topic.title}</Head>
         {topic.lead && <p className="lead">{topic.lead}</p>}

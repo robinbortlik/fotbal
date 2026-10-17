@@ -8,6 +8,7 @@ import { say, PHRASES, useSpeech } from "../lib/voice.js";
 import { PITCH } from "../scenes/hriste.js";
 import { RULES } from "../scenes/pravidla.js";
 import { KICKING } from "../scenes/kopani.js";
+import { DRIBBLING } from "../scenes/klicky.js";
 import { ATTACK } from "../scenes/utok.js";
 import { DEFENSE } from "../scenes/obrana.js";
 import { KEEPER } from "../scenes/brankar.js";
@@ -18,7 +19,7 @@ import { forAge, useAge } from "../lib/age.js";
    quiz.at, dítě odpoví a scéna se dohraje: ukáže správné řešení. Fotková situace (photoScene) ukáže fotku
    bez štítků a po odpovědi se štítky. Otázky podle vybrané kategorie (U8–U9 / U10–U11). */
 const all = (age) =>
-  [PITCH, RULES, KICKING, ATTACK, DEFENSE, KEEPER].flatMap((topic) =>
+  [PITCH, RULES, KICKING, DRIBBLING, ATTACK, DEFENSE, KEEPER].flatMap((topic) =>
     topic.scenes.map((s) => forAge(s, age)).filter(quizOf).map((scene) => ({ topic, scene }))
   );
 const ROUND = 8;

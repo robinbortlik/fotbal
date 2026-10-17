@@ -38,6 +38,7 @@ export const YOUNGER = [
 
 export const SLOGANS = [
   ["Kopání", ["Krátká přihrávka? Placírka, špička ven!", "Střela? Kopni tkaničkami!", "Nekopej špičkou.", "Noha jako bič, ne jako klacek.", "Stojná noha vedle míče, špička na cíl.", "Nakloň se nad míč.", "Kopej oběma nohama."]],
+  ["Kličky", ["Kličkuj až dva kroky před soupeřem.", "Cesta zavřená? Stáhni podrážkou!", "Soupeř skočí do kopu? Otoč se za nohu.", "Jedna přešlapovačka a jeď!", "Zastav – a vyraž!", "U jejich brány kličkuj, u naší přihraj."]],
   ["Útok (máme míč)", ["Máme míč? Roztáhni se!", "Ukaž se, ať ti přihrají!", "Přihraj a běž!", "Než míč přijde, koukni přes rameno.", "Veď míč tam, kde nikdo není.", "Soupeř blízko? Schovej míč tělem.", "Klička – a zrychli!", "Plno? Přenes hru na druhou stranu.", "Před střelou koukni na bránu.", "Po střele dobíhej!", "Náš aut? Přiběhni blíž a ukaž se."]],
   ["Obrana (nemáme míč)", ["Nemáme míč? Bráníme všichni!", "Nemáme míč? Stáhněte se k sobě.", "Mezi soupeře a naši bránu!", "Nejbližší jde na míč.", "Kamarád jde na míč? Jisti ho zezadu.", "Bokem – vytlač ho ke straně.", "Míč vezmi, ne jen odkopni.", "Soupeř vystřelil? Běž k bráně!", "Aut nebo roh soupeře? Hlídej svého hráče."]],
   ["Přepnutí", ["Ztráta? Hned zpátky pro míč!", "Získali jsme míč? Hned na bránu!", "Nejde to dopředu? Podrž míč.", "Náš roh? Někdo zůstane vzadu."]],

@@ -24,8 +24,10 @@ Vite + React 18, plain global CSS (no Tailwind). No test framework, no linter.
 `createBrowserRouter` in `src/router.jsx`, `base: "/"` (site runs at the domain root): `/utok` = topic,
 `/utok/roztahni-se` = situation (`:scene?` param; the situation list is `<Link>`s so crawlers follow them, a click
 `navigate`s with `replace`). `src/lib/nav.js` is the single
-source for the menu (top bar, mobile tab bar, home tiles) and for page titles/descriptions (`PAGES`, `pageTitle`) — add
-pages there and in `router.jsx`. Old slugs redirect via `<Navigate>` routes and with a 301 in `public/_redirects`; old `#` links (`#/utok?s=x`, `#rules`) are
+source for the menu and for page titles/descriptions (`PAGES`, `pageTitle`) — add
+pages there and in `router.jsx`. `NAV` = topics and Kvíz in order („Další“ after a topic's last situation, SEO); `MENU`
+(top bar, mobile tab bar, home tiles) merges topics with the same `group` into one item: „Technika“ = Kopání + Kličky,
+switched by tabs at the top of the topic page (TopicPage). Old slugs redirect via `<Navigate>` routes and with a 301 in `public/_redirects`; old `#` links (`#/utok?s=x`, `#rules`) are
 rewritten by `fromHash` (nav.js, asserted in `npm run check`) with `history.replaceState` before the router starts.
 `scripts/seo.mjs` runs after `vite build`: writes `dist/<url>.html` for every page and situation (own title, description,
 canonical, og:*, BreadcrumbList JSON-LD on topics and situations, plus a `.seo` text + links in `#root` for crawlers without JS — hidden by CSS for 3 s, replaced by the app),
@@ -42,7 +44,7 @@ everything Kopík says in it; on the topic URL the H1 is the topic.
   arrows, zone, label, x/check).
 - `src/components/Scene.jsx` — scene player. **The data format is documented at the top of this file.**
   `SceneBoard` renders a scene at a given time (also used by the quiz).
-- `src/scenes/*.js` — one topic per file (`hriste`, `pravidla`, `kopani`, `utok`, `obrana`, `brankar`): plain data
+- `src/scenes/*.js` — one topic per file (`hriste`, `pravidla`, `kopani`, `klicky`, `utok`, `obrana`, `brankar`): plain data
   `{ id, title, lead, scenes: [...] }`. A scene may instead be `{ id, title, icon, Component }` for
   custom interactive content (see `src/components/keeper/`); it must render the same `.scene` grid
   skeleton (`.board`, `<SceneTitle>`, `<Say>`, `.scene-extra`, `<Why why story>`, `{children}`).
@@ -123,7 +125,7 @@ Install dialog = open source `<pwa-install>` (`@khmyznikov/pwa-install`, element
 `src/lib/install.js`): offered by itself once (`fotbal:install`) on the home page of a returning visitor, otherwise the
 install button next to the voice button in the top bar (and a footer link). The top bar is full (brand, 7 menu items, U10–U11
 select, install, voice): its label breakpoints in `index.css` were measured (with a 15 px scrollbar, install button forced, longer
-„Číst nahlas“) so nothing overflows at 300–1700 px; the mobile tab bar shows only the 6 topics (Kvíz hidden by CSS, it has a home tile and is „Další“ after Brankář) and fits 300 px — re-measure after adding anything to it. Icons are rendered from the Kopík SVG; re-render them if Kopík changes.
+„Číst nahlas“) so nothing overflows at 300–1700 px; the mobile tab bar shows the 6 menu items without Kvíz (hidden by CSS, it has a home tile and is „Další“ after Brankář) and fits 300 px — re-measure after adding anything to it. Icons are rendered from the Kopík SVG; re-render them if Kopík changes.
 Share preview: Open Graph / Twitter meta in `index.html` with absolute URLs, image `public/og.png` (1200×630, < 300 kB for
 WhatsApp) composed from the home-page board, Kopík and menu icons; per-page og:title/description/url come from `scripts/seo.mjs`.
 After changing it, re-scrape in the Facebook Sharing Debugger.
