@@ -39,7 +39,7 @@ export function TopicPage({ topic }) {
   const age = useAge();
   const scenes = useMemo(() => topic.scenes.map((s) => forAge(s, age)), [topic, age]); // U8–U9: kde se pravidla liší
   const found = scenes.findIndex((s) => s.id === sid);
-  const i = Math.max(0, found); // neznámá situace → první
+  const i = Math.max(0, found); // bez situace v adrese (/utok) → první; neznámou řeší router (Stránka nenalezena)
   const scene = scenes[i];
   const next = scenes[i + 1];
   const [run, setRun] = useState(0); // klik na už vybranou situaci ji pustí znovu od začátku

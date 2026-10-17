@@ -169,6 +169,23 @@ function Legend() {
   );
 }
 
+/* Dlaždice témat — na úvodu a na stránce Stránka nenalezena. */
+export function Tiles() {
+  return (
+    <div className="tiles">
+      {MENU.map((n) => (
+        <Link key={n.id} to={n.path} className={"tile tile-" + n.id}>
+          <span className="tile-ico">
+            <Icon name={n.icon} size={34} />
+          </span>
+          <span className="tile-label">{n.label}</span>
+          <span className="tile-hint">{n.hint}</span>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
 export function HomePage() {
   useEffect(() => {
     document.title = PAGES["/"].title;
@@ -179,17 +196,7 @@ export function HomePage() {
       <Legend />
       <section className="chapters" aria-labelledby="co-umet">
         <h2 id="co-umet">Co chceš umět?</h2>
-        <div className="tiles">
-          {MENU.map((n) => (
-            <Link key={n.id} to={n.path} className={"tile tile-" + n.id}>
-              <span className="tile-ico">
-                <Icon name={n.icon} size={34} />
-              </span>
-              <span className="tile-label">{n.label}</span>
-              <span className="tile-hint">{n.hint}</span>
-            </Link>
-          ))}
-        </div>
+        <Tiles />
         <p className="book-link">
           Chcete to mít na papíře? <a {...BOOK}>Stáhněte si knihu k vytištění (PDF)</a>.
         </p>
