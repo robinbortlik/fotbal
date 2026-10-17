@@ -23,6 +23,14 @@ export const VIDEOS = {
     { id: "YWXuwF59hyo", scene: "fair-play", title: "Soupeř leží zraněný, tak pošle míč ven", channel: "Guardian Football", lang: "" },
     { id: "Leg9YYN3LVE", scene: "po-zapase", title: "Po zápase si podáme ruce se všemi soupeři", channel: "ArysRsk", lang: "", vertical: true },
   ],
+  kopani: [
+    { id: "stIfylUDjDM", scene: "placirka", title: "Přihrávka placírkou v pohybu", channel: "Můj první gól", lang: "CZ", start: 11, end: 59 },
+    { id: "kGIeTbktxAo", scene: "tkanicky", title: "Kop nártem: špička k zemi, trefuj tkaničkami", channel: "Můj první gól", lang: "CZ", start: 23, end: 46 },
+    { id: "eq3lQYgCRLM", scene: "svihni-od-kolena", title: "Pata dozadu, pak švih (kop v pěti krocích)", channel: "Martin Football M7", lang: "", vertical: true },
+    { id: "OtZqONAg4N8", scene: "stojna-noha", title: "Stojná noha vedle míče, ne za ním", channel: "SOCCSTER", lang: "", vertical: true, start: 15 },
+    { id: "rtIIZ7DkAEQ", scene: "naklon-se", title: "Mírný předklon, jinak míč letí vysoko", channel: "Honza Weber", lang: "CZ", vertical: true },
+    { id: "3rzqU51bzRY", scene: "obe-nohy", title: "Jak trénovat slabší nohu", channel: "Štěpán Šebrle", lang: "CZ", vertical: true },
+  ],
   utok: [
     { id: "tO37HwloKvo", scene: "roztahni-se", title: "Roztáhněte hru, na druhé straně bývá volno", channel: "FAČR", lang: "CZ", start: 952, end: 978 },
     { id: "W-hRUMmEUA4", scene: "ukaz-se", title: "Vystup ze stínu soupeře (3 na 1)", channel: "FIFA Training Centre", lang: "EN", vertical: true },

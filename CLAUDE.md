@@ -42,12 +42,12 @@ everything Kopík says in it; on the topic URL the H1 is the topic.
   arrows, zone, label, x/check).
 - `src/components/Scene.jsx` — scene player. **The data format is documented at the top of this file.**
   `SceneBoard` renders a scene at a given time (also used by the quiz).
-- `src/scenes/*.js` — one topic per file (`hriste`, `pravidla`, `utok`, `obrana`, `brankar`): plain data
+- `src/scenes/*.js` — one topic per file (`hriste`, `pravidla`, `kopani`, `utok`, `obrana`, `brankar`): plain data
   `{ id, title, lead, scenes: [...] }`. A scene may instead be `{ id, title, icon, Component }` for
   custom interactive content (see `src/components/keeper/`); it must render the same `.scene` grid
   skeleton (`.board`, `<SceneTitle>`, `<Say>`, `.scene-extra`, `<Why why story>`, `{children}`).
-- `src/pages/TopicPage.jsx` renders any topic; `src/pages/QuizPage.jsx` collects `scene.quiz` from all
-  topics. Scene ids must be unique within a topic (they appear in URLs `?s=`).
+- `src/pages/TopicPage.jsx` renders any topic; `src/pages/QuizPage.jsx` collects `scene.quiz` (or `Component.QUIZ`,
+  `quizOf` in Scene.jsx) from all topics. Scene ids must be unique within a topic (they appear in URLs `?s=`).
 - Age category: the site is built for *starší přípravka* U10–U11 (5 + 1, default). The top-bar `<select>` switches to
   *mladší přípravka* U8–U9 (4 + 1), remembered in localStorage `fotbal:age` (`src/lib/age.js`). Only scenes whose rules
   differ carry `younger: { …scene keys… }`, merged over the scene by `forAge` (TopicPage, Quiz; `bad: null` / `quiz: null`
@@ -57,7 +57,9 @@ everything Kopík says in it; on the topic URL the H1 is the topic.
   in DEV (`console.warn`, not in the prod bundle) and in `npm run check`. Keep it at zero warnings.
 - `src/scenes/videos.js` — YouTube videos per topic (`scene` = id of the situation it belongs to).
   `src/components/Video.jsx` loads nothing from YouTube until clicked (youtube-nocookie).
-- `src/components/keeper/` — custom goalkeeper scenes (stance figure, interactive positioning, hands).
+- `src/components/keeper/` — custom scenes (goalkeeper positioning, hands) and `photoScene` in `parts.jsx`: a „Takhle ano /
+  ne“ pair of photos with board-style labels (keeper stance and fall, all of Kopání except „Kopej oběma nohama“), data in
+  `src/scenes`; its optional `quiz` shows the photo without labels in the Kvíz (`Component.QUIZ`).
   Custom scenes get `next` / `onReplay` from TopicPage: they show `<BoardEnd>` (Znovu / Další) once Kopík finished
   (`useSpeak` returns done), and „Takhle ano“ chains to „Takhle ne“ with `useChain` (Scene.jsx) like a normal scene.
   Every custom component must list its spoken sentences in `Component.TEXTS` (for voice generation) and its pictures for
@@ -100,7 +102,7 @@ per topic an opener with an illustration, then one page per situation, quiz with
 A situation page is a comic: `SceneBoard` at the end of each beat (`shot` — before a mark that started in that beat disappears),
 „Takhle ne“ underneath without the beats it shares with „Takhle ano“, and `why`; page numbers are computed up front for the contents.
 `scripts/book.mjs` builds it with Vite (no PWA, no `public/`) and prints it with headless Chrome into `public/fotbalove-abc.pdf`
-(committed, ~9 MB, linked as `BOOK` from `nav.js` on the home page, Pro rodiče and footer; not precached). Keep the PDF small: Chrome
+(committed, ~11 MB, linked as `BOOK` from `nav.js` on the home page, Pro rodiče and footer; not precached). Keep the PDF small: Chrome
 embeds webp losslessly, so the book aliases the keeper photos to JPEG copies `src/book/img/brankar-*.jpg`, and `book.css` replaces
 SVG patterns (goal net, red hatch) with flat fills. Illustrations `src/book/img/*.jpg` were made with Gemini in the user's Chrome.
 
@@ -119,9 +121,9 @@ a Workbox service worker that precaches the app (`autoUpdate`; every navigation 
 are not precached — see Read-aloud).
 Install dialog = open source `<pwa-install>` (`@khmyznikov/pwa-install`, element in `index.html`, lazy-loaded by
 `src/lib/install.js`): offered by itself once (`fotbal:install`) on the home page of a returning visitor, otherwise the
-install button next to the voice button in the top bar (and a footer link). The top bar is full (brand, menu, U10–U11 select,
-install, voice): its label breakpoints in `index.css` were measured (with a 15 px scrollbar, install button forced, longer
-„Číst nahlas“) so nothing overflows at 320–1600 px — re-measure after adding anything to it. Icons are rendered from the Kopík SVG; re-render them if Kopík changes.
+install button next to the voice button in the top bar (and a footer link). The top bar is full (brand, 7 menu items, U10–U11
+select, install, voice): its label breakpoints in `index.css` were measured (with a 15 px scrollbar, install button forced, longer
+„Číst nahlas“) so nothing overflows at 300–1700 px, the mobile tab bar fits 300 px — re-measure after adding anything to it. Icons are rendered from the Kopík SVG; re-render them if Kopík changes.
 Share preview: Open Graph / Twitter meta in `index.html` with absolute URLs, image `public/og.png` (1200×630, < 300 kB for
 WhatsApp) composed from the home-page board, Kopík and menu icons; per-page og:title/description/url come from `scripts/seo.mjs`.
 After changing it, re-scrape in the Facebook Sharing Debugger.

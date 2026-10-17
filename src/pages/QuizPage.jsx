@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { SceneBoard, Say, beatAt } from "../components/Scene.jsx";
+import { SceneBoard, Say, beatAt, quizOf } from "../components/Scene.jsx";
 import { Kopik } from "../components/Kopik.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { useTimeline } from "../hooks/useTimeline.js";
 import { say, PHRASES, useSpeech } from "../lib/voice.js";
 import { PITCH } from "../scenes/hriste.js";
 import { RULES } from "../scenes/pravidla.js";
+import { KICKING } from "../scenes/kopani.js";
 import { ATTACK } from "../scenes/utok.js";
 import { DEFENSE } from "../scenes/obrana.js";
 import { KEEPER } from "../scenes/brankar.js";
@@ -14,10 +15,11 @@ import { PAGES } from "../lib/nav.js";
 import { forAge, useAge } from "../lib/age.js";
 
 /* Kvíz „Co uděláš ty?“ — otázky jsou přímo ve scénách (pole quiz). Scéna se zastaví v čase
-   quiz.at, dítě odpoví a scéna se dohraje: ukáže správné řešení. Otázky podle vybrané kategorie (U8–U9 / U10–U11). */
+   quiz.at, dítě odpoví a scéna se dohraje: ukáže správné řešení. Fotková situace (photoScene) ukáže fotku
+   bez štítků a po odpovědi se štítky. Otázky podle vybrané kategorie (U8–U9 / U10–U11). */
 const all = (age) =>
-  [PITCH, RULES, ATTACK, DEFENSE, KEEPER].flatMap((topic) =>
-    topic.scenes.map((s) => forAge(s, age)).filter((s) => s.quiz).map((scene) => ({ topic, scene }))
+  [PITCH, RULES, KICKING, ATTACK, DEFENSE, KEEPER].flatMap((topic) =>
+    topic.scenes.map((s) => forAge(s, age)).filter(quizOf).map((scene) => ({ topic, scene }))
   );
 const ROUND = 8;
 
@@ -71,7 +73,8 @@ function Quiz({ age }) {
 
 function Question({ q, last, onNext }) {
   const { scene } = q;
-  const { at: stop, ask, options } = scene.quiz;
+  const quiz = quizOf(scene);
+  const { at: stop, ask, options } = quiz;
   const { time, setPlaying } = useTimeline(scene.dur, false, false, stop);
   const opts = useMemo(() => shuffle(options), [options]);
   const [picked, setPicked] = useState(null);
@@ -90,13 +93,13 @@ function Question({ q, last, onNext }) {
     setPlaying(true);
     say(opts[k].ok ? PHRASES.right : PHRASES.wrong, { force: true });
   };
-  const beat = scene.beats?.[beatAt(scene, time)];
+  const after = quiz.art ? quiz : scene.beats?.[beatAt(scene, time)]; // titulek po odpovědi
 
   return (
     <div className="scene">
-      <SceneBoard s={scene} time={time} />
+      {quiz.art ? <div className="board">{answered ? quiz.solved : quiz.art}</div> : <SceneBoard s={scene} time={time} />}
       <h2 className="scene-title">{scene.title}</h2>
-      <Say text={answered ? beat?.text : ask} spoken={answered ? beat?.say : undefined} />
+      <Say text={answered ? after?.text : ask} spoken={answered ? after?.say : undefined} />
       <div className="scene-extra">
         {answered && (
           <p className={"verdict " + (ok ? "ok" : "miss")}>

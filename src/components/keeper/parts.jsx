@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import { BoardEnd, Say, SceneTitle, useChain, Why } from "../Scene.jsx";
 import { Icon } from "../Icons.jsx";
 import { say } from "../../lib/voice.js";
 import { W, L, PAD } from "../../lib/pitch.js";
 import "./keeper.css";
 
-/* Společné kousky vlastních brankářských situací. */
+/* Společné kousky vlastních situací (brankář, kopání). */
 
 /* Přečte text nahlas (když má dítě zapnuté čtení), kdykoli se změní — jako titulky ve <Scene>.
    Komponenty sem dávají mluvenou verzi (say: titulek + proč), stejnou jako tlačítko 🔊 (Say spoken)
@@ -77,4 +78,60 @@ export function Label({ x, y, text, tone = "ink", to }) {
       </text>
     </g>
   );
+}
+
+/* Situace „Takhle ano / Takhle ne“ ze dvou fotek (vygenerovaných Gemini) se štítky — postoj brankáře, kopání…
+   good / bad = { text, say, src, alt, labels: [[x, y, "štítek", [kamX, kamY]], …] }: text = krátký titulek,
+   say = co Kopík řekne nahlas (titulek + proč). quiz = { ask, options: [{ text, ok }], on?: "good" }: v Kvízu
+   fotka „Takhle ne“ (nebo „Takhle ano“) bez štítků, po odpovědi se štítky a titulkem.
+   Vrací scénu { id, title, icon, Component } pro src/scenes. */
+export function photoScene({ id, title, icon, good, bad, why, quiz }) {
+  const art = (side, bare) => (
+    <Art label={side.alt}>
+      <Photo src={side.src} />
+      {!bare &&
+        side.labels.map(([x, y, text, to]) => <Label key={text} x={x} y={y} text={text} to={to} tone={side === bad ? "bad" : "ink"} />)}
+    </Art>
+  );
+  const story = [["Takhle ano", good.say], ["Takhle ne", bad.say]];
+
+  function PhotoScene({ children, onReplay, next }) {
+    const [mode, setMode] = useState("good");
+    const [opening, setOpening] = useState(true); // jen první „Takhle ano“ pokračuje samo na „Takhle ne“
+    const line = mode === "bad" ? bad : good;
+    const done = useSpeak(line.say);
+    const chain = done && opening && line === good;
+    const note = useChain(chain, () => setMode("bad"));
+    const pick = (m) => {
+      setOpening(false);
+      setMode(m);
+    };
+    return (
+      <div className="scene">
+        <div className="board">
+          {art(line)}
+          {done && !chain && <BoardEnd onReplay={onReplay} next={next} />}
+        </div>
+        <SceneTitle>{title}</SceneTitle>
+        <Choice label="Porovnej" value={mode} onChange={pick} options={GOOD_BAD} />
+        <Say text={note ?? line.text} spoken={note ?? line.say} />
+        <Why why={why} story={story} />
+        {children}
+      </div>
+    );
+  }
+  PhotoScene.TEXTS = [good.say, bad.say];
+  // Kniha k tisku (src/book): obrázky se štítky a titulky.
+  PhotoScene.PRINT = {
+    frames: [
+      { tone: "good", text: good.text, art: art(good) },
+      { tone: "bad", text: bad.text, art: art(bad) },
+    ],
+    why,
+  };
+  if (quiz) {
+    const side = quiz.on === "good" ? good : bad;
+    PhotoScene.QUIZ = { ...quiz, art: art(side, true), solved: art(side), text: side.text, say: side.say };
+  }
+  return { id, title, icon, Component: PhotoScene };
 }
